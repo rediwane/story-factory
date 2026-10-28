@@ -20,14 +20,20 @@ Décidé par le propriétaire :
   simples animés ;
 - à terme, la même routine que l'autre compte : des vidéos générées chaque matin et
   programmées via Metricool ;
-- aucun lien public avec l'autre compte.
+- aucun lien public avec l'autre compte ;
+- (28/10) l'identité repose sur **un personnage récurrent**, simple et reconnaissable
+  d'un coup d'œil, qui raconte des histoires et peut aussi expliquer des choses réelles
+  (faits vérifiés), avec **une signature formelle forte** et constante (palette, mise
+  en scène, ton). Le personnage lui-même reste à choisir ;
+- (28/10) **la langue : l'anglais.** Une version dans une autre langue, plus tard, serait
+  un autre compte.
 
 À trancher par le propriétaire, dans cet ordre, avant toute routine :
-1. **L'identité** : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
+1. **L'identité** (direction choisie, voir plus haut ; reste le personnage, son ton et sa signature) : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
    du genre (qui raconte, ce qui revient d'une vidéo à l'autre, le ton, le style visuel,
    la voix). C'est la décision la plus importante : un compte d'histoires sans identité
    est indistinguable de mille autres.
-2. **La langue** des histoires, de la voix et des captions.
+2. ~~La langue~~ : tranchée, l'anglais.
 3. **La voix** : les voix piper gratuites suffisent pour un prototype ; une voix plus
    naturelle peut demander un service payant.
 4. **Le nom du compte** (filigrane) et sa création sur TikTok, à la main ; la nouvelle
