@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+
+# les mp4 ne sont jamais versionnés : ils vivent le temps de publier
+output/*.mp4

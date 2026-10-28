@@ -1,0 +1,34 @@
+{
+  "name": "rendu_test",
+  "hook_text": "Rendering test",
+  "watermark": "@watermark",
+  "persist": [
+    {"type": "rect", "color": [40, 40, 56], "x": 0.5, "y": 0.66, "w": 1.0, "h": 0.02, "z": -1}
+  ],
+  "scenes": [
+    {
+      "narration": "This is a rendering test of the engine. A circle appears and moves to the right.",
+      "elements": [
+        {"type": "circle", "color": [230, 230, 240], "x": 0.25, "y": 0.6, "r": 0.06,
+         "t0": 0.5, "to": {"x": 0.75}, "move": [2.5, 5.0], "bob": 0.004}
+      ]
+    },
+    {
+      "narration": "A square grows and turns, and a line is drawn.",
+      "elements": [
+        {"type": "rect", "color": [120, 120, 140], "x": 0.5, "y": 0.45, "w": 0.1, "h": 0.1,
+         "to": {"scale": 2.0, "angle": 45}},
+        {"type": "line", "color": [200, 200, 210], "x": 0.2, "y": 0.3,
+         "points": [[0, 0], [0.3, 0.05], [0.6, 0]], "width": 0.008, "t0": 1.0},
+        {"type": "text", "text": "TEXT", "color": [255, 255, 255], "x": 0.5, "y": 0.25, "size": 0.08, "t0": 1.5}
+      ]
+    },
+    {
+      "narration": "End of the test.",
+      "elements": [
+        {"type": "poly", "color": [180, 180, 190], "x": 0.5, "y": 0.5,
+         "points": [[0, -0.1], [0.09, 0.06], [-0.09, 0.06]], "fade": 0.6}
+      ]
+    }
+  ]
+}
