@@ -29,9 +29,17 @@ Décidé par le propriétaire :
   un autre compte ;
 - (28/10) **la voix : Kokoro (gratuit, open source), voix `am_fenrir`**, préférée par le
   propriétaire à piper après écoute. À brancher dans `src/engine/voice.py`, piper en repli.
+- (28/10) **le personnage et le style de montage**, validés comme direction après le
+  prototype `prototypes/v2_monte.py` : une silhouette noire à tête d'ampoule à
+  filament (le filament fait son visage, la lumière dit son humeur, un câble et sa
+  prise le suivent), toujours accompagnée d'un papillon de nuit ; et une vidéo
+  **montrée autant que racontée** : chaque phrase a son plan qui illustre ce qui est
+  dit, l'image change toutes les une à trois secondes (caméra, transitions, gros
+  textes animés, sous-titres mot à mot, bruitages et musique générés). Le moteur est
+  à étendre dans ce sens (`src/engine/`, rendu SVG).
 
 À trancher par le propriétaire, dans cet ordre, avant toute routine :
-1. **L'identité** (direction choisie, voir plus haut ; reste le personnage, son ton et sa signature) : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
+1. **L'identité** (personnage et style de montage choisis, voir plus haut ; restent son ton et sa signature à confirmer sur les prototypes) : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
    du genre (qui raconte, ce qui revient d'une vidéo à l'autre, le ton, le style visuel,
    la voix). C'est la décision la plus importante : un compte d'histoires sans identité
    est indistinguable de mille autres.
