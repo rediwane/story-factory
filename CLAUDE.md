@@ -26,7 +26,9 @@ Décidé par le propriétaire :
   (faits vérifiés), avec **une signature formelle forte** et constante (palette, mise
   en scène, ton). Le personnage lui-même reste à choisir ;
 - (28/10) **la langue : l'anglais.** Une version dans une autre langue, plus tard, serait
-  un autre compte.
+  un autre compte ;
+- (28/10) **la voix : Kokoro (gratuit, open source), voix `am_fenrir`**, préférée par le
+  propriétaire à piper après écoute. À brancher dans `src/engine/voice.py`, piper en repli.
 
 À trancher par le propriétaire, dans cet ordre, avant toute routine :
 1. **L'identité** (direction choisie, voir plus haut ; reste le personnage, son ton et sa signature) : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
@@ -34,8 +36,7 @@ Décidé par le propriétaire :
    la voix). C'est la décision la plus importante : un compte d'histoires sans identité
    est indistinguable de mille autres.
 2. ~~La langue~~ : tranchée, l'anglais.
-3. **La voix** : les voix piper gratuites suffisent pour un prototype ; une voix plus
-   naturelle peut demander un service payant.
+3. ~~La voix~~ : tranchée, Kokoro `am_fenrir`.
 4. **Le nom du compte** (filigrane) et sa création sur TikTok, à la main ; la nouvelle
    marque dans Metricool (son `brandId` va dans les skills `publier` et `mesure`).
 5. **Le protocole du test** : sa durée (cinq à six semaines) et le seuil qui dira si la
