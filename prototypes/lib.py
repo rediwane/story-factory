@@ -349,6 +349,7 @@ class Story:
         win = SR // FPS
         env = np.array([vb[i * win:(i + 1) * win].mean() for i in range(int(self.TOTAL * FPS) + 3)])
         self.ENV = np.clip(np.convolve(env / (np.percentile(env, 97) + 1e-9), np.ones(3) / 3, "same"), 0, 1)
+        self.sub_words = 3
         self.words = self._words()
         self.hook, self.hook_until = "", 0.0
         self.sub_mute = []; self.sub_y = 1380; self.sub_size = 86
@@ -371,7 +372,7 @@ class Story:
             groups, cur = [], []
             for w in ws:
                 cur.append(w)
-                if len(cur) >= 3 or w[-1] in ".,:!?": groups.append(cur); cur = []
+                if len(cur) >= self.sub_words or w[-1] in ".,:!?": groups.append(cur); cur = []
             if cur: groups.append(cur)
             for grp in groups:
                 g0 = acc; ts = []
