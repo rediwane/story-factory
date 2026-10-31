@@ -317,10 +317,13 @@ def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=()
                 continue
             if in_narration(t0, narr):
                 continue                      # il se tait pendant que le narrateur parle
+            hv = cfg.get("_hook_voice")
+            if hv is not None and t0 < 0.15 + len(hv) / sr + 0.1:
+                continue                      # et pendant l'accroche
             ak.add(buf, pitch(name, 1.0 + rng.uniform(-0.03, 0.03)), t0, gain=cfg["hero_gain"])
             last = t0; said += 1
         for tr in replies:                    # ses répliques : pleines, après la phrase
-            ak.add(buf, name, tr, gain=1.0); said += 1
+            ak.add(buf, name, tr, gain=cfg.get("hero_reply_gain", 1.4)); said += 1
         if payoff_t is not None and mood in ("win", "lose"):
             w = hero_word(cfg["hero_win"] if mood == "win" else cfg["hero_lose"], cfg)
             if w is not None:

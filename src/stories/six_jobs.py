@@ -124,6 +124,8 @@ class Library(Chapter):
         if self.down:
             return
         self.shake = 1.0
+        if self.t < self.cfg["lib_arm_s"]:
+            return                      # tant que le lundi n'est pas annoncé, l'étagère tient
         bump = 1.6 if self.bx > 500 else 1.0
         self.lean += self.cfg["lib_lean"] * k * bump * self.rng.uniform(0.5, 1.3)
         for b in self.books:
@@ -697,8 +699,8 @@ class Sunday(Chapter):
 # ---------------------------------------------------------------- l'histoire
 DEFAULTS = {
     "ball_r": 68.0, "gravity": 3000.0,
-    "lib_lean": 0.022, "mus_kick": 1.05, "cake_slide": 15.0, "chair_step": 15.0, "mattress_hits": 9,
-    "sunday_s": 5.0, "chapter_max_s": 13.0,
+    "lib_lean": 0.055, "lib_arm_s": 9.2, "mus_kick": 1.05, "cake_slide": 15.0, "chair_step": 15.0, "mattress_hits": 6,
+    "sunday_s": 4.0, "chapter_max_s": 15.0,
     "counter_font_size": 56, "counter_y": 0.19, "hook_text_s": 5.0,
     "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 0.5, "narr_tail_s": 0.2,
 }
