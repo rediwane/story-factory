@@ -288,7 +288,7 @@ class Waiter(Chapter):
 
 # ---------------------------------------------------------------- 3. gardien de musée
 class Museum(Chapter):
-    title = "WEDNESDAY · MUSEUM NIGHT GUARD"
+    title = "WEDNESDAY · NIGHT GUARD"
     stamp = ("FIRED", RED)
     mood = "lose"
     PX, TOP, PW = 780.0, 1060.0, 120.0      # socle : centre, sommet, largeur
@@ -700,7 +700,7 @@ DEFAULTS = {
     "lib_lean": 0.022, "mus_kick": 1.05, "cake_slide": 15.0, "chair_step": 15.0, "mattress_hits": 9,
     "sunday_s": 5.0, "chapter_max_s": 13.0,
     "counter_font_size": 56, "counter_y": 0.19, "hook_text_s": 5.0,
-    "sub_y": 0.885, "watermark_y": 0.955, "end_hold_s": 0.6,
+    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 0.5, "narr_tail_s": 0.2,
 }
 
 CHAPTERS = [(Library, {}), (Waiter, {}), (Museum, {}), (Cake, {}), (Lifeguard, {}), (Mattress, {}), (Sunday, {})]

@@ -35,6 +35,7 @@ class StorySim:
             seed = int(cfg["seed"]) * 100 + k
             self.sims.append(cls(c, np.random.default_rng(seed)))
         self.lines, self.replies = [], []
+        self._line_end = {}
         self.done = False
         self.payoff = False
         self.outcome = None
@@ -51,20 +52,29 @@ class StorySim:
         x = nv.say(text, self.cfg["narrator_voice"], self.cfg["narrator_length"])
         return (len(x) / nv.SR) if x is not None else 0.8
 
-    def _place(self, trig, text):
+    def _place(self, trig, text, key=None):
         start = max(trig, self.narr_free + self.cfg["narr_gap_s"])
         self.narr_free = start + self.narr_dur(text)
+        if key is not None:
+            self._line_end[key] = self.narr_free
         return start
+
+    def _reply(self, key, delay):
+        """Une réponse de Bounce après la phrase `key` : le narrateur et la coupe l'attendent."""
+        end = self._line_end.get(key)
+        if end is not None:
+            self.narr_free = max(self.narr_free, end + delay + 0.9)
 
     def _open(self, i):
         self.i = i
         self.t0 = self.t
         s = self.sims[i]
         for (tl, text, key) in getattr(s, "lines", []):
-            self._place(self.t0 + tl, text)
+            self._place(self.t0 + tl, text, f"{i}:{key}")
             self.lines.append((self.t0 + tl, text, f"{i}:{key}"))
         for (key, delay) in getattr(s, "replies", []):
             self.replies.append((f"{i}:{key}", delay))
+            self._reply(f"{i}:{key}", delay)
         s._lines_seen = len(getattr(s, "lines", []))
         s._replies_seen = len(getattr(s, "replies", []))
         s._end_local = None
@@ -73,17 +83,21 @@ class StorySim:
         self.t += dt
         s = self.sims[self.i]
         evs = []
+        if self.done:
+            s.step(dt)          # la scène vit encore pendant la tenue finale
+            return evs
         if not getattr(s, "_finished", False):
             evs = s.step(dt)
             # répliques ajoutées pendant le chapitre
             L = getattr(s, "lines", [])
             for (tl, text, key) in L[s._lines_seen:]:
-                self._place(self.t0 + tl, text)
+                self._place(self.t0 + tl, text, f"{self.i}:{key}")
                 self.lines.append((self.t0 + tl, text, f"{self.i}:{key}"))
             s._lines_seen = len(L)
             Rp = getattr(s, "replies", [])
             for (key, delay) in Rp[s._replies_seen:]:
                 self.replies.append((f"{self.i}:{key}", delay))
+                self._reply(f"{self.i}:{key}", delay)
             s._replies_seen = len(Rp)
             if s.payoff and s._end_local is None:
                 s._end_local = self.t - self.t0
