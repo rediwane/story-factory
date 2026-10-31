@@ -26,6 +26,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import voice as vk  # noqa: E402
+import bounce as hero  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -39,6 +40,7 @@ DEFAULTS = {
     "sub_color": [255, 255, 255], "sub_stroke": [0, 0, 0],
     "watermark": "", "watermark_y": 0.95, "watermark_alpha": 0.15,
     "scene_pause_s": 0.35, "end_hold_s": 0.8,
+    "hero_gain": 0.9, "hero_min_gap_s": 0.45, "hero_shock_s": 0.3,
     "persist": [],
     "scenes": [],
 }
@@ -98,6 +100,28 @@ def build_timeline(cfg):
         scenes_t.append((start, end, sc))
         t = end
     total = t + cfg["end_hold_s"]
+    # les mots de Bounce : aux retombées de ses sauts (`hops`) et aux instants `say`
+    w = hero.word()
+    times = []
+    for (a, b, sc) in scenes_t:
+        for el in sc.get("elements", []):
+            if el.get("type") != "bounce":
+                continue
+            for tl in hero_landings(el, b - a):
+                times.append(a + tl)
+            for ts in el.get("say", []):
+                times.append(a + ts)
+    for el in cfg["persist"]:
+        if el.get("type") == "bounce":
+            times += hero_landings(el, total) + list(el.get("say", []))
+    said, last = 0, -9.0
+    for tt in sorted(times):
+        if w is None or tt - last < cfg["hero_min_gap_s"]:
+            continue
+        clips.append((tt, w * cfg["hero_gain"]))
+        said += 1
+        last = tt
+    cfg["_hero_said"] = said
     cfg["_hook_until"] = max(hook_end + cfg["hook_extra_s"], cfg.get("hook_min_s", 0.0)) if cfg["hook_text"] else 0.0
     return clips, scenes_t, total
 
@@ -140,11 +164,59 @@ def element_state(el, ts, scene_len):
     bob = el.get("bob")
     if bob:
         p["y"] = p["y"] + bob * math.sin(2 * math.pi * ts / el.get("bob_s", 1.2))
+    sw = el.get("swing")
+    if sw:
+        p["angle"] = p["angle"] + sw * math.sin(2 * math.pi * ts / el.get("swing_s", 1.2))
     fade = el.get("fade", 0.2)
     a = 1.0
     if fade > 0:
         a = min(1.0, (ts - t0) / fade, (t1 - ts) / fade) if el.get("t1") is not None else min(1.0, (ts - t0) / fade)
     p["alpha"] = max(0.0, min(1.0, a))
+    return p
+
+
+def hero_landings(el, scene_len):
+    """Instants (depuis le début de la scène) où Bounce retombe, d'après `hops` :
+    {"h": hauteur en fraction de la largeur, "period": durée d'un saut, "t0", "t1"}."""
+    hp = el.get("hops")
+    if not hp:
+        return []
+    t0 = hp.get("t0", el.get("t0", 0.0))
+    t1 = hp.get("t1", el.get("t1", scene_len))
+    t1 = scene_len if t1 is None else t1
+    per = max(0.15, hp.get("period", 0.6))
+    out, t = [], t0 + per
+    while t <= t1 + 1e-6:
+        out.append(t)
+        t += per
+    return out
+
+
+def hero_state(el, p, ts, scene_len, shock_s):
+    """Ajoute à `p` le saut en cours (décalage vertical) et l'expression du visage."""
+    expr = el.get("expr", "calm")
+    for (ta, e) in el.get("expr_at", []):
+        if ts >= ta:
+            expr = e
+    hp = el.get("hops")
+    dy = 0.0
+    if hp:
+        t0 = hp.get("t0", el.get("t0", 0.0))
+        t1 = hp.get("t1", el.get("t1", scene_len))
+        t1 = scene_len if t1 is None else t1
+        per = max(0.15, hp.get("period", 0.6))
+        if t0 <= ts <= t1:
+            u = ((ts - t0) % per) / per
+            dy = -hp.get("h", 0.06) * 4 * u * (1 - u)
+            since = (ts - t0) % per
+            k = int((ts - t0) // per)
+            if k >= 1 and since < shock_s and expr == "calm":
+                expr = "shock"
+    for tsay in el.get("say", []):
+        if 0 <= ts - tsay < shock_s + 0.2 and expr == "calm":
+            expr = "shock"
+    p["dy"] = dy
+    p["expr"] = expr
     return p
 
 
@@ -166,6 +238,11 @@ def draw_element(dr, el, p, W, H, bg):
     lw = int(el.get("width", 0) * W) if el.get("width") else 0
     x, y, k = p["x"] * W, p["y"] * H, p["scale"]
     typ = el.get("type", "circle")
+    if typ == "bounce":
+        r = (p["r"] or 0.05) * W * k
+        hero.draw(dr, x, y + p.get("dy", 0.0) * W, r, p.get("expr", "calm"),
+                  math.radians(p["angle"]), p["alpha"], bg)
+        return
     if typ in ("circle", "ellipse"):
         rx = (p["r"] if p["r"] is not None else p["w"] / 2) * W * k
         ry = (p["r"] if p["r"] is not None and typ == "circle" else (p["h"] or p["w"] or 0) / 2) * W * k
@@ -266,8 +343,11 @@ def render(cfg, out_path):
         layers = [(el, t) for el in cfg["persist"]] + [(el, t - s0) for el in sc.get("elements", [])]
         layers.sort(key=lambda e: e[0].get("z", 0))
         for el, ts in layers:
-            p = element_state(el, ts, (total if el in cfg["persist"] else s1 - s0))
+            sl = total if el in cfg["persist"] else s1 - s0
+            p = element_state(el, ts, sl)
             if p:
+                if el.get("type") == "bounce":
+                    hero_state(el, p, ts, sl, cfg["hero_shock_s"])
                 draw_element(dr, el, p, W, H, bg)
 
         if cfg["watermark"]:
@@ -298,7 +378,8 @@ def render(cfg, out_path):
 def summary(cfg, total, scenes_t):
     return {"name": cfg["name"], "duration_s": round(total, 2), "scenes": len(scenes_t),
             "scene_s": [round(b - a, 2) for a, b, _ in scenes_t],
-            "hook_until_s": round(cfg.get("_hook_until", 0.0), 2)}
+            "hook_until_s": round(cfg.get("_hook_until", 0.0), 2),
+            "hero_said": cfg.get("_hero_said", 0)}
 
 
 def main(argv=None):

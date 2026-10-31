@@ -15,6 +15,10 @@
     {
       "date": "2026-10-28",
       "note": "Phase 0 : dépôt créé, moteur de rendu écrit et testé (tests/rendu_test.json), règles et skills en place. Genre décidé par le propriétaire : histoires racontées par une voix de synthèse sur des dessins simples animés. Identité, langue, voix, nom du compte, marque Metricool et protocole du test restent à trancher (CLAUDE.md, état du projet)."
+    },
+    {
+      "date": "2026-10-31",
+      "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
     }
   ]
 }

@@ -1,13 +1,16 @@
 """
 La voix du narrateur et le mixage.
 
-- `say(text, voice, length_scale)` : texte -> tableau numpy (mono, SR), par piper ;
-  repli espeak-ng ; None si aucun moteur ne répond. L'absence de voix ne casse
+- `say(text, voice, length_scale)` : texte -> tableau numpy (mono, SR). Le moteur est
+  Kokoro (kokoro-onnx, voix choisie par le propriétaire : `am_fenrir`) ; les noms de voix
+  piper (`langue_REGION-nom-qualité`) passent par piper ; repli espeak-ng ; None si
+  aucun moteur ne répond. L'absence de voix ne casse
   jamais un rendu : elle se signale sur stderr, et le run l'écrit dans ses notes.
 - `add`, `write_wav` : poser des sons dans un buffer, écrire le mix avec un limiteur
   souple (normalisation sur le corps du morceau, pas sur la crête).
 
-Les modèles piper se téléchargent au premier usage dans ~/.cache/piper.
+Les modèles se téléchargent au premier usage : Kokoro dans ~/.cache/kokoro (modèle
+et voix, ~350 Mo), piper dans ~/.cache/piper.
 """
 import os
 import sys
@@ -21,7 +24,44 @@ import numpy as np
 SR = 44100
 VOICE_DIR = os.environ.get("PIPER_VOICE_DIR", os.path.expanduser("~/.cache/piper"))
 VOICE_BASE_URL = "https://huggingface.co/rhasspy/piper-voices/resolve/main"
-DEFAULT_VOICE = "en_US-lessac-medium"
+DEFAULT_VOICE = "am_fenrir"
+KOKORO_DIR = os.environ.get("KOKORO_DIR", os.path.expanduser("~/.cache/kokoro"))
+KOKORO_FILES = {
+    "kokoro-v1.0.onnx": "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx",
+    "voices-v1.0.bin": "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin",
+}
+_kokoro = None
+
+
+def is_piper_name(name):
+    return "-" in name and "_" in name.split("-")[0]
+
+
+def ensure_kokoro(timeout=600):
+    """Charge Kokoro (télécharge le modèle si absent). Renvoie l'objet ou None."""
+    global _kokoro
+    if _kokoro is not None:
+        return _kokoro
+    try:
+        from kokoro_onnx import Kokoro
+    except Exception as e:
+        print(f"[voice] kokoro-onnx absent : {e}", file=sys.stderr)
+        return None
+    os.makedirs(KOKORO_DIR, exist_ok=True)
+    for fn, url in KOKORO_FILES.items():
+        dest = os.path.join(KOKORO_DIR, fn)
+        if not os.path.exists(dest):
+            try:
+                subprocess.run(["curl", "-sSL", "--fail", "-o", dest, url], check=True, timeout=timeout)
+            except Exception as e:
+                print(f"[voice] téléchargement Kokoro échoué : {e}", file=sys.stderr)
+                return None
+    try:
+        _kokoro = Kokoro(os.path.join(KOKORO_DIR, "kokoro-v1.0.onnx"), os.path.join(KOKORO_DIR, "voices-v1.0.bin"))
+    except Exception as e:
+        print(f"[voice] Kokoro ne se charge pas : {e}", file=sys.stderr)
+        return None
+    return _kokoro
 
 
 def _voice_url(name):
@@ -68,10 +108,23 @@ def _norm(x):
 
 
 def say(text, voice=DEFAULT_VOICE, length_scale=None, sr=SR):
-    """Texte -> tableau numpy. piper, puis espeak-ng, puis None."""
+    """Texte -> tableau numpy. Kokoro (voix am_*, af_*, bm_*…), ou piper pour un nom
+    piper, puis espeak-ng, puis None. `length_scale` : 1.0 normal, plus grand = plus lent."""
     if not text or not text.strip():
         return None
-    onnx = ensure_voice(voice)
+    if not is_piper_name(voice):
+        k = ensure_kokoro()
+        if k is not None:
+            try:
+                x, ksr = k.create(text, voice=voice, speed=1.0 / (length_scale or 1.0), lang="en-us")
+                x = np.asarray(x, dtype=np.float64)
+                if ksr != sr:
+                    x = np.interp(np.arange(int(len(x) * sr / ksr)) / sr, np.arange(len(x)) / ksr, x)
+                if len(x):
+                    return _norm(x)
+            except Exception as e:
+                print(f"[voice] Kokoro échec : {e}", file=sys.stderr)
+    onnx = ensure_voice(voice) if is_piper_name(voice) else None
     tmp = tempfile.mktemp(suffix=".wav")
     try:
         if onnx:

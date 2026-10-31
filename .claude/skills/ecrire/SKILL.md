@@ -17,7 +17,7 @@ Un fichier `configs/<name>.json`. Toutes les clés ont une valeur par défaut da
 | clé | rôle |
 |---|---|
 | `name` | nom de la vidéo, celui du mp4 |
-| `voice`, `voice_length` | modèle piper du narrateur (`langue_REGION-nom-qualité`), vitesse (1.0 normal, plus grand = plus lent) |
+| `voice`, `voice_length` | voix du narrateur : une voix Kokoro (par défaut celle du compte, `am_fenrir`) ou un modèle piper (`langue_REGION-nom-qualité`) ; vitesse (1.0 normal, plus grand = plus lent) |
 | `hook_text` | l'accroche, écrite en haut de l'image et lue en premier ; vide = pas d'accroche |
 | `hook_voice` | `false` pour l'afficher sans la lire |
 | `bg` | couleur de fond `[r, g, b]` ; une scène peut avoir la sienne |
@@ -35,7 +35,7 @@ Un **élément** :
 
 | clé | rôle |
 |---|---|
-| `type` | `circle`, `ellipse`, `rect`, `poly`, `line`, `text` |
+| `type` | `circle`, `ellipse`, `rect`, `poly`, `line`, `text`, `bounce` (le personnage : son dessin, sa voix et sa couleur ne se règlent pas) |
 | `x`, `y` | position, en fraction de la largeur et de la hauteur de l'image |
 | `r`, `w`, `h` | taille, en fraction de la largeur |
 | `points` | pour `poly` et `line` : sommets relatifs à `(x, y)`, en fraction de la largeur |
@@ -45,6 +45,10 @@ Un **élément** :
 | `fade` | durée du fondu d'entrée et de sortie |
 | `to`, `move`, `ease` | propriétés à atteindre (`x`, `y`, `r`, `w`, `h`, `size`, `angle`, `scale`), fenêtre du mouvement `[début, fin]`, courbe (`inout`, `in`, `out`, `linear`) |
 | `bob`, `bob_s` | petite oscillation verticale, amplitude et période |
+| `swing`, `swing_s` | oscillation de l'angle, amplitude en degrés et période |
+| `expr`, `expr_at` | pour `bounce` : visage (`calm`, `shock`, `win`, `lose`), et changements datés `[[t, expr], …]` |
+| `hops` | pour `bounce` : sauts sur place `{"h": hauteur, "period": durée d'un saut, "t0", "t1"}` ; à chaque retombée il dit son nom et fait sa tête de choc |
+| `say` | pour `bounce` : instants où il dit son nom en dehors des sauts |
 | `angle`, `scale` | rotation en degrés, échelle |
 | `z` | ordre de dessin |
 

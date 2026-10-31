@@ -1,3 +1,5 @@
 numpy
 pillow
-piper-tts       # voix du narrateur ; repli espeak-ng si absent
+kokoro-onnx     # voix du narrateur (Kokoro, voix am_fenrir) ; modele telecharge au premier rendu
+soundfile
+piper-tts       # voix de Bounce (reprise du premier compte) ; repli du narrateur

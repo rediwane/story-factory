@@ -1,47 +1,51 @@
 # story-factory
 
-Deuxième système autonome du propriétaire : un compte TikTok qui publiera chaque jour
-des histoires racontées par une voix, sur des dessins simples animés, produites,
-publiées, mesurées et améliorées sans intervention humaine, via Metricool.
+Le **format histoire** du compte TikTok **@bouncefactory0** (Metricool `brandId 7069324`,
+fuseau Europe/Paris) : des histoires courtes racontées par une voix off, sur des dessins
+simples animés, dont le héros est Bounce, le personnage du compte. Il tourne **en
+parallèle** du format de simulation physique du dépôt `rediwane/bouncefactory`, sur le
+même compte, et partage ses créneaux.
 
-La méthode vient d'un premier compte du propriétaire, qui tourne déjà seul (dépôt
-`rediwane/bouncefactory`). Ce compte-ci est aussi **un test de cette méthode** : savoir
-si elle trouve un format qui marche quand on part de zéro, dans une autre niche. Rien
-de l'autre compte ne s'utilise ici : ni son personnage, ni ses thèmes, ni son nom.
+La méthode vient de ce premier dépôt, qui tourne déjà seul. Ce qui est propre à ce
+format est ici ; ce qui est au personnage (son dessin, sa voix, son mot unique) est
+repris à l'identique de `bouncefactory` dans `src/engine/bounce.py`, jamais réinventé.
 
 ## État du projet — à lire en premier
 
-**Phase 0 : la base est posée, rien n'est publié.** Le 28/10/2026 : dépôt créé, moteur
-de rendu écrit et testé (`src/engine/`), règles et skills en place. Aucun compte
-TikTok n'est encore branché, aucune routine planifiée n'existe.
+**Phase 1 : prototypes en session, rien n'est encore publié par ce dépôt.**
 
-Décidé par le propriétaire :
-- le genre : des **histoires**, racontées par une voix de synthèse, sur des dessins
-  simples animés ;
-- à terme, la même routine que l'autre compte : des vidéos générées chaque matin et
-  programmées via Metricool ;
-- aucun lien public avec l'autre compte.
+- 28/10/2026 : dépôt créé pour un second compte d'histoires sans lien avec Bounce ;
+  moteur de rendu écrit et testé (`src/engine/`), règles et skills en place.
+- 31/10/2026, décidé par le propriétaire : **le dépôt change de but**. Pas de second
+  compte : les histoires ont Bounce pour héros et sortent sur @bouncefactory0, comme
+  nouveau format à côté des simulations. Raisons : partir de 10 000 abonnés et d'un
+  visage connu plutôt que de zéro ; la narration est le format de rétention le plus
+  solide ; le personnage est l'actif à construire (attachement, commentaires, suite).
+  **Voix du narrateur : Kokoro, voix `am_fenrir`** (`src/engine/voice.py`). Langue :
+  l'anglais, celle du compte. Premier prototype rendu le jour même
+  (`configs/lighthouse_20261031.json`), relu, montré au propriétaire, non publié.
 
-À trancher par le propriétaire, dans cet ordre, avant toute routine :
-1. **L'identité** : ce qui rend le compte reconnaissable au premier coup d'œil, en plus
-   du genre (qui raconte, ce qui revient d'une vidéo à l'autre, le ton, le style visuel,
-   la voix). C'est la décision la plus importante : un compte d'histoires sans identité
-   est indistinguable de mille autres.
-2. **La langue** des histoires, de la voix et des captions.
-3. **La voix** : les voix piper gratuites suffisent pour un prototype ; une voix plus
-   naturelle peut demander un service payant.
-4. **Le nom du compte** (filigrane) et sa création sur TikTok, à la main ; la nouvelle
-   marque dans Metricool (son `brandId` va dans les skills `publier` et `mesure`).
-5. **Le protocole du test** : sa durée (cinq à six semaines) et le seuil qui dira si la
-   méthode a marché, fixés **avant** la première vidéo.
+Décidé, et qui ne se rediscute pas sans le propriétaire :
+- **Bounce ne dit jamais que son nom**, de sa voix du premier compte ; le narrateur
+  parle, lui répond « Bounce ». C'est le gag qui traverse toutes les histoires.
+- **Le visuel reste celui du compte** : géométrie simple sur fond sombre, Bounce dessiné
+  par le code commun, les autres personnages sans visage, le nom du compte en filigrane,
+  aucun détail illustratif (tout ce qui n'est pas Bounce se fait en formes primitives).
+- **Bounce se met lui-même dans le pétrin** : l'histoire part d'une situation qu'il
+  suffirait de régler en restant assis, et il ne reste jamais assis.
+- **Une accroche** écrite en haut et lue en premier ; sous-titres de la narration.
+- **Aucun son hors les deux voix** : ni musique, ni bruitage.
 
-Ensuite, dans l'ordre :
-1. cinq ou six vidéos prototypes faites en session avec le propriétaire, qu'il valide ;
-2. l'écriture de l'identité retenue dans ce fichier, et `era_start` dans `history.json` ;
-3. les premières publications, une ou deux par jour la première semaine (un compte
-   neuf qui publie en rafale par un outil tiers est freiné plus facilement), puis la
-   cadence pleine ;
-4. la tâche planifiée du matin, puis, quand l'historique le permet, un juge à part.
+À trancher par le propriétaire, après les prototypes :
+1. **Le ton du narrateur** (conte qui prend Bounce au sérieux, ou commentateur agacé)
+   et **le monde** des histoires (celui des thèmes de simulation, ou le sien).
+2. **La part des créneaux** : le compte ne distribue pas plus de 5 vidéos par jour ;
+   combien reviennent aux histoires, et à partir de quand.
+3. **Le protocole du test** : combien d'histoires, comparées à quoi (la médiane M du
+   compte, lue dans le `history.json` de `bouncefactory`), et le seuil qui dira si le
+   format entre dans la routine quotidienne.
+4. Quand il y entre : la routine du matin de ce dépôt (ou son intégration dans celle de
+   `bouncefactory`), et le juge.
 
 Une session qui reprend le projet commence par cette section, propose, et laisse le
 propriétaire trancher. Quand une décision est prise, elle s'écrit ici et la liste se
@@ -55,9 +59,13 @@ cette question : pourquoi quelqu'un resterait jusqu'à la fin, et pourquoi il ne
 partirait pas dans les premières secondes ? Une vidéo indistinguable de dix autres de
 la niche est un échec, quels que soient ses chiffres.
 
-## Identité — à écrire quand le propriétaire l'aura choisie
+## Identité
 
-Vide pour l'instant, volontairement. Rien ne s'y écrit sans décision du propriétaire.
+Celle du compte @bouncefactory0, telle que son `CLAUDE.md` la fixe (Bounce, son visage,
+sa couleur, sa voix, son mot unique, le fond sombre, la géométrie simple, le filigrane,
+l'anglais), plus ce que ce format ajoute : un narrateur (Kokoro `am_fenrir`) qui raconte,
+des sous-titres, des scènes qui s'enchaînent. Ce qui reste à choisir est dans l'état du
+projet ; rien d'autre ne s'écrit ici sans décision du propriétaire.
 
 ## Ce que les instructions ne contiennent jamais
 
@@ -95,7 +103,7 @@ du moteur, sans contenu : il ne sert pas de modèle.
 | `history.json` | `_schema`, `era_start`, `videos`, `themes`, `daily`, `veille`, `notes` | le run |
 | `configs/`, `captions/` | recettes et captions des vidéos, versionnées | le run |
 | `output/` | les mp4, le temps de publier ; **jamais versionnés** | le run |
-| `src/engine/` | le moteur : `render.py` (rendu), `voice.py` (voix, mixage) | — |
+| `src/engine/` | le moteur : `render.py` (rendu), `voice.py` (narrateur, mixage), `bounce.py` (le personnage, repris de bouncefactory) | — |
 | `src/tools/coherence.py` | détecteur d'incohérences | — |
 
 `history.json → videos[]`, une entrée par vidéo produite : `name, date, theme, config,
@@ -131,13 +139,13 @@ Ce qui a été appris sur l'autre compte, et qui vaut ici sans rien imposer de l
 
 ## Contraintes
 
-- **Une seule langue** pour tout le compte, celle que le propriétaire aura choisie.
+- **Une seule langue** pour tout le compte : l'anglais.
 - **Rien qui tombe sous les règles communautaires TikTok** (argent, jeux d'argent,
   armes, drogues, actes dangereux, sexe, désinformation). Une vidéo retirée passe
   `removed` et son thème est revu avant toute nouvelle vidéo.
 - **Contenu généré par IA** : le compte respecte les règles de TikTok sur l'étiquetage
   du contenu généré par IA.
-- **Aucune musique ni son sous droits** dans le dépôt ou dans les vidéos.
+- **Aucune musique, aucun bruitage, aucun son sous droits** : les deux voix sont tout l'audio.
 - Erreur bloquante : ne rien publier ce jour-là, l'écrire dans `notes`.
 
 ## Skills
