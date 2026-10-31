@@ -144,7 +144,7 @@ class StorySim:
             while base.text_w(f, text) > self.W * S * 0.86 and size > 40 * S:
                 size = int(size * 0.9)
                 f = base.font(size)
-            x, y = self.W * S / 2, self.H * S * 0.52
+            x, y = self.W * S / 2, self.H * S * getattr(s, "stamp_y", 0.52)
             dr.text((x, y), text, fill=col, anchor="mm", font=f, stroke_width=int(6 * S), stroke_fill=(10, 8, 12))
 
 

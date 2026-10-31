@@ -32,12 +32,49 @@
         "shares": null,
         "measured_at": null
       }
+    },
+    {
+      "name": "halloween_20261031",
+      "date": "2026-10-31",
+      "theme": "halloween",
+      "config": "configs/halloween_20261031.json",
+      "role": "owner",
+      "hook_text": "It Only Says One Word",
+      "duration_s": 69.5,
+      "hashtags": [
+        "#halloween",
+        "#horror",
+        "#bouncingball",
+        "#fyp"
+      ],
+      "caption": "captions/halloween_20261031.md",
+      "slot": "22:35",
+      "scheduled_time": "2026-10-31T22:35:00+01:00",
+      "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
+      "metricool_post_id": 412482253,
+      "post_url": null,
+      "status": "scheduled",
+      "stats": {
+        "views_24h": null,
+        "views_48h": null,
+        "views": null,
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "measured_at": null
+      }
     }
   ],
   "themes": [
     {
       "name": "six_jobs",
       "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
+      "state": "actif",
+      "created": "2026-10-31"
+    },
+    {
+      "name": "halloween",
+      "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
       "state": "actif",
       "created": "2026-10-31"
     }
@@ -62,6 +99,10 @@
     {
       "date": "2026-10-31",
       "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
+    },
+    {
+      "date": "2026-10-31",
+      "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
     }
   ]
 }

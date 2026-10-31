@@ -437,7 +437,7 @@ class HorrorSim(StorySim):
     def post(self, img, t):
         a = np.asarray(img).astype(np.float32)
         a *= self.vignette
-        a += self.grain_rng.normal(0, 7.0, a.shape).astype(np.float32)
+        a += self.grain_rng.normal(0, 3.2, a.shape).astype(np.float32)
         a *= 1.0 + 0.02 * self.grain_rng.standard_normal()
         return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
 
@@ -448,7 +448,7 @@ DEFAULTS = {
     "chapter_max_s": 40.0,
     "narrator_voice": "am_onyx", "narrator_length": 1.18, "narr_gap_s": 0.6,
     "hook_text_s": 4.5, "sub_y": 0.80, "sub_font_size": 50, "watermark_y": 0.93,
-    "end_hold_s": 0.8, "narr_tail_s": 0.3,
+    "end_hold_s": 0.8, "narr_tail_s": 0.3, "crf": 21,
     "hero_gain": 1.0, "hero_min_gap_s": 0.3, "hero_win": "", "hero_lose": "",
 }
 

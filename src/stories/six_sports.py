@@ -31,6 +31,7 @@ class Sport(Chapter):
 class Basketball(Sport):
     title = "BASKETBALL"
     stamp = ("OWN BASKET", RED)
+    stamp_y = 0.68
     mood = "lose"
     RIM_X, RIM_Y, RIM_R = 230.0, 900.0, 70.0
 
@@ -104,7 +105,7 @@ class Golf(Sport):
     title = "GOLF"
     stamp = ("WATER", RED)
     mood = "lose"
-    HOLE_X, POND_X = 560.0, 880.0
+    HOLE_X, POND_X = 520.0, 760.0
 
     def setup(self):
         self.hop_init(160.0, FLOOR_Y, wobble=0.0, xmin=0, xmax=2000, **dict(HOP, min_h=200.0, max_h=460.0))
@@ -116,7 +117,7 @@ class Golf(Sport):
     def hop_go(self):
         s = math.sqrt(2 * self.g * self.h)
         T = 2 * s / self.g
-        self.stride *= self.rng.uniform(1.15, 1.35)
+        self.stride *= self.rng.uniform(1.12, 1.28)
         self.vx = self.stride / T
         self.vy = -s
         self.on = "air"
@@ -185,7 +186,7 @@ class Tennis(Sport):
     stamp = ("OUT", RED)
     mood = "lose"
     NET_X = 540.0
-    LINE_L, LINE_R = 90.0, 990.0
+    LINE_L, LINE_R = 180.0, 900.0
 
     def setup(self):
         self.hop_init(300.0, FLOOR_Y, wobble=0.0, xmin=0, xmax=2000, **dict(HOP, min_h=240.0, max_h=560.0))
@@ -212,7 +213,7 @@ class Tennis(Sport):
             self.on = "still"
             self.finish("OUT")
             self.line("Out. Both players missed him anyway.", "fired", self.t + 0.5)
-            self.line("The umpire asked for his name.", "ask", self.t + 2.4)
+            self.line("The umpire asked for his name.", "ask", self.t + 1.2)
             self.replies.append(("ask", 0.3))
 
     def after(self, dt, evs):
@@ -237,7 +238,7 @@ class Tennis(Sport):
             dr.line([(P(self.NET_X - 60), P(y)), (P(self.NET_X + 60), P(y))], fill=(220, 220, 230), width=int(P(2)))
         dr.rectangle([P(self.NET_X - 60), P(FLOOR_Y - 236), P(self.NET_X + 60), P(FLOOR_Y - 224)], fill=(240, 240, 240))
         # les deux joueurs et leurs raquettes
-        for (x, col, side) in ((130, (200, 80, 80), "L"), (950, (80, 120, 200), "R")):
+        for (x, col, side) in ((70, (200, 80, 80), "L"), (1010, (80, 120, 200), "R")):
             self.figure(dr, P, x, FLOOR_Y, col, h=240, w=86)
             sw = s["swing"][side]
             ang = (-1.2 if side == "L" else 1.2) * (1 - sw) + (0.4 if side == "L" else -0.4) * sw
@@ -252,6 +253,7 @@ class Tennis(Sport):
 class HighJump(Sport):
     title = "HIGH JUMP"
     stamp = ("BAR DOWN", RED)
+    stamp_y = 0.36
     mood = "lose"
     MAT_X0, MAT_X1, MAT_TOP = 560.0, 1040.0, 1300.0
     BAR_Y = 1000.0
@@ -275,9 +277,9 @@ class HighJump(Sport):
             self.line("The bar was in the way.", "fired", self.t + 0.6)
         if self.bar is not None:
             b = self.bar
-            b[2] += self.g * dt; b[1] += b[2] * dt; b[3] += 2.2 * dt
+            b[2] += self.g * dt; b[1] += b[2] * dt; b[3] = min(0.22, b[3] + 0.9 * dt)
             if b[1] >= self.MAT_TOP - 10:
-                b[1] = self.MAT_TOP - 10; b[2] = 0.0
+                b[1] = self.MAT_TOP - 10; b[2] = 0.0; b[3] = 0.0
         self.settle()
 
     def snapshot(self):
@@ -306,7 +308,7 @@ class HighJump(Sport):
         else:
             bx, by, _, ang = s["bar"]
             ca, sa = math.cos(ang), math.sin(ang)
-            L = (self.MAT_X1 - self.MAT_X0 + 80) / 2
+            L = (self.MAT_X1 - self.MAT_X0 - 20) / 2
             dr.line([(P(bx - L * ca), P(by - L * sa)), (P(bx + L * ca), P(by + L * sa))], fill=(240, 240, 240), width=int(P(14)))
         self.bounce(dr, P, s)
 
@@ -323,7 +325,7 @@ class Swimming(Sport):
         self.line("Swimming.", "title", 0.0)
         self.stride = 125.0
         self.rings = []
-        self.done_x = 960.0
+        self.done_x = 850.0
 
     def hop_go(self):
         s = math.sqrt(2 * self.g * self.h)
@@ -358,7 +360,7 @@ class Swimming(Sport):
         for i in range(10):
             y = WY + 50 + i * 70
             dr.line([(P(20), P(y + 6 * math.sin(t * 2 + i))), (P(W - 20), P(y + 6 * math.sin(t * 2 + i + 1)))], fill=(90, 160, 220), width=int(P(2)))
-        dr.rectangle([P(self.done_x + 70), P(WY - 60), P(W), P(H)], fill=(190, 194, 204))
+        dr.rectangle([P(self.done_x + 80), P(WY - 60), P(W), P(H)], fill=(190, 194, 204))
         for (x, age) in s["rings"]:
             r = 20 + 160 * age
             dr.ellipse([P(x - r), P(WY - r * 0.25), P(x + r), P(WY + r * 0.25)], outline=(200, 230, 255), width=int(P(3)))
@@ -374,7 +376,7 @@ class Trampoline(Sport):
     MAT_Y = 1380.0
 
     def setup(self):
-        self.hop_init(540.0, self.MAT_Y, wobble=30.0, xmin=470, xmax=610, **dict(HOP, start_h=360.0, min_h=360.0, max_h=5000.0, gain=(1.32, 1.42)))
+        self.hop_init(540.0, self.MAT_Y, wobble=30.0, xmin=470, xmax=610, **dict(HOP, start_h=360.0, min_h=360.0, max_h=5000.0, gain=(1.26, 1.34)))
         self.line("Trampoline.", "title", 0.0)
         self.cards = [0, 0, 0]
         self.sink = 0.0
@@ -433,7 +435,7 @@ DEFAULTS = {
     "bb_arm_s": 9.5, "hj_attempts": 5,
     "chapter_max_s": 15.0,
     "counter_font_size": 56, "counter_y": 0.19, "hook_text_s": 5.0,
-    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 0.5, "narr_tail_s": 0.2,
+    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.0, "narr_tail_s": 0.2,
 }
 
 CHAPTERS = [(Basketball, {}), (Golf, {}), (Tennis, {}), (HighJump, {}), (Swimming, {}), (Trampoline, {})]

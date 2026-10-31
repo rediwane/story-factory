@@ -451,7 +451,7 @@ def render_video(theme, sim, states, cfg, audio_path, out_path, events=(), narr=
     proc = subprocess.Popen(
         ["ffmpeg", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
          "-s", f"{W}x{H}", "-r", str(fps), "-i", "-", "-i", audio_path,
-         "-c:v", "libx264", "-preset", "slow", "-crf", "17",
+         "-c:v", "libx264", "-preset", "medium", "-crf", str(cfg.get("crf", 17)),
          "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", out_path],
         stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
