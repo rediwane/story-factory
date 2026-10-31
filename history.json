@@ -1,8 +1,47 @@
 {
   "_schema": "videos : une entrée par vidéo produite. themes : une entrée par thème (une forme d'histoire décrite en une phrase), jamais supprimée. daily : métriques de compte par jour. veille : dernière veille hebdomadaire. notes : journal daté, une entrée par décision ou incident. era_start : date de la première vidéo publiée, vide tant que rien n'est publié.",
-  "era_start": null,
-  "videos": [],
-  "themes": [],
+  "era_start": "2026-10-31",
+  "videos": [
+    {
+      "name": "six_jobs_20261031",
+      "date": "2026-10-31",
+      "theme": "six_jobs",
+      "config": "configs/six_jobs_20261031.json",
+      "role": "owner",
+      "hook_text": "Can Bounce Keep A Job?",
+      "duration_s": 61.15,
+      "hashtags": [
+        "#bouncingball",
+        "#physics",
+        "#satisfying",
+        "#fyp"
+      ],
+      "caption": "captions/six_jobs_20261031.md",
+      "slot": "21:00",
+      "scheduled_time": "2026-10-31T21:00:00+01:00",
+      "media_url": "https://h.uguu.se/yECsUvDU.mp4",
+      "metricool_post_id": 412415155,
+      "post_url": null,
+      "status": "scheduled",
+      "stats": {
+        "views_24h": null,
+        "views_48h": null,
+        "views": null,
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "measured_at": null
+      }
+    }
+  ],
+  "themes": [
+    {
+      "name": "six_jobs",
+      "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
+      "state": "actif",
+      "created": "2026-10-31"
+    }
+  ],
   "daily": [],
   "veille": {
     "last_check": null,
@@ -19,6 +58,10 @@
     {
       "date": "2026-10-31",
       "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
+    },
+    {
+      "date": "2026-10-31",
+      "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
     }
   ]
 }
