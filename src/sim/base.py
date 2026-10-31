@@ -298,6 +298,34 @@ def hero_word(text, cfg):
     return v
 
 
+def reverb(x, sr, tail_s=0.8, wet=0.5):
+    """Réverbération simple : convolution avec une queue de bruit décroissante."""
+    n = int(tail_s * sr)
+    ir = np.random.default_rng(7).standard_normal(n) * np.exp(-np.arange(n) / (sr * tail_s / 4))
+    ir[0] = 0.0
+    ir /= (np.sum(np.abs(ir)) + 1e-9) / 3.0
+    wetx = np.convolve(x, ir)
+    out = np.zeros(len(wetx))
+    out[:len(x)] += x * (1 - wet)
+    out += wetx * wet
+    return out / (np.max(np.abs(out)) + 1e-9)
+
+
+def drone(n, sr, env_fn, rng):
+    """Une nappe sourde : bruit filtré très bas, dont l'amplitude suit env_fn(t) en 0..1."""
+    noise = rng.standard_normal(n)
+    # filtre passe-bas grossier par moyenne glissante, deux passes
+    k = int(sr / 60)
+    ker = np.ones(k) / k
+    low = np.convolve(noise, ker, mode="same")
+    low = np.convolve(low, ker, mode="same")
+    low /= (np.max(np.abs(low)) + 1e-9)
+    t = np.arange(n) / sr
+    env = np.array([env_fn(tt) for tt in t[::sr // 20]])
+    env = np.interp(t, t[::sr // 20], env)
+    return low * env * 0.5
+
+
 def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=(), replies=()):
     """Le son vient des collisions : à chaque `hit`, Bounce dit son nom. Deux mots ne
     sont jamais plus rapprochés que hero_min_gap_s : sur une rafale de rebonds, seuls
@@ -312,15 +340,30 @@ def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=()
         print(f"[{cfg['name']}] avertissement : aucune voix pour Bounce, rebonds muets", file=sys.stderr)
     else:
         last = -9.0
+        far = reverb(name, sr, 0.9, 0.5)
         for (t0, kind, data) in events:
             if kind != "hit" or t0 - last < cfg["hero_min_gap_s"]:
                 continue
-            if in_narration(t0, narr):
+            tag = str(data)
+            if tag.startswith("scare"):
+                w = np.concatenate([name, np.zeros(int(0.05 * sr))])
+                ak.add(buf, w, t0, gain=1.6)
+                ak.add(buf, pitch(name, 0.6), t0 + 0.02, gain=1.2)
+                last = t0; said += 1
+                continue
+            if in_narration(t0, narr) and not tag.startswith("far"):
                 continue                      # il se tait pendant que le narrateur parle
             hv = cfg.get("_hook_voice")
             if hv is not None and t0 < 0.15 + len(hv) / sr + 0.1:
                 continue                      # et pendant l'accroche
-            ak.add(buf, pitch(name, 1.0 + rng.uniform(-0.03, 0.03)), t0, gain=cfg["hero_gain"])
+            if tag.startswith("far"):
+                try:
+                    g = float(tag.split(":")[1])
+                except Exception:
+                    g = 0.3
+                ak.add(buf, pitch(far, 1.0 + rng.uniform(-0.02, 0.02)), t0, gain=g)
+            else:
+                ak.add(buf, pitch(name, 1.0 + rng.uniform(-0.03, 0.03)), t0, gain=cfg["hero_gain"])
             last = t0; said += 1
         for tr in replies:                    # ses répliques : pleines, après la phrase
             ak.add(buf, name, tr, gain=cfg.get("hero_reply_gain", 1.4)); said += 1
@@ -334,6 +377,9 @@ def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=()
                 ak.add(buf, w, tw, gain=1.0)
     for n in narr:
         ak.add(buf, n["audio"], n["start"], gain=1.0)
+    env_fn = getattr(cfg.get("_sim"), "drone_env", None)
+    if env_fn is not None:
+        buf += drone(len(buf), sr, env_fn, rng)
 
     if cfg["hook_voice"] and cfg["hook_text"]:
         v = cfg.get("_hook_voice")
@@ -463,6 +509,8 @@ def render_video(theme, sim, states, cfg, audio_path, out_path, events=(), narr=
 
         if S > 1:
             img = img.resize((W, H), Image.LANCZOS)
+        if hasattr(sim, "post"):
+            img = sim.post(img, t)
         proc.stdin.write(img.tobytes())
     proc.stdin.close(); proc.wait()
 
@@ -487,6 +535,7 @@ def run(theme, argv=None):
         print(json.dumps({**summary, "error": f"trop court (< {cfg['min_duration_s']} s)"}), file=sys.stderr)
         return 1
     narr, replies = build_narration(sim, cfg)
+    cfg["_sim"] = sim
     total = dur
     if narr:
         total = max(dur, narr[-1]["end"] + cfg["narr_tail_s"])

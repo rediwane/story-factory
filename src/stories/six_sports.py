@@ -148,20 +148,22 @@ class Golf(Sport):
     def draw(self, dr, s, t, S):
         P = lambda v: v * S
         W, H = self.W, self.H
-        dr.rectangle([0, P(430), P(W), P(FLOOR_Y)], fill=(90, 150, 200))
-        circle(dr, P(200), P(600), P(70), (255, 240, 200))
-        for (cx, cy, r) in ((520, 640, 90), (640, 620, 120), (780, 650, 80)):
-            circle(dr, P(cx), P(cy), P(r), (230, 236, 244))
-        dr.rectangle([0, P(1150), P(W), P(FLOOR_Y)], fill=(60, 120, 60))
+        dr.rectangle([0, P(430), P(W), P(FLOOR_Y)], fill=(12, 16, 36))
+        circle(dr, P(200), P(600), P(60), (226, 228, 236)); circle(dr, P(226), P(586), P(54), (12, 16, 36))
+        for i in range(24):
+            circle(dr, P((i * 7919 + 311) % W), P(460 + (i * 104729 + 97) % 560), P(2), (170, 175, 200))
+        dr.rectangle([0, P(1150), P(W), P(FLOOR_Y)], fill=(22, 44, 30))
         for i in range(8):
-            dr.polygon([(P(60 + i * 140), P(1150)), (P(90 + i * 140), P(1020)), (P(120 + i * 140), P(1150))], fill=(40, 90, 50))
-        dr.rectangle([0, P(FLOOR_Y), P(W), P(H)], fill=(96, 170, 80))
-        dr.rectangle([0, P(FLOOR_Y), P(self.POND_X - 60), P(FLOOR_Y + 10)], fill=(130, 200, 100))
+            dr.polygon([(P(60 + i * 140), P(1150)), (P(90 + i * 140), P(1020)), (P(120 + i * 140), P(1150))], fill=(14, 30, 22))
+        dr.rectangle([0, P(FLOOR_Y), P(W), P(H)], fill=(34, 86, 44))
+        dr.rectangle([0, P(FLOOR_Y), P(self.POND_X - 60), P(FLOOR_Y + 10)], fill=(50, 110, 56))
+        # la lampe du green
+        circle(dr, P(self.HOLE_X), P(FLOOR_Y - 20), P(260), (40, 96, 50))
         # l'étang
-        water = (50, 120, 190)
+        water = (18, 50, 96)
         dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(H)], fill=water)
-        dr.ellipse([P(self.POND_X - 60), P(FLOOR_Y - 30), P(self.POND_X + 20), P(FLOOR_Y + 30)], fill=(96, 170, 80))
-        dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(FLOOR_Y + 10)], fill=(110, 170, 220))
+        dr.ellipse([P(self.POND_X - 60), P(FLOOR_Y - 30), P(self.POND_X + 20), P(FLOOR_Y + 30)], fill=(34, 86, 44))
+        dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(FLOOR_Y + 10)], fill=(40, 80, 130))
         # le trou et le drapeau
         hx = self.HOLE_X
         dr.ellipse([P(hx - 40), P(FLOOR_Y - 12), P(hx + 40), P(FLOOR_Y + 14)], fill=(20, 40, 20))
@@ -349,15 +351,14 @@ class Swimming(Sport):
         dr.rectangle([0, P(WY - 40), P(W), P(WY)], fill=(200, 204, 212))
         water = (40, 120, 190)
         dr.rectangle([0, P(WY), P(W), P(H)], fill=water)
+        self.figure(dr, P, 1010, WY - 40, (40, 40, 56), h=220, w=80)
         for i in range(5):
             y = WY + 90 + i * 110
             dr.line([(P(0), P(y)), (P(W), P(y))], fill=(230, 80, 80) if i % 2 else (240, 240, 240), width=int(P(6)))
         for i in range(10):
             y = WY + 50 + i * 70
             dr.line([(P(20), P(y + 6 * math.sin(t * 2 + i))), (P(W - 20), P(y + 6 * math.sin(t * 2 + i + 1)))], fill=(90, 160, 220), width=int(P(2)))
-        dr.rectangle([P(self.done_x + 70), P(WY - 300), P(W), P(H)], fill=(190, 194, 204))
-        # le juge
-        self.figure(dr, P, 1010, WY - 40, (40, 40, 56), h=220, w=80)
+        dr.rectangle([P(self.done_x + 70), P(WY - 60), P(W), P(H)], fill=(190, 194, 204))
         for (x, age) in s["rings"]:
             r = 20 + 160 * age
             dr.ellipse([P(x - r), P(WY - r * 0.25), P(x + r), P(WY + r * 0.25)], outline=(200, 230, 255), width=int(P(3)))
