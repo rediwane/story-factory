@@ -40,7 +40,7 @@ DEFAULTS = {
     "sub_color": [255, 255, 255], "sub_stroke": [0, 0, 0],
     "watermark": "", "watermark_y": 0.95, "watermark_alpha": 0.15,
     "scene_pause_s": 0.35, "end_hold_s": 0.8,
-    "hero_gain": 0.9, "hero_min_gap_s": 0.45, "hero_shock_s": 0.3,
+    "hero_gain": 0.95, "hero_min_gap_s": 0.9, "hero_shock_s": 0.3,
     "persist": [],
     "scenes": [],
 }
@@ -114,11 +114,21 @@ def build_timeline(cfg):
     for el in cfg["persist"]:
         if el.get("type") == "bounce":
             times += hero_landings(el, total) + list(el.get("say", []))
+    # ses mots de saut se taisent sous la narration ; ses répliques (`say`) passent toujours, pleines
+    narr = [sc.get("_narr", (0, 0)) for (_, _, sc) in scenes_t]
+    says = set()
+    for (a, b, sc) in scenes_t:
+        for el in sc.get("elements", []):
+            if el.get("type") == "bounce":
+                says.update(round(a + ts, 3) for ts in el.get("say", []))
     said, last = 0, -9.0
     for tt in sorted(times):
         if w is None or tt - last < cfg["hero_min_gap_s"]:
             continue
-        clips.append((tt, w * cfg["hero_gain"]))
+        is_say = round(tt, 3) in says
+        if not is_say and any(na - 0.1 <= tt <= nb + 0.1 for (na, nb) in narr):
+            continue
+        clips.append((tt, w * (1.0 if is_say else cfg["hero_gain"])))
         said += 1
         last = tt
     cfg["_hero_said"] = said

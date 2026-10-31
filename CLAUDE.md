@@ -23,7 +23,9 @@ repris à l'identique de `bouncefactory` dans `src/engine/bounce.py`, jamais ré
   solide ; le personnage est l'actif à construire (attachement, commentaires, suite).
   **Voix du narrateur : Kokoro, voix `am_fenrir`** (`src/engine/voice.py`). Langue :
   l'anglais, celle du compte. Premier prototype rendu le jour même
-  (`configs/lighthouse_20261031.json`), relu, montré au propriétaire, non publié.
+  (`configs/lighthouse_20261031.json`), relu, montré au propriétaire, non publié : jugé trop lent, Bounce trop fort dans le
+  mix, histoire pas assez intéressante. Deuxième prototype choisi par le propriétaire
+  parmi trois pitchs : le championnat de bowling (`configs/bowling_20261031.json`).
 
 Décidé, et qui ne se rediscute pas sans le propriétaire :
 - **Bounce ne dit jamais que son nom**, de sa voix du premier compte ; le narrateur
@@ -34,7 +36,14 @@ Décidé, et qui ne se rediscute pas sans le propriétaire :
 - **Bounce se met lui-même dans le pétrin** : l'histoire part d'une situation qu'il
   suffirait de régler en restant assis, et il ne reste jamais assis.
 - **Une accroche** écrite en haut et lue en premier ; sous-titres de la narration.
-- **Aucun son hors les deux voix** : ni musique, ni bruitage.
+- **Aucun son hors les deux voix** : ni musique, ni bruitage. Sous la narration, Bounce
+  se tait ; ses répliques sont rares et pleines, ses mots de saut discrets.
+- **La chute change d'une histoire à l'autre.** Le mot unique en réponse à une question
+  est un ressort, pas la fin obligée : certaines histoires finissent sur une image, un
+  geste, une conséquence, sans qu'il parle. Deux histoires qui tombent sur la même chute
+  apprennent la recette au spectateur.
+- **Rien d'immobile** : aucun plan de plus de trois secondes sans mouvement, quelque chose
+  bouge à chaque seconde, les histoires visent 40 à 45 secondes.
 
 À trancher par le propriétaire, après les prototypes :
 1. **Le ton du narrateur** (conte qui prend Bounce au sérieux, ou commentateur agacé)
