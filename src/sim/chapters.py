@@ -39,13 +39,29 @@ class StorySim:
         self.payoff = False
         self.outcome = None
         self.end_t = None
+        # l'horloge du narrateur : une phrase ne commence qu'après la précédente ; le
+        # chapitre ne se ferme pas avant que ses phrases soient dites
+        import audio_kit as ak
+        hook = ak.hook_voice(cfg["hook_text"]) if (cfg["hook_voice"] and cfg["hook_text"]) else None
+        self.narr_free = (0.15 + len(hook) / ak.SR + 0.3) if hook is not None else 0.3
         self._open(0)
+
+    def narr_dur(self, text):
+        import voice as nv
+        x = nv.say(text, self.cfg["narrator_voice"], self.cfg["narrator_length"])
+        return (len(x) / nv.SR) if x is not None else 0.8
+
+    def _place(self, trig, text):
+        start = max(trig, self.narr_free + self.cfg["narr_gap_s"])
+        self.narr_free = start + self.narr_dur(text)
+        return start
 
     def _open(self, i):
         self.i = i
         self.t0 = self.t
         s = self.sims[i]
         for (tl, text, key) in getattr(s, "lines", []):
+            self._place(self.t0 + tl, text)
             self.lines.append((self.t0 + tl, text, f"{i}:{key}"))
         for (key, delay) in getattr(s, "replies", []):
             self.replies.append((f"{i}:{key}", delay))
@@ -62,6 +78,7 @@ class StorySim:
             # répliques ajoutées pendant le chapitre
             L = getattr(s, "lines", [])
             for (tl, text, key) in L[s._lines_seen:]:
+                self._place(self.t0 + tl, text)
                 self.lines.append((self.t0 + tl, text, f"{self.i}:{key}"))
             s._lines_seen = len(L)
             Rp = getattr(s, "replies", [])
@@ -72,6 +89,8 @@ class StorySim:
                 s._end_local = self.t - self.t0
             tl = self.t - self.t0
             over = (s._end_local is not None and tl - s._end_local >= getattr(s, "hold_s", 1.4)) or tl >= s.cfg.get("chapter_max_s", 14.0)
+            if over and self.t < self.narr_free + 0.25 and tl < s.cfg.get("chapter_max_s", 14.0) + 4.0:
+                over = False          # le narrateur finit sa phrase avant la coupe
             if over:
                 s._finished = True
                 if self.i + 1 < len(self.sims):

@@ -107,7 +107,18 @@ def _norm(x):
     return x / (np.max(np.abs(x)) + 1e-9)
 
 
+_memo = {}
+
+
 def say(text, voice=DEFAULT_VOICE, length_scale=None, sr=SR):
+    """Mémoïsé : la même phrase n'est synthétisée qu'une fois par processus."""
+    key = (text, voice, length_scale, sr)
+    if key not in _memo:
+        _memo[key] = _say(text, voice, length_scale, sr)
+    return _memo[key]
+
+
+def _say(text, voice=DEFAULT_VOICE, length_scale=None, sr=SR):
     """Texte -> tableau numpy. Kokoro (voix am_*, af_*, bm_*…), ou piper pour un nom
     piper, puis espeak-ng, puis None. `length_scale` : 1.0 normal, plus grand = plus lent."""
     if not text or not text.strip():
