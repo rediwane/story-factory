@@ -27,41 +27,36 @@ SPAN = FLOOR_Y - SCENE_TOP - 140.0          # hauteur d'image pour le saut en co
 LY = 9.4607e15
 R_EARTH = 6.371e6
 BX = 330.0                                  # Bounce
-OX = 770.0                                  # les jalons
+OX = 730.0                                  # les jalons
 GOLD = (255, 205, 90)
 BG = (6, 6, 12)
 
 # (altitude m, nom, distance affichée, dessin, rayon réel m, rayon d'affichage max px, saut, phrase)
+# Le saut d'un jalon est le premier dont la hauteur 2^n m dépasse sa distance.
 MARKS = [
     (330.0, "EIFFEL TOWER", "330 M", "tower", None, None, 9, "Nine. The Eiffel Tower."),
     (8849.0, "MOUNT EVEREST", "8,849 M", "everest", None, None, 14, "Fourteen. Higher than Everest."),
     (408e3, "SPACE STATION", "408 KM", "iss", 55.0, 150.0, 19, "Nineteen. Past the space station."),
     (384400e3, "THE MOON", "384,400 KM", "moon", 1.737e6, 170.0, 29, "Twenty nine. The Moon."),
-    (38e9, "VENUS, AT ITS CLOSEST", "38 MILLION KM", "venus", 6.05e6, 120.0, None, None),
-    (149.6e9, "THE SUN", "149.6 MILLION KM", "sun", 6.96e8, 270.0, 38, None),
-    (4.5e12, "NEPTUNE", "4.5 BILLION KM", "neptune", 2.46e7, 90.0, None, None),
+    (149.6e9, "THE SUN", "149.6 MILLION KM", "sun", 6.96e8, 230.0, 38, None),
+    (25.8e12, "VOYAGER 1", "25.8 BILLION KM", "voyager", 3.0, 120.0, None, None),
     (4.24 * LY, "NEAREST STAR", "4.24 LIGHT-YEARS", "star", 1.07e8, 110.0, 56, "Fifty six. The nearest star."),
-    (26000 * LY, "CENTER OF OUR GALAXY", "26,000 LIGHT-YEARS", "milkyway", None, 250.0, 68, "Sixty eight. The middle of our galaxy."),
+    (1344 * LY, "ORION NEBULA", "1,344 LIGHT-YEARS", "nebula", None, 190.0, None, None),
+    (26000 * LY, "CENTER OF OUR GALAXY", "26,000 LIGHT-YEARS", "milkyway", None, 240.0, 68, "Sixty eight. The middle of our galaxy."),
+    (160000 * LY, "LARGE MAGELLANIC CLOUD", "160,000 LIGHT-YEARS", "cloud", None, 170.0, None, None),
     (2.5e6 * LY, "ANDROMEDA", "2.5 MILLION LIGHT-YEARS", "andromeda", None, 230.0, 75, "Seventy five. Another galaxy."),
     (46.5e9 * LY, "EDGE OF THE OBSERVABLE UNIVERSE", "46.5 BILLION LIGHT-YEARS", "edge", None, 0.0, 89, None),
 ]
+SUN_LINES = ("Thirty eight bounces. That's it.", "Now, how many to leave the observable universe?")
+EDGE_LINE = "Eighty nine. The edge of the observable universe."
 
-# la durée vidéo de chaque tranche de sauts : la règle d'abord, un jalon toutes les 4 à 5 s,
-# un ralenti avant le Soleil, puis l'accélération vers les galaxies
-SEGMENTS = [(1, 9, 8.0), (10, 14, 4.6), (15, 19, 4.4), (20, 29, 6.4), (30, 35, 4.0), (36, 38, 4.2),
-            (39, 47, 4.6), (48, 56, 4.2), (57, 68, 5.0), (69, 75, 4.0), (76, 89, 6.8)]
+# la durée vidéo des déplacements de chaque tranche de sauts ; à chaque jalon nommé, Bounce
+# s'arrête en haut de son saut le temps que le narrateur le dise (le compteur ne ment jamais)
+SEGMENTS = [(1, 9, 8.2), (10, 14, 3.0), (15, 19, 3.0), (20, 29, 4.4), (30, 38, 4.4),
+            (39, 56, 5.0), (57, 68, 3.4), (69, 75, 2.4), (76, 89, 4.0)]
 LAST = 89
 LOG_TOP = 27.0                              # l'échelle : de 1 m à 10^27 m
-
-
-def schedule():
-    out, t = [], 0.0
-    for (a, b, d) in SEGMENTS:
-        k = b - a + 1
-        for n in range(a, b + 1):
-            out.append((n, t, d / k))
-            t += d / k
-    return out
+AFTER = 0.6                                 # un saut après le bord de l'univers
 
 
 def fmt(h):
@@ -78,7 +73,7 @@ def fmt(h):
     if ly < 1e3:
         return f"{ly:,.1f} LIGHT-YEARS"
     if ly < 1e6:
-        return f"{ly / 1e3:,.0f},000 LIGHT-YEARS"
+        return f"{ly:,.0f} LIGHT-YEARS"
     if ly < 1e9:
         return f"{ly / 1e6:,.1f} MILLION LIGHT-YEARS"
     return f"{ly / 1e9:,.1f} BILLION LIGHT-YEARS"
@@ -89,10 +84,9 @@ class Doubling(Chapter):
     stamp = None
     stamp_y = 0.30
     mood = "lose"
-    hold_s = 5.4
+    hold_s = 4.6
 
     def setup(self):
-        self.sched = schedule()
         self.R = R_BOUNCE
         self.n = 1
         self.bx, self.by = BX, FLOOR_Y - self.R
@@ -102,68 +96,120 @@ class Doubling(Chapter):
         self.sun_t = None
         self.prev_by = self.by
         rr = random.Random(7)
-        self.stars = [(rr.uniform(90, self.W - 10), rr.uniform(SCENE_TOP + 10, FLOOR_Y - 10), rr.uniform(0.3, 1.0), rr.choice((2, 2, 3, 4)))
+        self.stars = [(rr.uniform(110, self.W - 10), rr.uniform(SCENE_TOP + 10, FLOOR_Y - 10), rr.uniform(0.3, 1.0), rr.choice((2, 2, 3, 4)))
                       for _ in range(90)]
-        self.web = [(rr.uniform(0, self.W), rr.uniform(-160, 0), rr.uniform(0.3, 1.0)) for _ in range(160)]
+        self.web = [(rr.uniform(120, self.W), rr.uniform(-160, 0), rr.uniform(0.3, 1.0)) for _ in range(160)]
         self.mw = [(rr.uniform(0, 2 * math.pi), rr.uniform(0.05, 1.0), rr.random()) for _ in range(260)]
-        self.line("First bounce, two meters. Each one goes twice as high.", "title", 0.0)
-        self.line("How many bounces to reach the Sun? Take a guess.", "ask", 3.4)
+        self.neb = [(rr.uniform(-1, 1), rr.uniform(-1, 1), rr.uniform(0.3, 0.8), rr.choice(((220, 90, 140), (120, 110, 230), (240, 150, 110)))) for _ in range(14)]
+        self.sched = self.schedule()
+        self.line("Each bounce goes twice as high as the last.", "title", 0.0)
+        self.line("Take a guess.", "ask", 0.5)
+
+    def say_s(self, text):
+        import voice as nv
+        x = nv.say(text, self.cfg["narrator_voice"], self.cfg["narrator_length"])
+        return (len(x) / nv.SR) if x is not None else 1.5
+
+    def schedule(self):
+        """[(n, t_debut, duree_deplacement, pause_au_sommet)]. Dans la première tranche, un
+        petit saut est court et un grand est long (poids 2^(n/4)) : l'ouverture part vite."""
+        hover = {}
+        gap = self.cfg["narr_gap_s"]
+        for m in MARKS:
+            at, say = m[6], m[7]
+            if at is None:
+                continue
+            if m[3] == "sun":
+                hover[at] = self.say_s(SUN_LINES[0]) + gap + self.say_s(SUN_LINES[1]) + 0.9
+            elif m[3] == "edge":
+                hover[at] = self.say_s(EDGE_LINE) + 0.5
+            else:
+                hover[at] = self.say_s(say) + 0.5
+        out, t = [], 0.0
+        for i, (a, b, d) in enumerate(SEGMENTS):
+            ns = list(range(a, b + 1))
+            w = [2 ** (n / 4.0) for n in ns] if i == 0 else [1.0] * len(ns)
+            for n, wi in zip(ns, w):
+                dd = d * wi / sum(w)
+                hv = hover.get(n, 0.0)
+                out.append((n, t, dd, hv))
+                t += dd + hv
+        return out
 
     # --- le temps
     def state_at(self, t):
-        for (n, t0, d) in self.sched:
-            if t < t0 + d:
-                return n, (t - t0) / d
-        n, t0, d = self.sched[-1]
-        k = (t - t0 - d) / 0.6
-        return LAST + 1 + int(k), k - int(k)
+        """(n, u, pause) : le saut, sa phase (0 au sol, 0,5 au sommet, 1 au sol), et si Bounce
+        est en pause au sommet."""
+        for (n, t0, d, hv) in self.sched:
+            if t < t0 + d + hv:
+                x = t - t0
+                if x < d / 2:
+                    return n, x / d, False
+                if x < d / 2 + hv:
+                    return n, 0.5, True
+                return n, (x - hv) / d, False
+        n, t0, d, hv = self.sched[-1]
+        k = (t - t0 - d - hv) / AFTER
+        return LAST + 1 + int(k), k - int(k), False
+
+    def hover_el(self, t):
+        """Depuis combien de temps Bounce est en pause au sommet (0 sinon)."""
+        for (n, t0, d, hv) in self.sched:
+            if t < t0 + d + hv:
+                x = t - t0 - d / 2
+                return x if 0 <= x < hv else 0.0
+        return 0.0
 
     @staticmethod
     def height(n):
         return 2.0 ** min(n, LAST + 20)
 
     def view(self, n, u):
-        lo = math.log2(max(14.0, self.height(n - 1) * 1.25))
-        hi = math.log2(max(14.0, self.height(n) * 1.25))
+        lo = math.log2(max(4.0, self.height(n - 1) * 1.25))
+        hi = math.log2(max(4.0, self.height(n) * 1.25))
         k = min(1.0, u / 0.5)
         k = k * k * (3 - 2 * k)
         return 2.0 ** (lo + (hi - lo) * k)
 
-    def alt(self, n, u):
-        return self.height(n) * 4 * u * (1 - u)
+    def alt(self, n, u, hover=False):
+        a = self.height(n) * 4 * u * (1 - u)
+        if hover:
+            a *= 1.0 - 0.05 * (1 - math.cos(self.t * 6.0))      # il flotte au sommet
+        return a
 
     def step(self, dt):
         self.t += dt
         evs = []
-        n, u = self.state_at(self.t)
+        n, u, hv = self.state_at(self.t)
         if n != self.n:
             self.n = n
             self.hit_t = self.t
             evs.append(("hit", "floor"))
-        if u >= 0.5:
+        if hv and n not in self.said:
+            self.said.add(n)
             for m in MARKS:
                 at, say = m[6], m[7]
-                if at is not None and n == at and at not in self.said:
-                    self.said.add(at)
-                    if say:
-                        self.line(say, f"m{at}", self.t)
-                    if at == 38:
-                        self.sun_t = self.t
-                        self.line("Thirty eight. That's all it takes.", "m38", self.t)
-                        self.line("And he didn't stop.", "go", self.t + 2.6)
-                    if at == LAST and not self.payoff:
-                        self.finish("EDGE")
-                        self.line("Eighty nine bounces. The edge of the observable universe.", "end", self.t)
-                        self.line("Still bouncing.", "still", self.t + 3.6)
+                if at != n:
+                    continue
+                if m[3] == "sun":
+                    self.sun_t = self.t
+                    self.line(SUN_LINES[0], "m38", self.t)
+                    self.line(SUN_LINES[1], "q2", self.t + 0.1)
+                elif m[3] == "edge":
+                    self.finish("EDGE")
+                    self.line(EDGE_LINE, "end", self.t)
+                    self.line("Still bouncing.", "still", self.t + 0.1)
+                elif say:
+                    self.line(say, f"m{at}", self.t)
         self.prev_by = self.by
-        V = self.view(n, u)
-        self.by = FLOOR_Y - self.R - self.alt(n, u) / V * SPAN
+        V = self.view(n, u) * (1.0 + 0.07 * self.hover_el(self.t))
+        self.by = FLOOR_Y - self.R - self.alt(n, u, hv) / V * SPAN
         return evs
 
     def snapshot(self):
-        n, u = self.state_at(self.t)
+        n, u, hv = self.state_at(self.t)
         s = self.base_snap()
-        s.update({"n": n, "u": u, "V": self.view(n, u), "a": self.alt(n, u), "sun_t": self.sun_t,
+        s.update({"n": n, "u": u, "hover": hv, "V": self.view(n, u) * (1.0 + 0.07 * self.hover_el(self.t)), "a": self.alt(n, u, hv), "sun_t": self.sun_t,
                   "vy": (self.by - self.prev_by) * 30.0})
         return s
 
@@ -182,20 +228,22 @@ class Doubling(Chapter):
         space = max(0.0, min(1.0, (math.log10(V) - 4.3) / 1.6))
         sky = mix((22, 30, 58), BG, space)
         dr.rectangle([0, P(SCENE_TOP), P(W), P(FLOOR_Y)], fill=sky)
-        for (x, y, b, r) in self.stars:
+        for i, (x, y, b, r) in enumerate(self.stars):
             if space > 0:
-                circle(dr, P(x), P(y), P(r), mix(sky, (210, 214, 236), space * b))
+                tw = 0.65 + 0.35 * math.sin(t * 3.0 + i * 1.7)          # elles scintillent
+                circle(dr, P(x), P(y), P(r), mix(sky, (210, 214, 236), space * b * tw))
         self.earth(dr, P, px, space)
         for m in MARKS:
             self.mark(dr, P, m, px, V, t, s)
         self.ladder(dr, P, s)
         self.streaks(dr, P, s)
-        if s["sun_t"] is not None and 0 <= t - s["sun_t"] < 3.4:
+        sun_on = s["sun_t"] is not None and s["n"] == 38 and s["hover"]
+        if sun_on:
             base.HERO["expr"] = "win"
         elif s["end"] is None:
             base.HERO["expr"] = "calm"
         self.bounce(dr, P, s)
-        if s["sun_t"] is not None and 0 <= t - s["sun_t"] < 3.4:
+        if sun_on:
             k = min(1.0, (t - s["sun_t"]) / 0.25)
             fb = base.font(int((230 - 70 * (1 - k)) * S))
             sy = FLOOR_Y - 149.6e9 * SPAN / s["V"]
@@ -204,12 +252,13 @@ class Doubling(Chapter):
             k = min(1.0, (t - s["end"]) / 0.25)
             fb = base.font(int((230 - 70 * (1 - k)) * S))
             fl = base.font(int(56 * S))
-            dr.text((P(OX - 20), P(900)), "89", fill=GOLD, anchor="mm", font=fb, stroke_width=int(10 * S), stroke_fill=(40, 20, 10))
-            dr.text((P(OX - 20), P(1035)), "BOUNCES", fill=GOLD, anchor="mm", font=fl, stroke_width=int(6 * S), stroke_fill=(40, 20, 10))
+            dr.text((P(OX - 20), P(1010)), "89", fill=GOLD, anchor="mm", font=fb, stroke_width=int(10 * S), stroke_fill=(40, 20, 10))
+            dr.text((P(OX - 20), P(1145)), "BOUNCES", fill=GOLD, anchor="mm", font=fl, stroke_width=int(6 * S), stroke_fill=(40, 20, 10))
+        dr.rectangle([0, 0, P(W), P(SCENE_TOP) - 1], fill=tuple(self.cfg["bg_color"]))      # rien sur le bandeau du haut
         self.hud(dr, P, s, t, S)
 
     def hud(self, dr, P, s, t, S):
-        if t < self.cfg["hook_text_s"]:
+        if t < self.cfg["hook_text_s"] or s["end"] is not None:
             return
         n = s["n"]
         f1 = base.font(int(52 * S))
@@ -223,12 +272,12 @@ class Doubling(Chapter):
 
     def ladder(self, dr, P, s):
         """L'échelle : de 1 m (en bas) à 10^27 m (en haut), en logarithme."""
-        x, y0, y1 = 52.0, FLOOR_Y - 20, SCENE_TOP + 40
+        x, y0, y1 = 58.0, FLOOR_Y - 30, SCENE_TOP + 60
         Y = lambda h: y0 - max(0.0, min(1.0, math.log10(max(h, 1.0)) / LOG_TOP)) * (y0 - y1)
-        dr.rectangle([P(x - 3), P(y1), P(x + 3), P(y0)], fill=(60, 60, 78))
-        f = base.font(int(24 * P(1)))
-        dr.text((P(x - 14), P(y0 + 26)), "EARTH", fill=(150, 180, 230), anchor="lm", font=f)
-        dr.text((P(x - 14), P(y1 - 22)), "EDGE OF THE UNIVERSE", fill=(200, 170, 110), anchor="lm", font=f)
+        dr.rectangle([P(x - 5), P(y1), P(x + 5), P(y0)], fill=(60, 60, 78))
+        f = base.font(int(30 * P(1)))
+        dr.text((P(x - 18), P(y0 + 32)), "EARTH", fill=(150, 180, 230), anchor="lm", font=f)
+        dr.text((P(x - 18), P(y1 - 30)), "EDGE", fill=(240, 200, 110), anchor="lm", font=f)
         for (h, name, dist, kind, rr, rmax, at, say) in MARKS:
             if at is None:
                 continue
@@ -236,14 +285,14 @@ class Doubling(Chapter):
             sun = kind == "sun"
             done = s["n"] > at or (s["n"] == at and s["u"] >= 0.5)
             col = GOLD if sun else ((150, 220, 160) if done else (130, 130, 150))
-            w = 16 if sun else 10
-            dr.rectangle([P(x - w), P(y - 2), P(x + w), P(y + 2)], fill=col)
+            w = 22 if sun else 13
+            dr.rectangle([P(x - w), P(y - 3), P(x + w), P(y + 3)], fill=col)
             if sun:
-                dr.text((P(x + 22), P(y)), "SUN", fill=GOLD, anchor="lm", font=f)
+                dr.text((P(x + 28), P(y)), "SUN", fill=GOLD, anchor="lm", font=f)
         # le plus haut atteint, et où il est maintenant
         top = self.height(s["n"]) if s["u"] >= 0.5 else self.height(s["n"] - 1)
-        dr.rectangle([P(x - 3), P(Y(top)), P(x + 3), P(y0)], fill=(230, 60, 170))
-        circle(dr, P(x), P(Y(max(1.0, s["a"]))), P(13), (255, 70, 200))
+        dr.rectangle([P(x - 5), P(Y(top)), P(x + 5), P(y0)], fill=(230, 60, 170))
+        circle(dr, P(x), P(Y(max(1.0, s["a"]))), P(17), (255, 70, 200))
 
     def streaks(self, dr, P, s):
         v = s["vy"]
@@ -253,7 +302,10 @@ class Doubling(Chapter):
         d = 1 if v < 0 else -1                                # traînée derrière lui
         for k, dx in enumerate((-40, 0, 40)):
             y0 = s["by"] + d * (self.R + 10 + 14 * (k % 2))
-            dr.line([(P(BX + dx), P(y0)), (P(BX + dx), P(y0 + d * L))], fill=(120, 90, 140), width=max(1, int(P(5))))
+            y1 = min(FLOOR_Y - 6, y0 + d * L) if d > 0 else y0 + d * L
+            if d > 0 and y0 >= FLOOR_Y - 20:
+                continue                                      # jamais dans le sol
+            dr.line([(P(BX + dx), P(y0)), (P(BX + dx), P(y1))], fill=(120, 90, 140), width=max(1, int(P(5))))
 
     def earth(self, dr, P, px, space):
         """Le sol, puis la courbure, puis la boule, puis le point : la Terre à l'échelle."""
@@ -303,7 +355,7 @@ class Doubling(Chapter):
             dr.polygon([(P(x - w / 2 - hp * 0.06), P(FLOOR_Y - hp * 0.62)), (P(x + w / 2 + hp * 0.06), P(FLOOR_Y - hp * 0.62)), (P(x), P(FLOOR_Y - hp))], fill=(120, 72, 62))
             dr.rectangle([P(x - w * 0.3), P(FLOOR_Y - hp * 0.45), P(x - w * 0.1), P(FLOOR_Y - hp * 0.28)], fill=(240, 200, 110))
             dr.rectangle([P(x + w * 0.12), P(FLOOR_Y - hp * 0.3), P(x + w * 0.3), P(FLOOR_Y)], fill=(50, 40, 50))
-        shape(8.0, house)
+        shape(6.0, house)
 
         def tree(hp):
             x = OX - 200
@@ -341,16 +393,16 @@ class Doubling(Chapter):
             hp = h * px
             if hp < 10 or hp > SPAN * 1.25:
                 return
-            self.mountains(dr, P, hp)
+            self.mountains(dr, P, hp, t)
             label = FLOOR_Y - hp - 70 if hp > 150 else None
         elif kind == "edge":
             if y > FLOOR_Y - 40:
                 return
             for (x, dy, b) in self.web:
                 circle(dr, P(x), P(y + dy), P(3), mix(BG, (240, 170, 80), b))
-            for x in range(0, int(self.W), 36):
+            for x in range(120, int(self.W), 36):
                 dr.rectangle([P(x), P(y - 3), P(x + 20), P(y + 3)], fill=GOLD)
-            label = y + 50
+            label = y + 50 if s["end"] is None else None          # le 89 et la voix le disent
         else:
             frac = h / V                                    # où il est dans l'image (1 = en haut)
             if frac > 1.15 or frac < 0.012:
@@ -387,7 +439,7 @@ class Doubling(Chapter):
         arch = w * 0.28
         dr.ellipse([P(x - arch), P(FLOOR_Y - hp * 0.12), P(x + arch), P(FLOOR_Y + hp * 0.06)], fill=(26, 46, 34))
 
-    def mountains(self, dr, P, hp):
+    def mountains(self, dr, P, hp, t=0.0):
         for (dx, sc, col) in ((-520, 0.62, (60, 66, 88)), (430, 0.7, (64, 70, 92)), (0, 1.0, (88, 94, 118))):
             hh = hp * sc
             w = hh * 1.6
@@ -397,8 +449,8 @@ class Doubling(Chapter):
             dr.polygon([(P(x - w / 2 * sn), P(FLOOR_Y - hh * (1 - sn))), (P(x + w / 2 * sn), P(FLOOR_Y - hh * (1 - sn) + hh * 0.03)), (P(x + w * 0.06), P(FLOOR_Y - hh)), (P(x - w * 0.04), P(FLOOR_Y - hh * 0.97))], fill=(228, 230, 240))
         for k in range(4):
             cy = FLOOR_Y - hp * (0.35 + 0.1 * k)
-            cx = (k * 337 + 120) % self.W
-            dr.ellipse([P(cx - hp * 0.25), P(cy - hp * 0.03), P(cx + hp * 0.25), P(cy + hp * 0.03)], fill=(70, 76, 100))
+            cx = (k * 337 + 120 + t * 70) % (self.W + 300) - 150      # les nuages passent
+            dr.ellipse([P(cx - hp * 0.25), P(cy - hp * 0.03), P(cx + hp * 0.25), P(cy + hp * 0.03)], fill=(96, 102, 128))
 
     def d_plane(self, dr, P, x, y, r, a, t):
         c = lambda col: mix(BG, col, a)
@@ -416,13 +468,26 @@ class Doubling(Chapter):
 
     def d_moon(self, dr, P, x, y, r, a, t):
         c = lambda col: mix(BG, col, a)
-        circle(dr, P(x), P(y), P(r), c((205, 205, 212)))
-        for (dx, dy, cr) in ((-0.35, -0.25, 0.22), (0.3, 0.2, 0.15), (0.1, -0.5, 0.1), (-0.2, 0.45, 0.12)):
-            circle(dr, P(x + dx * r), P(y + dy * r), P(r * cr), c((168, 168, 178)))
-        dr.ellipse([P(x - r * 0.25), P(y - r), P(x + r * 1.0), P(y + r)], fill=c((120, 120, 132)))
-        dr.chord([P(x - r), P(y - r), P(x + r), P(y + r)], 90, 270, fill=c((205, 205, 212)))
-        for (dx, dy, cr) in ((-0.35, -0.25, 0.22), (-0.2, 0.45, 0.12)):
-            circle(dr, P(x + dx * r), P(y + dy * r), P(r * cr), c((168, 168, 178)))
+        glow(dr, P, x, y, r * 1.25, (200, 200, 215), BG, 0.18 * a, rings=3)
+        circle(dr, P(x), P(y), P(r), c((210, 210, 216)))
+        for (dx, dy, cr) in ((-0.35, -0.25, 0.22), (0.3, 0.2, 0.15), (0.1, -0.5, 0.1), (-0.2, 0.45, 0.12), (0.45, -0.25, 0.09)):
+            circle(dr, P(x + dx * r), P(y + dy * r), P(r * cr), c((172, 172, 182)))
+
+    def d_voyager(self, dr, P, x, y, r, a, t):
+        c = lambda col: mix(BG, col, a)
+        circle(dr, P(x), P(y - r * 0.1), P(r * 0.42), c((215, 215, 222)))
+        dr.rectangle([P(x - r * 0.18), P(y - r * 0.05), P(x + r * 0.18), P(y + r * 0.25)], fill=c((180, 160, 110)))
+        dr.line([(P(x), P(y + r * 0.1)), (P(x - r), P(y + r * 0.5))], fill=c((190, 190, 200)), width=max(1, int(P(5))))
+        dr.line([(P(x), P(y + r * 0.1)), (P(x + r * 0.9), P(y - r * 0.6))], fill=c((190, 190, 200)), width=max(1, int(P(4))))
+
+    def d_nebula(self, dr, P, x, y, r, a, t):
+        for (dx, dy, k, col) in self.neb:
+            glow(dr, P, x + dx * r * 0.6, y + dy * r * 0.45, r * k, col, BG, 0.22 * a, rings=3)
+        circle(dr, P(x), P(y), P(max(2, r * 0.05)), mix(BG, (255, 255, 255), a))
+
+    def d_cloud(self, dr, P, x, y, r, a, t):
+        for k in range(5, 0, -1):
+            dr.ellipse([P(x - r * k / 5), P(y - r * k / 9), P(x + r * k / 5 * 0.8), P(y + r * k / 7)], fill=mix(BG, (170, 180, 230), a * (0.15 + 0.1 * (5 - k))))
 
     def d_sun(self, dr, P, x, y, r, a, t):
         glow(dr, P, x, y, r * 1.9, (255, 170, 60), BG, 0.45 * a, rings=7)
@@ -466,7 +531,7 @@ DEFAULTS = {
     "chapter_max_s": 75.0,
     "hook_text_s": 2.6,
     "hook_narrator": True,
-    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.3, "narr_tail_s": 0.3, "narr_gap_s": 0.25,
+    "sub_y": 0.84, "watermark_y": 0.93, "end_hold_s": 2.2, "narr_tail_s": 0.3, "narr_gap_s": 0.25,
     "sources": {
         "Eiffel Tower 330 m": "https://www.toureiffel.paris/en/the-monument/key-figures",
         "Everest 8,849 m": "https://www.nationalgeographic.com/science/article/mount-everest-is-taller-than-we-thought",
