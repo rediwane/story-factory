@@ -77,7 +77,8 @@ en vérifie la plupart, la skill `juger` le reste.
 - **Tout reste dans le cadre** : Bounce, les objets qui tombent, les éclaboussures, le
   point d'impact. Sortir du cadre n'est permis que si c'est le gag (`exit_ok`).
 - **Rien ne se téléporte ni ne pivote d'un coup** : un objet qui tombe rebondit, glisse et
-  se couche progressivement (`settle_body` dans les listes existantes) ; les objets qui
+  se couche progressivement (`listkit.settle_body`, avec les sommets réels de sa forme,
+  saillies comprises, sinon il s'enfonce dans le sol) ; les objets qui
   bougent sont déclarés par `bodies()` et le contrôle suit chacun d'une image à l'autre.
 - **Rien ne traverse un solide.** Tout objet que Bounce peut toucher a une collision
   réelle **dès la première image**, pas seulement au moment scripté de la chute, et figure
@@ -94,6 +95,9 @@ en vérifie la plupart, la skill `juger` le reste.
 - Les deux voix seulement : le narrateur (Kokoro `am_fenrir`) et Bounce, au même niveau.
 - Bounce se tait pendant que le narrateur parle, et un mot n'est dit que s'il tient entier
   avant la phrase suivante et avant la fin (le moteur le garantit, le contrôle le vérifie).
+- **On entend Bounce dans chaque chapitre, et sur le rebond qui fait la chute** : la phrase
+  qui suit la chute attend que son mot soit fini (environ 0,9 s après la chute ; le
+  contrôle le vérifie).
 - **Seul l'atterrissage de Bounce le fait parler** : la chute d'un objet est un `event`,
   jamais un `hit`.
 - `end_hold_s` laisse à sa réaction finale le temps d'être dite entière.

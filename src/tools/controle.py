@@ -227,6 +227,17 @@ def pre(path, out):
             ko.append(f"deux mots de Bounce se chevauchent à {b_[0]:.2f} s")
     if mood and not any(w[1] == "react" for w in words):
         ko.append("la réaction finale de Bounce n'a pas la place de tenir avant la fin (allonger end_hold_s)")
+    # chaque chapitre fait entendre Bounce, et le rebond qui déclenche la chute est dit
+    voiced = [w[0] for w in words if w[1] in ("hit", "far", "scare", "reply")]
+    lands = [t for (t, kind, data) in events if kind == "hit"]
+    for i in range(len(starts)):
+        a0, a1 = starts[i], (starts[i + 1] if i + 1 < len(starts) else total)
+        if sum(1 for v in voiced if a0 <= v < a1) < 2:
+            ko.append(f"chapitre {i + 1} ({sims[i].title}) : Bounce ne dit presque jamais son nom ({sum(1 for v in voiced if a0 <= v < a1)} mot)")
+        if chutes[i] is not None:
+            trig = [t for t in lands if chutes[i] - 0.25 <= t <= chutes[i] + 0.01]
+            if trig and not any(abs(v - trig[-1]) < 0.02 for v in voiced):
+                ko.append(f"chapitre {i + 1} ({sims[i].title}) : le rebond de la chute ({trig[-1]:.2f} s) est muet (la phrase qui suit l'étouffe : la retarder)")
     rep_words = [w for w in words if w[1] == "reply"]
     for w in rep_words:
         near = [x for x in words if x[1] != "reply" and abs(x[0] - w[0]) < w[2] + 0.3]

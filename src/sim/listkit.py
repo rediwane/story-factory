@@ -144,6 +144,34 @@ class Chapter(Hopper):
         base.ball(dr, P(s["bx"]), P(s["by"]), P(self.R * s.get("scale", 1.0)))
 
 
+def settle_body(c, gy, flat_step, dt, corners, rest_ok=True):
+    """Pose un corps rigide c = {x, y, a, vx, vy, w, rest} sur le sol gy. `corners` : les
+    sommets de sa forme réelle, en coordonnées locales (dx, dy), saillies comprises
+    (cheminée, roues...) : le point bas se calcule sur eux, rien ne s'enfonce. Le corps
+    rebondit un peu, puis glisse et se couche progressivement sur le côté le plus proche
+    (multiple de `flat_step`), jamais d'un coup. Renvoie vrai s'il touche le sol."""
+    def low(a):
+        ca, sa = math.cos(a), math.sin(a)
+        return max(dx * sa + dy * ca for dx, dy in corners)
+    if c["y"] + low(c["a"]) < gy - 1:
+        return False
+    if c["vy"] > 320:
+        c["vy"] = -0.28 * c["vy"]; c["w"] *= 0.5; c["vx"] *= 0.7
+        c["y"] = gy - low(c["a"])
+        return False
+    c["vy"] = 0.0
+    c["w"] = 0.0
+    target = round(c["a"] / flat_step) * flat_step
+    da = target - c["a"]
+    stepa = 7.0 * dt
+    c["a"] += max(-stepa, min(stepa, da))
+    c["y"] = gy - low(c["a"])
+    c["vx"] *= max(0.0, 1 - 6.0 * dt)
+    if rest_ok and abs(target - c["a"]) < 1e-3 and abs(c["vx"]) < 8:
+        c["rest"] = True
+    return True
+
+
 def mix(a, b, k):
     k = max(0.0, min(1.0, k))
     return tuple(int(a[i] + (b[i] - a[i]) * k) for i in range(3))
