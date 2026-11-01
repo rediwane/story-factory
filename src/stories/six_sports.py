@@ -130,7 +130,7 @@ class Golf(Sport):
         if self.splash_t is None and self.on == "air" and self.bx > self.POND_X + 20 and self.by > FLOOR_Y - self.R - 10:
             self.splash_t = self.t
             self.on = "sunk"
-            self.by = FLOOR_Y + 60
+            self.by = FLOOR_Y
             evs.append(("hit", "splash"))
             for i in range(22):
                 a = self.rng.uniform(math.pi * 1.05, math.pi * 1.95); sp = self.rng.uniform(300, 900)
@@ -172,7 +172,8 @@ class Golf(Sport):
         dr.polygon([(P(hx + 4), P(FLOOR_Y - 300)), (P(hx + 110), P(FLOOR_Y - 270)), (P(hx + 4), P(FLOOR_Y - 240))], fill=(230, 60, 60))
         if s["on"] == "sunk":
             self.bounce(dr, P, s)
-            dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(FLOOR_Y + 70)], fill=water)
+            dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(H)], fill=water)
+            dr.rectangle([P(self.POND_X - 40), P(FLOOR_Y - 4), P(W), P(FLOOR_Y + 10)], fill=(40, 80, 130))
         else:
             self.bounce(dr, P, s)
         for (x, y) in s["splash"]:
@@ -186,7 +187,7 @@ class Tennis(Sport):
     stamp = ("OUT", RED)
     mood = "lose"
     NET_X = 540.0
-    LINE_L, LINE_R = 180.0, 900.0
+    LINE_L, LINE_R = 230.0, 850.0
 
     def setup(self):
         self.hop_init(300.0, FLOOR_Y, wobble=0.0, xmin=0, xmax=2000, **dict(HOP, min_h=240.0, max_h=560.0))
@@ -199,8 +200,9 @@ class Tennis(Sport):
         s = math.sqrt(2 * self.g * self.h)
         T = 2 * s / self.g
         # il traverse le filet dans un sens, puis dans l'autre, de plus en plus loin
-        target = self.rng.uniform(640, 900) if self.bx < self.NET_X else self.rng.uniform(140, 420)
-        target += (self.hits * 28) * (1 if target > self.NET_X else -1)
+        target = self.rng.uniform(600, 760) if self.bx < self.NET_X else self.rng.uniform(320, 480)
+        target += (self.hits * 22) * (1 if target > self.NET_X else -1)
+        target = min(924.0, max(156.0, target))      # jamais dans le corps d'un joueur
         self.vx = (target - self.bx) / T
         self.vy = -s
         self.on = "air"
@@ -238,7 +240,7 @@ class Tennis(Sport):
             dr.line([(P(self.NET_X - 60), P(y)), (P(self.NET_X + 60), P(y))], fill=(220, 220, 230), width=int(P(2)))
         dr.rectangle([P(self.NET_X - 60), P(FLOOR_Y - 236), P(self.NET_X + 60), P(FLOOR_Y - 224)], fill=(240, 240, 240))
         # les deux joueurs et leurs raquettes
-        for (x, col, side) in ((70, (200, 80, 80), "L"), (1010, (80, 120, 200), "R")):
+        for (x, col, side) in ((40, (200, 80, 80), "L"), (1040, (80, 120, 200), "R")):
             self.figure(dr, P, x, FLOOR_Y, col, h=240, w=86)
             sw = s["swing"][side]
             ang = (-1.2 if side == "L" else 1.2) * (1 - sw) + (0.4 if side == "L" else -0.4) * sw
@@ -259,16 +261,19 @@ class HighJump(Sport):
     BAR_Y = 1000.0
 
     def setup(self):
-        self.hop_init(760.0, self.MAT_TOP, wobble=60.0, xmin=640, xmax=940, **dict(HOP, min_h=240.0, max_h=560.0))
+        self.hop_init(760.0, self.MAT_TOP, wobble=60.0, xmin=640, xmax=940, **dict(HOP, start_h=110.0, min_h=90.0, max_h=130.0, gain=(0.95, 1.1)))
         self.line("High jump.", "title", 0.0)
         self.bar = None       # [x, y, vy, ang]
         self.attempt = 0
 
     def on_land(self, k, evs):
         self.attempt += 1
+        if self.attempt >= self.cfg["hj_attempts"] and self.bar is None:
+            self.max_h = 560.0
+            self.h = 540.0                # l'élan : le vrai saut
 
     def after(self, dt, evs):
-        if self.bar is None and self.on == "air" and self.vy < 0 and self.by - self.R < self.BAR_Y + 10 and abs(self.bx - 800) < 260 and self.attempt >= self.cfg["hj_attempts"]:
+        if self.bar is None and self.on == "air" and self.vy < 0 and self.by - self.R < self.BAR_Y + 7 and self.MAT_X0 - 40 < self.bx < self.MAT_X1 + 40:
             # il monte et prend la barre de dessous
             self.bar = [800.0, self.BAR_Y, -200.0, 0.0]
             self.vy = abs(self.vy) * 0.3
@@ -432,7 +437,7 @@ class Trampoline(Sport):
 
 DEFAULTS = {
     "ball_r": 68.0, "gravity": 3000.0,
-    "bb_arm_s": 9.5, "hj_attempts": 5,
+    "bb_arm_s": 9.5, "hj_attempts": 9,
     "chapter_max_s": 15.0,
     "counter_font_size": 56, "counter_y": 0.19, "hook_text_s": 5.0,
     "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.0, "narr_tail_s": 0.2,
