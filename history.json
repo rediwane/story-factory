@@ -66,7 +66,7 @@
     },
     {
       "name": "six_sports_20261101",
-      "date": "2026-11-02",
+      "date": "2026-11-01",
       "theme": "six_sports",
       "config": "configs/six_sports_20261101.json",
       "role": "owner",
@@ -79,10 +79,10 @@
         "#fyp"
       ],
       "caption": "captions/six_sports_20261101.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-02T14:30:00+01:00",
+      "slot": "18:00",
+      "scheduled_time": "2026-11-01T18:00:00+01:00",
       "media_url": "https://n.uguu.se/OVvUShJG.mp4",
-      "metricool_post_id": 412887374,
+      "metricool_post_id": 412888355,
       "post_url": null,
       "status": "scheduled",
       "stats": {
