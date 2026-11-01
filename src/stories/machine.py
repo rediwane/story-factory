@@ -362,14 +362,14 @@ class Machine(Chapter):
         tipy = FLOOR - last["h"] * math.cos(th)
         self.lev_L = 150.0
         self.lev_piv = (tipx + self.lev_L * math.cos(0.32) + 4, tipy + 6 + self.lev_L * math.sin(0.32))
-        lev = tr["lever"] = Track(0, 0, -0.32)
-        lev.add(t, 0, 0, -0.32)
+        lev = tr["lever"] = Track(0, 0, 0.32)
+        lev.add(t, 0, 0, 0.32)
         for k in range(1, 30):
-            lev.add(t + k * DT, 0, 0, -0.32 + 0.64 * min(1.0, k * DT / 0.1))
+            lev.add(t + k * DT, 0, 0, 0.32 - 0.64 * min(1.0, k * DT / 0.1))
         last["track"].add(t + 0.1, last["x"], FLOOR, th + 0.05)
         px, py = self.lev_piv
-        bx0 = px + self.lev_L * math.cos(-0.32)
-        by0 = py + self.lev_L * math.sin(-0.32) - RB - 9
+        bx0 = px + self.lev_L * math.cos(0.32)
+        by0 = py + self.lev_L * math.sin(0.32) - RB - 9
         B = tr["B"] = Track(bx0, by0)
         B.add(t, bx0, by0)
         bx1 = px + self.lev_L * math.cos(0.32)
@@ -386,6 +386,7 @@ class Machine(Chapter):
         self.pul_x = x_land + 70
         t, x, y, vx, vy, ra = fly(B, t, bx1, by1, vx, vy, lambda x, y, vx, vy: vy > 0 and y >= self.bucket_top0 + 20, spin=5)
         self.step_mark(t, 4)
+        self.elev_t0 = t
         self.focus_segs.append((t, "plat"))
         bucket = tr["bucket"] = Track(0, self.bucket_top0, 0)
         plat = tr["plat"] = Track(0, FLOOR - 20, 0)
@@ -393,19 +394,19 @@ class Machine(Chapter):
         rise = (FLOOR - 20) - (self.pul_y + 170)
         tt = t
         bucket.add(tt, 0, self.bucket_top0); plat.add(tt, 0, FLOOR - 20)
-        C = tr["C"] = Track(self.pul_x + 70, FLOOR - 20 - 14 - RB)
+        C = tr["C"] = Track(self.pul_x + 70, FLOOR - 20 - RB)
         while dist < rise:
             vv += 205.0 * DT
             dist += vv * DT
             tt += DT
             bucket.add(tt, 0, self.bucket_top0 + min(dist, rise)); plat.add(tt, 0, FLOOR - 20 - min(dist, rise))
             B.add(tt, self.pul_x - 70, self.bucket_top0 + min(dist, rise) + 40)
-            C.add(tt, self.pul_x + 70, FLOOR - 20 - min(dist, rise) - 14 - RB)
+            C.add(tt, self.pul_x + 70, FLOOR - 20 - min(dist, rise) - RB)
         t = tt
         # --- 6. le grand huit : la plateforme bute en haut, la bille C part sur la piste avec un looping
         self.step_mark(t, 5)
         self.focus_segs.append((t, "C"))
-        cx0, cy0 = self.pul_x + 70, FLOOR - 20 - rise - 14 - RB
+        cx0, cy0 = self.pul_x + 70, FLOOR - 20 - rise - RB
         pts, ang = path(cx0, cy0, 0.0, [("s", 60), ("a", math.radians(40), 120), ("s", 700), ("a", math.radians(-40), 260),
                                         ("s", 120), ("a", -2 * math.pi, 150), ("s", 160), ("a", math.radians(-24), 220), ("s", 40)])
         self.coaster = pts
@@ -449,34 +450,45 @@ class Machine(Chapter):
             om *= (1 - 0.15 * DT)
             phi += om * DT
             tt += DT
-            if phi < 0:
-                # elle revient frapper : la première repart de l'autre côté (et ainsi de suite)
-                cr1.add(tt, 0, 0, phi)
-                cr.add(tt, 0, 0, 0.0)
-            else:
-                cr.add(tt, 0, 0, phi)
-                cr1.add(tt, 0, 0, 0.0)
+            if self.cat_hit is not None:
+                # elle a frappé le cran : elle retombe et s'immobilise contre les autres
+                phi = max(0.0, phi)
+                om = -abs(om) * 0.35 if phi > 0.02 else 0.0
+            cr.add(tt, 0, 0, max(0.0, phi))
+            cr1.add(tt, 0, 0, 0.0)
             if self.cat_hit is None and phi >= math.radians(30):
                 self.cat_hit = tt
+                om = -abs(om) * 0.2
+            if self.cat_hit is not None and tt > self.cat_hit + 1.5:
+                break
         t = self.cat_hit
         # --- 8. la catapulte : la cinquième bille fait sauter le cran, le bras lance la bille D
-        self.focus_segs.append((t, "D"))
         self.cat_piv = (self.cat_x + 40, self.table_y - 30)
-        self.cat_len = 260.0
+        self.cat_len = 190.0
         cat = tr["cat"] = Track(0, 0, 0.0)
-        cat.add(t, 0, 0, 0.0)
-        for k in range(1, 70):
-            cat.add(t + k * DT, 0, 0, min(1.0, (k * DT / 0.22) ** 1.5) * math.radians(118))
         cpx, cpy = self.cat_piv
-        dx0, dy0 = cpx + self.cat_len, cpy - RB - 10
+        cup = lambda a: (cpx + math.cos(a) * self.cat_len - math.sin(a) * (RB + 10), cpy - math.sin(a) * self.cat_len - math.cos(a) * (RB + 10))
+        dx0, dy0 = cup(0.0)
         D = tr["D"] = Track(dx0, dy0)
+        cat.add(t, 0, 0, 0.0)
         D.add(t, dx0, dy0)
-        tr_ = t + 0.22
-        a1 = math.radians(118)
-        dx1, dy1 = cpx + math.cos(a1) * self.cat_len, cpy - math.sin(a1) * self.cat_len - RB - 10
-        D.add(tr_, dx1, dy1)
+        a, om, tt = 0.0, 0.0, t
+        released = None
+        while a < math.radians(100):
+            om += 260.0 * DT                     # le ressort
+            a += om * DT
+            tt += DT
+            cat.add(tt, 0, 0, min(a, math.radians(100)))
+            if released is None:
+                D.add(tt, *cup(a))
+                if a >= math.radians(30):
+                    released = (tt, cup(a))
+        tr_, (dx1, dy1) = released
         vx, vy = -1150.0, -1950.0
         self.ceil_y0 = CEIL + 140
+        self.d_launch = tr_
+        self.focus_segs.append((tr_ + 0.05, "D"))
+        D.t = [x for x in D.t if x <= tr_]; D.x = D.x[:len(D.t)]; D.y = D.y[:len(D.t)]; D.a = D.a[:len(D.t)]
         t, x, y, vx, vy, ra = fly(D, tr_, dx1, dy1, vx, vy, lambda x, y, vx, vy: vy > 0 and y >= self.ceil_y0, spin=-8)
         # --- 9. le rail du plafond : tout le chemin du retour
         self.step_mark(t, 7)
@@ -603,11 +615,14 @@ class Machine(Chapter):
             return self.doms[-1]["x"] + 300, FLOOR - 400
         if name == "plat":
             _, y, _ = tr["plat"].at(t)
-            return self.pul_x, 0.55 * (y - 80) + 0.45 * 500.0
+            _, yb, _ = tr["bucket"].at(t)
+            w = min(1.0, max(0.0, (t - self.elev_t0) / 2.2))
+            w = w * w * (3 - 2 * w)
+            return self.pul_x, (yb + 40) * (1 - w) + (0.55 * (y - 80) + 0.45 * 500.0) * w
         if name == "cradle":
-            return self.cr_x0 + 260, self.table_y - 180
+            return self.cr_x0 + 330, self.table_y - 200
         if name == "bounce":
-            cxr, cyr = 0.5 * (300.0 + self.switch_x) + 40, FLOOR - 430
+            cxr, cyr = 0.5 * (60.0 + self.switch_x) + 60, FLOOR - 430
             if t < 2.2:
                 bx, by = self.bounce_pos(t)
                 w = (t / 2.2) ** 2
@@ -778,6 +793,8 @@ class Machine(Chapter):
         qui rebondit à côté de l'interrupteur."""
         if t < 5.7 or t > self.drop_t0 - 0.2:
             return
+        if self.d_launch - 0.4 <= t <= self.ceil_t0 + 0.6:
+            return                                  # la bille D vole par là : on ne la cache pas
         k = min(1.0, (t - 5.7) / 0.3, (self.drop_t0 - 0.2 - t) / 0.3)
         if k <= 0:
             return
@@ -868,12 +885,25 @@ class Machine(Chapter):
         dr.rectangle([X(swx - 44), Y(FLOOR - 36), X(swx + 44), Y(FLOOR - 20)], fill=(90, 220, 120) if on else (200, 60, 60))
         if t < 6.0 or t > self.t_off - 0.6:
             f = base.font(int(34 * S))
-            dr.text((X(swx), Y(FLOOR - 70)), "LIGHT SWITCH", fill=(235, 235, 245), anchor="mm", font=f, stroke_width=int(P(3)), stroke_fill=(10, 10, 14))
+            dr.text((X(swx + 90), Y(FLOOR - 70)), "LIGHT SWITCH", fill=(235, 235, 245), anchor="lm", font=f, stroke_width=int(P(3)), stroke_fill=(10, 10, 14))
         # la bascule
         a = tr["seesaw"].at(t)[2]
         sx, sy = self.ss_piv
         dr.polygon([(X(sx - 30), Y(FLOOR)), (X(sx + 30), Y(FLOOR)), (X(sx), Y(sy))], fill=(90, 70, 60))
         self.plank(dr, X, Y, P, sx, sy, a, self.ss_L, 14, WOOD)
+        # supports : poteaux du zigzag et de la piste, tiges du rail du plafond (derrière les rails)
+        for pts in self.rails:
+            x0p, y0p = pts[len(pts) // 2]
+            if vis(x0p - 10, x0p + 10):
+                dr.rectangle([X(x0p - 4), Y(y0p + RB + 6), X(x0p + 4), Y(FLOOR)], fill=(52, 52, 68))
+        for k in range(0, len(self.coaster2), 40):
+            x0p, y0p = self.coaster2[k]
+            if vis(x0p - 10, x0p + 10):
+                dr.rectangle([X(x0p - 4), Y(y0p + RB + 6), X(x0p + 4), Y(FLOOR)], fill=(52, 52, 68))
+        for k in range(0, len(self.ceiling), 90):
+            x0p, y0p = self.ceiling[k]
+            if vis(x0p - 10, x0p + 10):
+                dr.rectangle([X(x0p - 3), Y(CEIL), X(x0p + 3), Y(y0p + RB)], fill=(52, 52, 68))
         # les rails et les butées
         for pts in self.rails + [self.coaster, self.coaster2, self.ceiling]:
             xs = [p[0] for p in pts]
@@ -886,12 +916,8 @@ class Machine(Chapter):
         sx0, sy0, sw, sh, ns = self.stairs
         if vis(sx0 - 20, sx0 + ns * sw + 20):
             for k in range(ns):
-                dr.rectangle([X(sx0 + k * sw), Y(sy0 + k * sh), X(sx0 + ns * sw), Y(sy0 + (k + 1) * sh)], fill=dim(WOOD, 0.9 - 0.04 * k))
-        # supports des rampes du zigzag
-        for pts in self.rails:
-            x0p, y0p = pts[len(pts) // 2]
-            if vis(x0p - 10, x0p + 10):
-                dr.rectangle([X(x0p - 4), Y(y0p + RB + 6), X(x0p + 4), Y(FLOOR)], fill=(60, 60, 76))
+                dr.rectangle([X(sx0 + k * sw), Y(sy0 + k * sh), X(sx0 + (k + 1) * sw), Y(FLOOR)], fill=dim(WOOD, 0.9 - 0.04 * k))
+                dr.rectangle([X(sx0 + k * sw), Y(sy0 + k * sh), X(sx0 + (k + 1) * sw), Y(sy0 + k * sh + 8)], fill=mix(WOOD, (255, 230, 190), 0.25))
         # les dominos
         for i, d in enumerate(self.doms):
             if not vis(d["x"] - 20, d["x"] + d["h"] + 40):
@@ -913,7 +939,9 @@ class Machine(Chapter):
             circle(dr, X(px), Y(self.pul_y), P(70), (110, 110, 130))
             circle(dr, X(px), Y(self.pul_y), P(18), (60, 60, 70))
             dr.line([(X(px - 70), Y(self.pul_y)), (X(px - 70), Y(by))], fill=(200, 200, 210), width=max(1, int(P(3))))
-            dr.line([(X(px + 70), Y(self.pul_y)), (X(px + 70), Y(py))], fill=(200, 200, 210), width=max(1, int(P(3))))
+            dr.line([(X(px + 70), Y(self.pul_y)), (X(px + 70), Y(py - 90))], fill=(200, 200, 210), width=max(1, int(P(3))))
+            dr.line([(X(px + 70), Y(py - 90)), (X(px + 22), Y(py))], fill=(200, 200, 210), width=max(1, int(P(3))))
+            dr.line([(X(px + 70), Y(py - 90)), (X(px + 138), Y(py))], fill=(200, 200, 210), width=max(1, int(P(3))))
             dr.polygon([(X(px - 115), Y(by)), (X(px - 25), Y(by)), (X(px - 35), Y(by + 80)), (X(px - 105), Y(by + 80))], fill=(150, 100, 70))
             dr.rectangle([X(px + 20), Y(py), X(px + 140), Y(py + 14)], fill=(150, 150, 160))
         # le pendule de Newton
