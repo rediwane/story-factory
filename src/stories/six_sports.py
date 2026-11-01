@@ -30,7 +30,7 @@ class Sport(Chapter):
 # ---------------------------------------------------------------- 1. basket
 class Basketball(Sport):
     title = "BASKETBALL"
-    stamp = ("OWN BASKET", RED)
+    stamp = ("WRONG BASKET", RED)
     stamp_y = 0.68
     mood = "lose"
     RIM_X, RIM_Y, RIM_R = 230.0, 900.0, 70.0
@@ -87,6 +87,17 @@ class Basketball(Sport):
         dr.rectangle([P(40), P(ry - 260), P(70), P(FLOOR_Y)], fill=(120, 120, 130))
         dr.rectangle([P(40), P(ry - 260), P(rx - 120), P(ry - 240)], fill=(120, 120, 130))
         dr.line([(P(rx - self.RIM_R), P(ry)), (P(rx + self.RIM_R), P(ry))], fill=(230, 90, 60), width=int(P(12)))
+        # le tableau d'affichage : c'est l'autre équipe qui marque
+        scored = s.get("end") is not None
+        bx0, by0 = 600, 690
+        dr.rectangle([P(bx0), P(by0), P(bx0 + 400), P(by0 + 150)], fill=(14, 14, 20))
+        dr.rectangle([P(bx0), P(by0), P(bx0 + 400), P(by0 + 6)], fill=(70, 70, 90))
+        fl = base.font(int(30 * S)); fn = base.font(int(76 * S))
+        dr.text((P(bx0 + 100), P(by0 + 34)), "HOME", fill=(150, 170, 230), anchor="mm", font=fl)
+        dr.text((P(bx0 + 300), P(by0 + 34)), "AWAY", fill=(230, 150, 150), anchor="mm", font=fl)
+        dr.text((P(bx0 + 100), P(by0 + 100)), "0", fill=(230, 210, 120), anchor="mm", font=fn)
+        flash = scored and int((t - (s["end"] or 0)) * 6) % 2 == 0
+        dr.text((P(bx0 + 300), P(by0 + 100)), "3" if scored else "0", fill=(255, 70, 70) if flash else (230, 210, 120), anchor="mm", font=fn)
         sw = s["sway"] * 20
         for i in range(6):
             x0 = rx - self.RIM_R + i * (2 * self.RIM_R / 5)
