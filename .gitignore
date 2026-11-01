@@ -3,3 +3,6 @@ __pycache__/
 
 # les mp4 ne sont jamais versionnés : ils vivent le temps de publier
 output/*.mp4
+
+# les planches et rapports du contrôle se régénèrent : jamais versionnés
+output/controle_*/

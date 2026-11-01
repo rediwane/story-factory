@@ -49,12 +49,14 @@ en vérifie la plupart, la skill `juger` le reste.
 - **La réplique de Bounce** : une par vidéo au plus, en réponse à une question explicite
   du narrateur, dans la scène de la question, avant la coupe. Ailleurs il ne dit son nom
   qu'à ses rebonds.
-- **Après la chute, la scène vit** : Bounce se pose, les débris roulent et s'arrêtent, un
-  personnage réagit. Jamais 1,5 s d'image immobile.
+- **Après la chute, la scène vit** : Bounce continue de rebondir (plus bas, sous le
+  tampon), les débris roulent et s'arrêtent, un personnage réagit. Jamais 1,5 s d'image
+  immobile : un Bounce posé sur un décor fixe, c'est une image morte.
 
 ## 3. L'image
 
-- **Nuit partout**, fond sombre, une source de lumière par scène autant que possible.
+- **Nuit partout**, fond sombre, une source de lumière par scène autant que possible. Un
+  éclair (flash, explosion) reste bref et gris, jamais un plein écran blanc.
 - **Formes primitives**, personnages sans visage, rien d'illustré : si une chose a besoin
   de détails pour se lire, c'est le mauvais objet.
 - **Bounce grand et franc** : rayon d'au moins 60 px, sauts d'au moins deux diamètres,
@@ -89,8 +91,9 @@ en vérifie la plupart, la skill `juger` le reste.
 
 ## 6. Le réglage
 
-1. `python3 src/tools/controle.py configs/<name>.json` : il simule, place les voix et
-   vérifie les règles mesurables. On corrige le script, les réglages ou la graine jusqu'à
+1. `python3 src/tools/controle.py configs/<name>.json` : il simule, place les voix,
+   vérifie les règles mesurables et estime le mouvement de l'image (ouverture, images
+   figées) sans rendre. On corrige le script, les réglages ou la graine jusqu'à
    zéro défaut bloquant. On ne rend rien avant.
 2. Le rendu : `python3 src/stories/<sujet>.py configs/<name>.json` (environ dix minutes).
 3. `python3 src/tools/controle.py configs/<name>.json --post` : mouvement, nuit,

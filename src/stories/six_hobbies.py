@@ -36,7 +36,7 @@ class CardHouse(Chapter):
 
     def setup(self):
         rng = self.rng
-        self.hop_init(330.0, FLOOR_Y, wobble=60.0, xmin=250, xmax=420, **dict(HOP, start_h=380.0, min_h=320.0, max_h=430.0, gain=(0.95, 1.1)))
+        self.hop_init(330.0, FLOOR_Y, wobble=120.0, xmin=200, xmax=440, **dict(HOP, start_h=420.0, min_h=340.0, max_h=460.0, gain=(0.95, 1.1)))
         self.line("Hobby one. Card house.", "title", 0.0)
         self.cards = []                     # segments (x0, y0, x1, y1, level)
         n, base_y, sp = 4, self.TOP, 100.0
@@ -51,7 +51,7 @@ class CardHouse(Chapter):
             for a, b in zip(xs, xs[1:]):
                 self.cards.append([a - 6, top - 3, b + 6, top - 3, lv])
             base_y = top - 6
-        self.sway = 0.0
+        self.sway = 0.05                    # la tour tremble dès l'image 0 : elle est déjà menacée
         self.need = int(rng.integers(4, 6))
         self.fall = None                    # corps des cartes en chute
 
@@ -372,7 +372,8 @@ class Photo(Chapter):
 
     def on_land(self, k, evs):
         if self.print_t is not None and self.t - self.print_t > 0.5 and not self.payoff:
-            self.on = "still"
+            # il ne s'arrête pas : rebonds plus bas, sous le tampon, et le photographe secoue la tête
+            self.min_h, self.max_h, self.h = 150.0, 200.0, 180.0
             self.finish("BLURRY")
             self.line("This was the sharpest one.", "punch", self.t + 0.4)
 
@@ -410,12 +411,13 @@ class Photo(Chapter):
         dr.rectangle([P(820), P(1110), P(915), P(1180)], fill=(30, 30, 36))
         dr.rectangle([P(790), P(1125), P(822), P(1165)], fill=(60, 60, 70))
         circle(dr, P(790), P(1145), P(16), (110, 140, 190))
-        self.figure(dr, P, 1000, FLOOR_Y, (70, 80, 100), h=250, w=92)
+        tilt = math.sin((t - s["end"]) * 9.0) * 1.4 if s["end"] is not None else 0.0
+        self.figure(dr, P, 1000, FLOOR_Y, (70, 80, 100), h=250, w=92, tilt=tilt)
         self.bounce(dr, P, s)
         # le flash
         if s["flash"] is not None and 0 <= t - s["flash"] < 0.18:
             k = 1 - (t - s["flash"]) / 0.18
-            dr.rectangle([0, P(SCENE_TOP), P(W), P(FLOOR_Y)], fill=tuple(int(40 + 180 * k) for _ in range(3)))
+            dr.rectangle([0, P(SCENE_TOP), P(W), P(FLOOR_Y)], fill=tuple(int(40 + 120 * k) for _ in range(3)))
             self.bounce(dr, P, s)
         # le tirage
         if s["print_t"] is not None:

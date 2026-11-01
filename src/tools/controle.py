@@ -37,7 +37,8 @@ SEUILS = {
     "fenetre_figee_s": 1.5, "mouvement_min": 0.5,   # niveaux de gris moyens par image (10 i/s, 54x96)
     "ouverture_mouvement_min": 1.6,                 # les 3 premières secondes bougent franchement (les métiers : 1,0, 43 % partis à 6 s)
     "silence_max_s": 1.6,
-    "luma_haut_max": 110.0,                         # le compte est de nuit
+    "luma_haut_max": 110.0,                         # le compte est de nuit (moyenne glissante sur 1 s : un flash est permis)
+    "estimation_facteur": 1.2,                      # l'estimation avant rendu surestime le mp4 (0,85 × mesuré sur six_hobbies) : seuils relevés
 }
 
 
@@ -201,6 +202,39 @@ def pre(path, out):
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : le tampon recouvre Bounce à {t:.2f} s")
     for i, t in sub_seen.items():
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : un sous-titre recouvre Bounce autour de la chute ({t:.2f} s)")
+    # mouvement estimé avant rendu : la scène dessinée en 54x96 à 10 i/s, sans les textes ni
+    # le lissage de l'encodage ; elle surestime le mp4, d'où des seuils relevés
+    from PIL import Image, ImageDraw
+    Sm = 54.0 / W
+    prev, diffs, k_next = None, [], 0.0
+    for (t, s) in states:
+        if t + 1e-9 < k_next:
+            continue
+        k_next = t + 0.1
+        img = Image.new("RGB", (54, 96), tuple(cfg["bg_color"]))
+        dr = ImageDraw.Draw(img)
+        base.HERO["pos"] = None
+        try:
+            sim.draw(dr, s, t, Sm)
+        except Exception:
+            pass
+        a = np.asarray(img.convert("L"), dtype=np.float32)
+        if prev is not None:
+            diffs.append(float(np.abs(a - prev).mean()))
+        prev = a
+    diffs = np.array(diffs)
+    win = int(SEUILS["fenetre_figee_s"] * 10)
+    figees = [k / 10.0 for k in range(0, len(diffs) - win) if diffs[k:k + win].mean() < SEUILS["mouvement_min"] * SEUILS["estimation_facteur"]]
+    figees = [f for f in figees if f < total - 2.5]
+    if figees:
+        groups = [figees[0]]
+        for a in figees[1:]:
+            if a - groups[-1] > 1.0:
+                groups.append(a)
+        ko.append("(estimation) image presque figée à : " + ", ".join(f"{g:.1f} s" for g in groups[:6]))
+    ouv_est = float(diffs[:30].mean()) if len(diffs) >= 30 else 0.0
+    if ouv_est < SEUILS["ouverture_mouvement_min"] * SEUILS["estimation_facteur"]:
+        ko.append(f"(estimation) les 3 premières secondes bougent trop peu ({ouv_est:.2f})")
     # accroche jamais utilisée
     hook = (cfg.get("hook_text") or "").strip()
     if not hook:
@@ -221,6 +255,7 @@ def pre(path, out):
                              "stamp": c.stamp[0] if c.stamp else None} for k, c in enumerate(sims)],
                "narration": [{"t": round(n["start"], 2), "end": round(n["end"], 2), "text": n["text"]} for n in narr],
                "replies": [round(x, 2) for x in replies],
+               "mouvement_estime": {"ouverture": round(ouv_est, 2), "min_fenetre": round(float(min([diffs[k:k + win].mean() for k in range(len(diffs) - win)] or [0])), 2)},
                "ko": ko, "warn": warn}
     os.makedirs(out, exist_ok=True)
     json.dump(rapport, open(os.path.join(out, "controle.json"), "w"), ensure_ascii=False, indent=1)
@@ -272,10 +307,11 @@ def post(path, rapport, cfg, out):
     if ouv < SEUILS["ouverture_mouvement_min"]:
         ko.append(f"les 3 premières secondes bougent trop peu ({ouv:.2f} < {SEUILS['ouverture_mouvement_min']})")
     # nuit : la moitié haute de l'image reste sombre
-    luma_haut = fr[:, :48, :].mean(axis=(1, 2))
+    luma_inst = fr[:, :48, :].mean(axis=(1, 2))
+    luma_haut = np.convolve(luma_inst, np.ones(10) / 10, mode="valid") if len(luma_inst) >= 10 else luma_inst
     if luma_haut.max() > SEUILS["luma_haut_max"]:
         k = int(np.argmax(luma_haut))
-        ko.append(f"image trop claire en haut à {k / 10:.1f} s (luma {luma_haut.max():.0f}) : le compte est de nuit")
+        ko.append(f"image trop claire en haut autour de {k / 10:.1f} s (luma moyenne sur 1 s {luma_haut.max():.0f}) : le compte est de nuit")
     # silences
     sil = subprocess.run(["ffmpeg", "-hide_banner", "-i", mp4, "-af", f"silencedetect=noise=-40dB:d={SEUILS['silence_max_s']}",
                           "-f", "null", "-"], capture_output=True, text=True).stderr
