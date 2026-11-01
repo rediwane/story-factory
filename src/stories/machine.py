@@ -229,7 +229,7 @@ class Machine(Chapter):
         xl, xr = pts[0][0] + 40, x_end
         for lev in range(1, n_levels):
             # la butée : la bille s'arrête net et tombe sur le niveau d'en dessous
-            self.bumpers.append((x_end + direction * (RB + 6), y_end))
+            self.bumpers.append((x_end + direction * (RB + 10), y_end))
             A.add(t + 0.04, x_end + direction * 3, y_end)
             t += 0.04
             t, x, y, vx2, vy2, ra = fly(A, t, x_end + direction * 3, y_end, -direction * 40.0, 0.0,
@@ -253,22 +253,31 @@ class Machine(Chapter):
         x, y = x_end, y_end
         vx = max(vx, 320.0)
         self.stairs_t = t
-        for k in range(n_st + 1):
-            top = FLOOR if k == n_st else self.stairs[1] + st_h * k
-            # chute jusqu'à la marche k
-            t, x, y, vx, vy, ra = fly(A, t, x, y, vx, vy, lambda xx, yy, a, b: b > 0 and yy >= top - RB, ra=ra, spin=vx / RB)
-            y = top - RB
-            # un petit rebond
+        sy0 = self.stairs[1]
+        x_bot = sx0 + n_st * st_w
+
+        def ground(xx):
+            """Le dessus de ce qui est sous le centre de la bille : la marche réellement en
+            dessous (calculée à partir de x à chaque instant), le sol après l'escalier."""
+            if xx >= x_bot:
+                return FLOOR
+            k = max(0, int((xx - sx0) // st_w))
+            return sy0 + st_h * k
+
+        for _ in range(40):
+            t, x, y, vx, vy, ra = fly(A, t, x, y, vx, vy, lambda xx, yy, a, b: b > 0 and yy >= ground(xx) - RB,
+                                      ra=ra, spin=vx / RB)
+            y = ground(x) - RB
+            A.y[-1] = y
+            if x >= x_bot:
+                break
             vy = -abs(vy) * 0.33
             if abs(vy) > 60:
-                t, x, y, vx, vy, ra = fly(A, t, x, y, vx, vy, lambda xx, yy, a, b: b > 0 and yy >= top - RB, ra=ra, spin=vx / RB)
-                y = top - RB
-            if k == n_st:
-                break
-            # elle roule jusqu'au bord de la marche, puis tombe
-            edge = sx0 + (k + 1) * st_w
+                continue                       # un petit rebond sur la même marche (ou la suivante)
+            # elle roule jusqu'au bord de sa marche, puis tombe
             vx = max(vx * 0.97, 320.0)
-            while x < edge:
+            g0 = ground(x)
+            while ground(x) == g0:
                 x += vx * DT; t += DT; ra += vx * DT / RB
                 A.add(t, x, y, ra)
             vy = 0.0
@@ -312,7 +321,7 @@ class Machine(Chapter):
                 th += om * DT
                 tt += DT
                 d["track"].add(tt, d["x"], FLOOR, th)
-                top_x = d["x"] + w / 2 + h * math.sin(th) - w * (1 - math.cos(th))
+                top_x = d["x"] + w / 2 + h * math.sin(th)          # la pointe, comme dessinée
                 if nxt is not None and top_x >= nxt["x"] - nxt["w"] / 2:
                     contact = tt
                     break
@@ -324,6 +333,36 @@ class Machine(Chapter):
             d["t_c"] = contact
             t_hit = contact
         t = t_hit
+        last = self.doms[-1]
+        # --- 4. le levier : le grand domino tombe sur son bout gauche
+        self.step_mark(t, 3)
+        self.marks_d = {3: t}
+        th = last["th_c"]
+        tipx = last["x"] + last["w"] / 2 + last["h"] * math.sin(th)     # la pointe, comme dessinée
+        tipy = FLOOR - last["h"] * math.cos(th)
+        self.lev_L = 150.0
+        # le bout gauche du levier (sa face du dessus) est exactement sous la pointe
+        self.lev_piv = (tipx + self.lev_L * math.cos(0.32) - 10, tipy + 7 + self.lev_L * math.sin(0.32))
+        lev = tr["lever"] = Track(0, 0, 0.32)
+        lev.add(t, 0, 0, 0.32)
+        lpx, lpy = self.lev_piv
+        for k in range(1, 30):
+            la = 0.32 - 0.64 * min(1.0, k * DT / 0.1)
+            lev.add(t + k * DT, 0, 0, la)
+            # le grand domino suit le levier qui s'enfonce : sa pointe reste posée sur la face
+            # du dessus de la planche (angle trouvé par dichotomie)
+            nx_, ny_ = math.sin(la), -math.cos(la)
+            hgt = lambda a: ((last["x"] + last["w"] / 2 + last["h"] * math.sin(a) - lpx) * nx_
+                             + (FLOOR - last["h"] * math.cos(a) - lpy) * ny_) - 7.0
+            a0, a1 = th, math.radians(88)
+            if hgt(a0) > 0:
+                for _ in range(30):
+                    am = 0.5 * (a0 + a1)
+                    if hgt(am) > 0:
+                        a0 = am
+                    else:
+                        a1 = am
+            last["track"].add(t + k * DT, last["x"], FLOOR, a0)
         # chaque domino reste appuyé contre le dos du suivant pendant que celui-ci tombe
         for i in range(N - 2, -1, -1):
             d, n_ = self.doms[i], self.doms[i + 1]
@@ -353,20 +392,6 @@ class Machine(Chapter):
                 lo_a = max(lo_a, a_s)
                 if k % 4 == 0:
                     d["track"].add(tt, d["x"], FLOOR, lo_a)
-        last = self.doms[-1]
-        # --- 4. le levier : le grand domino tombe sur son bout gauche
-        self.step_mark(t, 3)
-        self.marks_d = {3: t}
-        th = last["th_c"]
-        tipx = last["x"] + last["w"] / 2 + last["h"] * math.sin(th) - last["w"] * (1 - math.cos(th))
-        tipy = FLOOR - last["h"] * math.cos(th)
-        self.lev_L = 150.0
-        self.lev_piv = (tipx + self.lev_L * math.cos(0.32) + 4, tipy + 6 + self.lev_L * math.sin(0.32))
-        lev = tr["lever"] = Track(0, 0, 0.32)
-        lev.add(t, 0, 0, 0.32)
-        for k in range(1, 30):
-            lev.add(t + k * DT, 0, 0, 0.32 - 0.64 * min(1.0, k * DT / 0.1))
-        last["track"].add(t + 0.1, last["x"], FLOOR, th + 0.05)
         px, py = self.lev_piv
         bx0 = px + self.lev_L * math.cos(0.32)
         by0 = py + self.lev_L * math.sin(0.32) - RB - 9
@@ -378,12 +403,14 @@ class Machine(Chapter):
         B.add(t, bx1, by1)
         self.focus_segs.append((t - 0.4, "B"))
         # --- 5. la poulie : la bille B tombe dans le seau, le seau descend, la plateforme monte
-        vx, vy = 430.0, -2620.0
-        self.pul_y = -380.0
+        # la poulie est posée sur un pied, sous le rail du plafond ; la bille B monte juste
+        # assez haut pour passer sous le rail, et tombe dans le seau à gauche de la corde
+        self.pul_y = -200.0
         self.bucket_top0 = self.pul_y + 120
+        vx, vy = 430.0, -math.sqrt(2 * G * (by1 - (-230.0)))
         t_up = hit_time(by1, vy, self.bucket_top0 - 30)
         x_land = bx1 + vx * t_up
-        self.pul_x = x_land + 70
+        self.pul_x = x_land + 110
         t, x, y, vx, vy, ra = fly(B, t, bx1, by1, vx, vy, lambda x, y, vx, vy: vy > 0 and y >= self.bucket_top0 + 20, spin=5)
         self.step_mark(t, 4)
         self.elev_t0 = t
@@ -394,19 +421,19 @@ class Machine(Chapter):
         rise = (FLOOR - 20) - (self.pul_y + 170)
         tt = t
         bucket.add(tt, 0, self.bucket_top0); plat.add(tt, 0, FLOOR - 20)
-        C = tr["C"] = Track(self.pul_x + 70, FLOOR - 20 - RB)
+        C = tr["C"] = Track(self.pul_x + 160, FLOOR - 20 - RB)
         while dist < rise:
             vv += 205.0 * DT
             dist += vv * DT
             tt += DT
             bucket.add(tt, 0, self.bucket_top0 + min(dist, rise)); plat.add(tt, 0, FLOOR - 20 - min(dist, rise))
-            B.add(tt, self.pul_x - 70, self.bucket_top0 + min(dist, rise) + 40)
-            C.add(tt, self.pul_x + 70, FLOOR - 20 - min(dist, rise) - RB)
+            B.add(tt, self.pul_x - 110, self.bucket_top0 + min(dist, rise) + 36)
+            C.add(tt, self.pul_x + 160, FLOOR - 20 - min(dist, rise) - RB)
         t = tt
         # --- 6. le grand huit : la plateforme bute en haut, la bille C part sur la piste avec un looping
         self.step_mark(t, 5)
         self.focus_segs.append((t, "C"))
-        cx0, cy0 = self.pul_x + 70, FLOOR - 20 - rise - RB
+        cx0, cy0 = self.pul_x + 160, FLOOR - 20 - rise - RB
         pts, ang = path(cx0, cy0, 0.0, [("s", 60), ("a", math.radians(40), 120), ("s", 700), ("a", math.radians(-40), 260),
                                         ("s", 120), ("a", -2 * math.pi, 150), ("s", 160), ("a", math.radians(-24), 220), ("s", 40)])
         self.coaster = pts
@@ -430,7 +457,7 @@ class Machine(Chapter):
         pts = pts2
         # --- 7. le pendule de Newton
         self.step_mark(t, 6)
-        self.focus_segs.append((t, "cradle"))
+        self.focus_segs.append((t - 0.9, "cradle"))         # la caméra s'y installe avant l'arrivée de la bille
         ex, ey = pts[-1]
         self.table_y = ey + RB
         self.cr_L = 230.0
@@ -484,8 +511,8 @@ class Machine(Chapter):
                 if a >= math.radians(30):
                     released = (tt, cup(a))
         tr_, (dx1, dy1) = released
-        vx, vy = -1150.0, -1950.0
-        self.ceil_y0 = CEIL + 140
+        self.ceil_y0 = CEIL + 200
+        vx, vy = -1150.0, -math.sqrt(2 * G * (dy1 - self.ceil_y0))
         self.d_launch = tr_
         self.focus_segs.append((tr_ + 0.05, "D"))
         D.t = [x for x in D.t if x <= tr_]; D.x = D.x[:len(D.t)]; D.y = D.y[:len(D.t)]; D.a = D.a[:len(D.t)]
@@ -496,7 +523,7 @@ class Machine(Chapter):
         ang0 = math.atan2(vy, vx)
         self.switch_x = 790.0
         length = x - (self.switch_x + 2) - 200
-        pts, ang = path(x, y, ang0, [("a", (math.pi - math.radians(5.0)) - ang0, 150), ("s", length)])
+        pts, ang = path(x, y, ang0, [("a", (math.pi - math.radians(4.0)) - ang0, 150), ("s", length)])
         self.ceiling = pts
         t, v, ang, ra = roll(D, pts, t, math.hypot(vx, vy) * 0.5, mu=0.03, c=6.0)
         # la butée au-dessus de l'interrupteur, puis la chute
@@ -620,9 +647,12 @@ class Machine(Chapter):
             w = w * w * (3 - 2 * w)
             return self.pul_x, (yb + 40) * (1 - w) + (0.55 * (y - 80) + 0.45 * 500.0) * w
         if name == "cradle":
-            return self.cr_x0 + 330, self.table_y - 200
+            return self.cr_x0 + 430, self.table_y - 200
         if name == "bounce":
-            cxr, cyr = 0.5 * (60.0 + self.switch_x) + 60, FLOOR - 430
+            # l'interrupteur reste loin de la colonne de boutons de TikTok (x > 940 à l'écran)
+            cxr, cyr = self.switch_x - 300, FLOOR - 430
+            if t > self.t_off - 1.0:
+                cxr = self.switch_x - 130                  # la fin : l'interrupteur et Bounce bien dans l'image
             if t < 2.2:
                 bx, by = self.bounce_pos(t)
                 w = (t / 2.2) ** 2
@@ -679,14 +709,15 @@ class Machine(Chapter):
             (self.stairs_t + 0.1, "Stairs. Obviously.", "stairs"),
             (m[2] + 0.3, "Twenty eight dominoes.", "dom"),
             (self.doms[self.suspense]["track"].t[0] + 0.9, "Come on.", "come"),
+            (self.doms[-2]["t_c"] - 0.15, "The big one.", "big"),
             (m[4] + 0.6, "This part took him a week.", "week"),
             (m[5] + 0.4, "He never tested the loop.", "loop"),
             (self.jump_t1 + 0.05, "It works.", "works"),
             (m[7] + 0.6, "All the way back.", "back"),
             (self.drop_t0 - 2.4, "Almost there.", "almost"),
             (self.t_off - 0.5, "Here it comes.", "comes"),
-            (self.t_off + 0.8, "Goodnight, Bounce.", "night"),
-            (self.t_bounce_on + 1.0, "Tomorrow, a bigger machine.", "tomorrow"),
+            (self.t_off + 0.35, "Goodnight, Bounce.", "night"),
+            (self.t_bounce_on + 2.6, "Tomorrow, a bigger machine.", "tomorrow"),
         ]
         # tout ce qui est préparé en temps de simulation passe en temps de vidéo (ralentis)
         self.plan = [(self.tau_of(tt), text, key) for (tt, text, key) in self.plan]
@@ -711,7 +742,7 @@ class Machine(Chapter):
             if dist < 650:
                 evs.append(("hit", "floor"))
             else:
-                evs.append(("hit", "far:%.2f" % max(0.3, min(0.85, 1.0 - dist / 5000.0))))
+                evs.append(("hit", "far:%.2f" % max(0.6, min(0.9, 1.0 - dist / 8000.0))))
             self.hit_t = tl
             if self.t_on is None and abs(tl - self.t_bounce_on) < 0.03:
                 self.t_on = tl
@@ -737,13 +768,16 @@ class Machine(Chapter):
     # ------------------------------------------------------------------ dessin
     def lit(self, t):
         """1 : lampe allumée ; 0 : éteinte. Après le saut sur l'interrupteur, chacun de ses
-        rebonds appuie dessus : allumé, éteint, allumé..."""
+        rebonds appuie dessus : allumé, éteint, allumé... Chaque bascule est un court fondu."""
         if t < self.t_off:
             return 1.0
         if t < self.t_bounce_on:
-            return 0.0
-        k = int((t - self.t_bounce_on) / 0.8 + 1e-6)
-        return 1.0 if k % 2 == 0 else 0.0
+            tl, state = self.t_off, 0.0
+        else:
+            k = int((t - self.t_bounce_on) / 0.8 + 1e-6)
+            tl, state = self.t_bounce_on + k * 0.8, (1.0 if k % 2 == 0 else 0.0)
+        f = min(1.0, (t - tl) / 0.08)
+        return (1.0 - state) + (2.0 * state - 1.0) * f
 
     def draw(self, dr, s, t_video, S):
         W, H = self.W, self.H
@@ -770,15 +804,16 @@ class Machine(Chapter):
             x += 320
         self.machine(dr, X, Y, Q, t, vis, S * Z)
         bx, by = self.bounce_pos(t)
-        if self.lit(t) < 0.5:
+        lt = self.lit(t)
+        if lt < 0.5:
             base.HERO["expr"] = "calm"
         base.ball(dr, X(bx), Y(by), Q(self.R))
-        # la nuit : tout s'assombrit sauf la lune et Bounce
-        if self.lit(t) < 0.5:
+        # la nuit : tout s'assombrit sauf Bounce
+        if lt < 0.999:
             from PIL import Image
             box = (0, int(P(SCENE_TOP)), int(P(W)), int(P(H)))
             reg = dr._image.crop(box)
-            dark = Image.blend(reg, Image.new("RGB", reg.size, (2, 2, 6)), 0.78)
+            dark = Image.blend(reg, Image.new("RGB", reg.size, (2, 2, 6)), 0.78 * (1.0 - lt))
             dr._image.paste(dark, box[:2])
             base.ball(dr, X(bx), Y(by), Q(self.R))
         dr.rectangle([0, 0, P(W), P(SCENE_TOP) - 1], fill=tuple(self.cfg["bg_color"]))
@@ -786,7 +821,7 @@ class Machine(Chapter):
         if self.slowmo(t):
             f = base.font(int(40 * S))
             dr.text((P(W - 60), P(SCENE_TOP + 46)), "SLOW MOTION", fill=(255, 205, 90), anchor="rm", font=f, stroke_width=int(4 * S), stroke_fill=(10, 10, 14))
-        self.hud(dr, P, t_video, S)
+        self.hud(dr, P, t_video, S, t)
 
     def inset(self, dr, P, t, S):
         """Pendant que la machine tourne, un coin de l'image montre Bounce dans sa chambre,
@@ -829,8 +864,10 @@ class Machine(Chapter):
         dr.text((P(x0 + 16), P(y0 + 22)), "BOUNCE CAM", fill=(240, 80, 80), anchor="lm", font=f2)
         circle(dr, P(x0 + w - 24), P(y0 + 22), P(7), (240, 60, 60))
 
-    def hud(self, dr, P, t, S):
-        if t < self.cfg["hook_text_s"]:
+    def hud(self, dr, P, t_video, S, t):
+        # t_video pour l'accroche, t (temps de simulation) pour les étapes : les ralentis
+        # décalent l'un par rapport à l'autre
+        if t_video < self.cfg["hook_text_s"]:
             return
         n = 0
         for (tm, k) in self.marks:
@@ -857,10 +894,11 @@ class Machine(Chapter):
             dr.rectangle([X(110), Y(1300), X(450), Y(1345)], fill=(200, 200, 215))
             dr.rectangle([X(110), Y(1180), X(140), Y(FLOOR)], fill=(90, 66, 50))
             dr.rectangle([X(20), Y(1380), X(100), Y(FLOOR)], fill=(90, 66, 50))
+            # l'applique au-dessus du lit : la lumière à éteindre, toujours dans l'image
             if lit > 0.5:
-                glow(dr, P, X(60) / P(1), Y(1240) / P(1), 260, (255, 205, 140), (30, 30, 46), 0.42, rings=10)
-            dr.polygon([(X(30), Y(1250)), (X(90), Y(1250)), (X(76), Y(1205)), (X(44), Y(1205))], fill=(240, 210, 140) if lit > 0.5 else (90, 80, 70))
-            dr.rectangle([X(57), Y(1250), X(63), Y(1380)], fill=(80, 70, 60))
+                glow(dr, P, X(330) / P(1), Y(1110) / P(1), 280, (255, 205, 140), (30, 30, 46), 0.42, rings=10)
+            dr.rectangle([X(322), Y(1150), X(338), Y(1186)], fill=(80, 70, 60))
+            dr.polygon([(X(290), Y(1150)), (X(370), Y(1150)), (X(350), Y(1090)), (X(310), Y(1090))], fill=(240, 210, 140) if lit > 0.5 else (90, 80, 70))
         # des étagères, des cadres, des cartons le long du chemin : on sent la distance
         x = 1300.0
         k = 0
@@ -883,9 +921,9 @@ class Machine(Chapter):
         on = self.lit(t) > 0.5
         dr.rectangle([X(swx - 70), Y(FLOOR - 20), X(swx + 70), Y(FLOOR)], fill=(60, 60, 70))
         dr.rectangle([X(swx - 44), Y(FLOOR - 36), X(swx + 44), Y(FLOOR - 20)], fill=(90, 220, 120) if on else (200, 60, 60))
-        if t < 6.0 or t > self.t_off - 0.6:
+        if t < 5.2 or self.t_off - 0.6 < t < self.t_bounce_on - 0.9:
             f = base.font(int(34 * S))
-            dr.text((X(swx + 90), Y(FLOOR - 70)), "LIGHT SWITCH", fill=(235, 235, 245), anchor="lm", font=f, stroke_width=int(P(3)), stroke_fill=(10, 10, 14))
+            dr.text((X(swx), Y(FLOOR - 62)), "LIGHT SWITCH", fill=(235, 235, 245), anchor="mb", font=f, stroke_width=int(P(3)), stroke_fill=(10, 10, 14))
         # la bascule
         a = tr["seesaw"].at(t)[2]
         sx, sy = self.ss_piv
@@ -935,15 +973,20 @@ class Machine(Chapter):
         if vis(px - 200, px + 200):
             by = tr["bucket"].at(t)[1]
             py = tr["plat"].at(t)[1]
-            dr.rectangle([X(px - 6), Y(CEIL), X(px + 6), Y(self.pul_y)], fill=(80, 80, 96))
+            # le pied de la poulie, posé au sol, entre le seau et la plateforme
+            dr.rectangle([X(px - 7), Y(self.pul_y), X(px + 7), Y(FLOOR)], fill=(80, 80, 96))
+            dr.rectangle([X(px - 60), Y(FLOOR - 14), X(px + 60), Y(FLOOR)], fill=(80, 80, 96))
             circle(dr, X(px), Y(self.pul_y), P(70), (110, 110, 130))
             circle(dr, X(px), Y(self.pul_y), P(18), (60, 60, 70))
-            dr.line([(X(px - 70), Y(self.pul_y)), (X(px - 70), Y(by))], fill=(200, 200, 210), width=max(1, int(P(3))))
-            dr.line([(X(px + 70), Y(self.pul_y)), (X(px + 70), Y(py - 90))], fill=(200, 200, 210), width=max(1, int(P(3))))
-            dr.line([(X(px + 70), Y(py - 90)), (X(px + 22), Y(py))], fill=(200, 200, 210), width=max(1, int(P(3))))
-            dr.line([(X(px + 70), Y(py - 90)), (X(px + 138), Y(py))], fill=(200, 200, 210), width=max(1, int(P(3))))
-            dr.polygon([(X(px - 115), Y(by)), (X(px - 25), Y(by)), (X(px - 35), Y(by + 80)), (X(px - 105), Y(by + 80))], fill=(150, 100, 70))
-            dr.rectangle([X(px + 20), Y(py), X(px + 140), Y(py + 14)], fill=(150, 150, 160))
+            lw = max(1, int(P(3)))
+            rope = (200, 200, 210)
+            dr.line([(X(px - 70), Y(self.pul_y)), (X(px - 70), Y(by))], fill=rope, width=lw)
+            dr.line([(X(px + 70), Y(self.pul_y)), (X(px + 70), Y(py - 90))], fill=rope, width=lw)
+            dr.line([(X(px + 70), Y(py - 90)), (X(px + 24), Y(py))], fill=rope, width=lw)
+            dr.line([(X(px + 70), Y(py - 90)), (X(px + 116), Y(py))], fill=rope, width=lw)
+            dr.polygon([(X(px - 145), Y(by)), (X(px - 25), Y(by)), (X(px - 35), Y(by + 66)), (X(px - 135), Y(by + 66))], fill=(150, 100, 70))
+            dr.rectangle([X(px - 145), Y(by - 4), X(px - 25), Y(by + 4)], fill=(120, 80, 56))
+            dr.rectangle([X(px + 20), Y(py), X(px + 200), Y(py + 14)], fill=(150, 150, 160))
         # le pendule de Newton
         if vis(self.cr_x0 - 100, self.cr_x0 + 600):
             ty = self.table_y
