@@ -130,7 +130,7 @@
    "name": "doubling_proto",
    "date": "2026-11-02",
    "theme": "doubling",
-   "config": "configs/doubling_proto.json (branche proto-doubling)",
+   "config": "configs/doubling_proto.json",
    "role": "owner",
    "hook_text": "How Many Bounces To The Sun?",
    "duration_s": 64.67,
@@ -157,7 +157,8 @@
     "comments": null,
     "shares": null,
     "measured_at": null
-   }
+   },
+   "script": "src/stories/doubling.py (branche proto-doubling)"
   }
  ],
  "themes": [
