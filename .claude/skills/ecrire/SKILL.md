@@ -1,87 +1,99 @@
 ---
 name: ecrire
-description: Ecrire une video : le format complet d'une config pour src/engine/render.py (scenes, narration, elements dessines, mouvements, accroche, voix, sous-titres, filigrane), le rendu test, la relecture independante avant publication.
+description: Ecrire une video liste de Bounce de A a Z - choix du sujet, structure en six chapitres, script sur src/sim/listkit.py, regles d'image, de son et de rythme apprises des videos precedentes, reglage jusqu'a ce que le controle automatique ne trouve plus rien. A suivre avant la skill juger.
 ---
 
-# Écrire une vidéo
+# Écrire une vidéo liste
 
-Cette skill dit comment une histoire devient une config que le moteur rend. Elle ne dit
-pas quelle histoire écrire, et ne le dira jamais : l'identité du compte est dans
-`CLAUDE.md`, le reste est laissé à celui qui écrit.
+Une liste est une vidéo d'une minute : une accroche, six situations courtes jouées en
+simulation physique réelle, chacune avec sa chute, et la sixième qui retourne la série.
+Cette skill dit comment l'écrire pour qu'elle passe les juges du premier coup. Elle ne
+dit pas quel sujet choisir. Chaque règle ci-dessous vient d'un défaut qui a fait recaler
+une vidéo ou partir des spectateurs ; le contrôle automatique (`src/tools/controle.py`)
+en vérifie la plupart, la skill `juger` le reste.
 
-## La config
+## 1. Le sujet
 
-Un fichier `configs/<name>.json`. Toutes les clés ont une valeur par défaut dans
-`src/engine/render.py` (`DEFAULTS`) ; seules celles qui changent s'écrivent.
+- Une liste de six situations du même genre, que Bounce essaie l'une après l'autre ;
+  les cinq premières ratent à cause de ses rebonds, la sixième réussit grâce à eux.
+- Le test de nouveauté : le sujet ne doit décrire aucune liste sortie dans les 14
+  derniers jours (`themes[]` de ce dépôt), et aucune situation ne doit reprendre un thème
+  de simulation sorti dans les 14 derniers jours (`themes[]` de `bouncefactory`).
+- Le retournement ne doit pas être celui que les commentaires de la liste précédente ont
+  deviné ou réclamé : s'ils l'ont écrit, le spectateur l'attend.
+- L'accroche : une question de deux à six mots qui nomme Bounce, jamais déjà utilisée
+  (le contrôle la cherche dans les historiques des deux dépôts).
 
-| clé | rôle |
+## 2. La structure et le rythme
+
+| règle | valeur |
 |---|---|
-| `name` | nom de la vidéo, celui du mp4 |
-| `voice`, `voice_length` | voix du narrateur : une voix Kokoro (par défaut celle du compte, `am_fenrir`) ou un modèle piper (`langue_REGION-nom-qualité`) ; vitesse (1.0 normal, plus grand = plus lent) |
-| `hook_text` | l'accroche, écrite en haut de l'image et lue en premier ; vide = pas d'accroche |
-| `hook_voice` | `false` pour l'afficher sans la lire |
-| `bg` | couleur de fond `[r, g, b]` ; une scène peut avoir la sienne |
-| `subtitles`, `sub_words`, `sub_y`, `sub_size` | sous-titres de la narration, nombre de mots par morceau, position, taille |
-| `watermark` | nom du compte en filigrane, presque transparent |
-| `scene_pause_s`, `end_hold_s` | pause après chaque narration, tenue de la dernière image |
-| `persist` | éléments présents pendant toute la vidéo (décor) |
-| `scenes` | la suite des scènes |
+| durée totale | 60 à 66 s |
+| première chute | avant 6 s : la moitié des spectateurs partent dans les six premières secondes |
+| un chapitre | 5,5 à 12,5 s ; la chute au moins 2 s après la coupe |
+| répliques du narrateur par chapitre | le titre dès la coupe, au plus une phrase de mécanique avant la chute, une phrase après |
+| titre de chapitre à l'écran | le rang et le nom, en capitales (la progression retient) |
 
-Une **scène** : `narration` (le texte lu, et sous-titré), `elements` (ce qui est dessiné),
-et au besoin `pause_after`, `min_s`, `bg`, `voice`. Sa durée est celle de sa narration
-plus la pause ; la première scène commence pendant l'accroche.
+- **Rien avant l'action.** L'image 0 montre Bounce déjà en l'air et l'objet du premier
+  chapitre déjà menacé. Pas de phrase de présentation : l'accroche nomme Bounce, l'image
+  montre qui il est.
+- **La voix annonce, l'image tranche.** Le titre est dit avant la chute ; la phrase de
+  chute vient après le tampon, jamais à sa place.
+- **Une phrase ne déborde jamais sur le chapitre suivant**, et la coupe attend la fin de
+  la phrase et de la réplique de Bounce (le moteur le fait ; ne pas le contourner).
+- **Chaque chapitre a sa mécanique.** Deux chapitres d'une même vidéo ne tombent pas de
+  la même façon : deux tours qui s'effondrent sont une seule mécanique.
+- **Le gag se comprend sans le son.** La cause (ses rebonds) et la conséquence se voient.
+  Si la chute repose sur une règle que l'image ne montre pas d'elle-même (un score, un
+  camp, une limite), un élément visible la montre : un tableau, une couleur, une ligne.
+- **La réplique de Bounce** : une par vidéo au plus, en réponse à une question explicite
+  du narrateur, dans la scène de la question, avant la coupe. Ailleurs il ne dit son nom
+  qu'à ses rebonds.
+- **Après la chute, la scène vit** : Bounce se pose, les débris roulent et s'arrêtent, un
+  personnage réagit. Jamais 1,5 s d'image immobile.
 
-Un **élément** :
+## 3. L'image
 
-| clé | rôle |
-|---|---|
-| `type` | `circle`, `ellipse`, `rect`, `poly`, `line`, `text`, `bounce` (le personnage : son dessin, sa voix et sa couleur ne se règlent pas) |
-| `x`, `y` | position, en fraction de la largeur et de la hauteur de l'image |
-| `r`, `w`, `h` | taille, en fraction de la largeur |
-| `points` | pour `poly` et `line` : sommets relatifs à `(x, y)`, en fraction de la largeur |
-| `text`, `size`, `stroke` | pour `text` : le texte, sa taille, son contour |
-| `color`, `outline`, `width` | couleur de remplissage, contour, épaisseur |
-| `t0`, `t1` | apparition et disparition, en secondes depuis le début de la scène |
-| `fade` | durée du fondu d'entrée et de sortie |
-| `to`, `move`, `ease` | propriétés à atteindre (`x`, `y`, `r`, `w`, `h`, `size`, `angle`, `scale`), fenêtre du mouvement `[début, fin]`, courbe (`inout`, `in`, `out`, `linear`) |
-| `bob`, `bob_s` | petite oscillation verticale, amplitude et période |
-| `swing`, `swing_s` | oscillation de l'angle, amplitude en degrés et période |
-| `expr`, `expr_at` | pour `bounce` : visage (`calm`, `shock`, `win`, `lose`), et changements datés `[[t, expr], …]` |
-| `hops` | pour `bounce` : sauts sur place `{"h": hauteur, "period": durée d'un saut, "t0", "t1"}` ; à chaque retombée il dit son nom et fait sa tête de choc |
-| `say` | pour `bounce` : instants où il dit son nom en dehors des sauts |
-| `angle`, `scale` | rotation en degrés, échelle |
-| `z` | ordre de dessin |
+- **Nuit partout**, fond sombre, une source de lumière par scène autant que possible.
+- **Formes primitives**, personnages sans visage, rien d'illustré : si une chose a besoin
+  de détails pour se lire, c'est le mauvais objet.
+- **Bounce grand et franc** : rayon d'au moins 60 px, sauts d'au moins deux diamètres,
+  dans le tiers inférieur de l'image mais jamais sous les sous-titres au moment d'une chute.
+- **Tout reste dans le cadre** : Bounce, les objets qui tombent, les éclaboussures, le
+  point d'impact. Sortir du cadre n'est permis que si c'est le gag (`exit_ok`).
+- **Rien ne traverse un solide.** Tout objet que Bounce peut toucher a une collision
+  réelle **dès la première image**, pas seulement au moment scripté de la chute, et figure
+  dans `solids()`. Les personnages en font partie. Un objet qui doit tomber à cause de lui
+  tombe parce qu'il le touche ou parce que ses retombées le secouent, jamais parce que le
+  temps est écoulé.
+- **Le tampon et les sous-titres ne couvrent jamais Bounce ni l'objet de la chute** :
+  choisir `stamp_y` pour chaque chapitre selon où se joue sa chute.
+- Les décors des chapitres d'une même vidéo se distinguent au premier coup d'œil
+  (couleur dominante, lieu).
 
-Un personnage ou un objet composé se fait en plusieurs éléments qui bougent ensemble.
-Si le moteur ne sait pas dessiner ce qu'une histoire demande, on l'étend dans
-`src/engine/` : une fonction de plus, testée sur `tests/rendu_test.json`, sans casser
-les configs existantes.
+## 4. Le son
 
-## La narration et l'accroche
+- Les deux voix seulement : le narrateur (Kokoro `am_fenrir`) et Bounce, au même niveau.
+- Bounce se tait pendant que le narrateur parle (le moteur le garantit).
+- Jamais plus de 1,6 s sans voix.
 
-- La narration est lue mot pour mot ; elle s'écrit pour l'oreille : phrases courtes, un
-  événement par phrase, pas de parenthèses.
-- Les sous-titres découpent la narration aux ponctuations : une ponctuation bien placée
-  fait un sous-titre lisible.
-- L'accroche est une vraie question ou une promesse que la vidéo tient jusqu'au bout.
-  Jamais une accroche déjà utilisée (vérifier `hook_text` dans `history.json`).
-- Ce que la voix dit et ce que l'image montre avancent ensemble : une image fixe sous
-  une longue narration fait décrocher.
+## 5. Le script
 
-## Rendu test
+- Un fichier `src/stories/<sujet>.py` : un chapitre par classe, sur `src/sim/listkit.py`
+  (son en-tête décrit le contrat : `setup`, `on_land`, `after`, `snapshot`, `draw`,
+  `solids`, et les attributs `title`, `stamp`, `stamp_y`, `mood`, `hold_s`, `exit_ok`) ;
+  `CHAPTERS` et `Sim(StorySim)` en bas, comme les listes existantes.
+- Une config `configs/<name>.json` : `name`, `theme`, `seed`, `hook_text`.
+- Les réglages qui décident du moment des chutes sont dans `DEFAULTS`, pour pouvoir les
+  ajuster sans réécrire les chapitres.
 
-`--simulate` d'abord : il synthétise les voix et donne la durée de chaque scène, sans
-encoder. Puis le rendu, et des images extraites avec ffmpeg (la première, une toutes les
-2 à 3 secondes, la fin) : l'accroche ne cache pas la scène, les sous-titres sont lisibles
-sur téléphone, rien ne déborde de l'image.
+## 6. Le réglage
 
-## Relecture
-
-Avant publication, la vidéo est confiée à un agent séparé (outil Agent) qui ne l'a pas
-écrite. On ne lui donne ni la config, ni l'intention de l'auteur : seulement l'objectif
-du compte (des vues, donc du temps de visionnage), les images extraites et le texte de
-la narration dans l'ordre. Sa question décisive : un inconnu qui tombe sur cette vidéo
-reste-t-il jusqu'au bout, et a-t-il envie de la commenter ou de la partager ? Il dit à
-quel moment il aurait décroché, si l'identité du compte est tenue, et si la fin se
-devinait. Verdict : passe ou recalée, avec ses raisons, dans `notes`. Une vidéo recalée
-est retravaillée ou remplacée ; un créneau ne reste jamais vide.
+1. `python3 src/tools/controle.py configs/<name>.json` : il simule, place les voix et
+   vérifie les règles mesurables. On corrige le script, les réglages ou la graine jusqu'à
+   zéro défaut bloquant. On ne rend rien avant.
+2. Le rendu : `python3 src/stories/<sujet>.py configs/<name>.json` (environ dix minutes).
+3. `python3 src/tools/controle.py configs/<name>.json --post` : mouvement, nuit,
+   silences, durée, et les planches pour les juges dans `output/controle_<name>/`.
+   Zéro défaut bloquant, sinon retour à l'étape 1.
+4. Les juges : skill `juger`.

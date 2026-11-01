@@ -12,20 +12,24 @@ repris à l'identique de `bouncefactory` dans `src/engine/bounce.py`, jamais ré
 
 ## État du projet — à lire en premier
 
-**Phase 1 : prototypes en session, rien n'est encore publié par ce dépôt.**
+**Phase 2 : le format liste est trouvé ; on industrialise sa fabrication.**
 
-- 28/10/2026 : dépôt créé pour un second compte d'histoires sans lien avec Bounce ;
-  moteur de rendu écrit et testé (`src/engine/`), règles et skills en place.
-- 31/10/2026, décidé par le propriétaire : **le dépôt change de but**. Pas de second
-  compte : les histoires ont Bounce pour héros et sortent sur @bouncefactory0, comme
-  nouveau format à côté des simulations. Raisons : partir de 10 000 abonnés et d'un
-  visage connu plutôt que de zéro ; la narration est le format de rétention le plus
-  solide ; le personnage est l'actif à construire (attachement, commentaires, suite).
-  **Voix du narrateur : Kokoro, voix `am_fenrir`** (`src/engine/voice.py`). Langue :
-  l'anglais, celle du compte. Premier prototype rendu le jour même
-  (`configs/lighthouse_20261031.json`), relu, montré au propriétaire, non publié : jugé trop lent, Bounce trop fort dans le
-  mix, histoire pas assez intéressante. Deuxième prototype choisi par le propriétaire
-  parmi trois pitchs : le championnat de bowling (`configs/bowling_20261031.json`).
+- 28/10/2026 : dépôt créé pour un second compte d'histoires sans lien avec Bounce.
+- 31/10/2026, décidé par le propriétaire : pas de second compte, les histoires ont Bounce
+  pour héros et sortent sur @bouncefactory0. Narrateur : Kokoro `am_fenrir`. Trois
+  prototypes rejetés (des formes déplacées comme des diapositives, puis une simulation
+  commentée : « le même format en moins bien »).
+- 31/10/2026 : **le format liste**, choisi par le propriétaire : une accroche, six
+  situations courtes en simulation physique réelle, chacune avec sa chute, la sixième qui
+  retourne la série, une minute. Première vidéo publiée le soir même : bien au-dessus de
+  la médiane du compte, 41 % de durée moyenne regardée, 29 % de visionnage complet, et la
+  seule vidéo du compte à recevoir l'« Additional Reward » de TikTok (RPM environ dix fois
+  celui des autres). Défaut mesuré : 43 % des spectateurs partent avant 6 s.
+- 01/11/2026 : deuxième liste publiée ; décidé par le propriétaire : **ce que l'auteur
+  apprend ne reste pas dans sa tête**. Les règles vont dans les skills `ecrire` et
+  `juger`, les vérifications mesurables dans `src/tools/controle.py`, pour qu'un run sans
+  session produise une vidéo que le propriétaire n'a rien à reprendre. Le circuit : le
+  contrôle automatique avant et après rendu, puis trois juges indépendants.
 
 Décidé, et qui ne se rediscute pas sans le propriétaire :
 - **Bounce ne dit jamais que son nom**, de sa voix du premier compte ; le narrateur
@@ -42,19 +46,21 @@ Décidé, et qui ne se rediscute pas sans le propriétaire :
   est un ressort, pas la fin obligée : certaines histoires finissent sur une image, un
   geste, une conséquence, sans qu'il parle. Deux histoires qui tombent sur la même chute
   apprennent la recette au spectateur.
-- **Rien d'immobile** : aucun plan de plus de trois secondes sans mouvement, quelque chose
-  bouge à chaque seconde, les histoires visent 40 à 45 secondes.
+- **Le format liste** : une accroche, six situations courtes en simulation physique
+  réelle, chacune avec sa chute, la sixième qui retourne la série, 60 à 66 secondes, la
+  première chute avant 6 secondes. Le détail est dans la skill `ecrire`.
+- **Rien d'immobile** : jamais 1,5 seconde sans mouvement, aucune présentation avant
+  l'action.
+- **La mémoire de l'auteur ne compte pas** : tout défaut trouvé par un juge ou par le
+  propriétaire devient, dans le même commit que sa correction, une vérification dans
+  `src/tools/controle.py` ou une règle dans une skill.
 
-À trancher par le propriétaire, après les prototypes :
-1. **Le ton du narrateur** (conte qui prend Bounce au sérieux, ou commentateur agacé)
-   et **le monde** des histoires (celui des thèmes de simulation, ou le sien).
-2. **La part des créneaux** : le compte ne distribue pas plus de 5 vidéos par jour ;
-   combien reviennent aux histoires, et à partir de quand.
-3. **Le protocole du test** : combien d'histoires, comparées à quoi (la médiane M du
-   compte, lue dans le `history.json` de `bouncefactory`), et le seuil qui dira si le
-   format entre dans la routine quotidienne.
-4. Quand il y entre : la routine du matin de ce dépôt (ou son intégration dans celle de
-   `bouncefactory`), et le juge.
+À trancher par le propriétaire :
+1. **La part des créneaux** : combien de listes par jour sur les cinq créneaux du compte.
+2. **L'automatisation** : la routine qui écrit, contrôle, fait juger et publie une liste
+   chaque nuit (architecture à plusieurs routines décrite en session le 31/10 : un
+   gérant qui attribue les créneaux, une routine par format, un juge commun).
+3. **YouTube Shorts et Instagram Reels** : comptes à créer et relier à Metricool.
 
 Une session qui reprend le projet commence par cette section, propose, et laisse le
 propriétaire trancher. Quand une décision est prise, elle s'écrit ici et la liste se
@@ -112,7 +118,10 @@ du moteur, sans contenu : il ne sert pas de modèle.
 | `history.json` | `_schema`, `era_start`, `videos`, `themes`, `daily`, `veille`, `notes` | le run |
 | `configs/`, `captions/` | recettes et captions des vidéos, versionnées | le run |
 | `output/` | les mp4, le temps de publier ; **jamais versionnés** | le run |
-| `src/engine/` | le moteur : `render.py` (rendu), `voice.py` (narrateur, mixage), `bounce.py` (le personnage, repris de bouncefactory) | — |
+| `src/engine/` | `voice.py` (narrateur Kokoro, mixage), `bounce.py` (le personnage, repris de bouncefactory) ; `render.py`, le premier moteur à diapositives, n'est plus utilisé | — |
+| `src/sim/` | `base.py` (simulation, voix, rendu, repris de bouncefactory et étendu au narrateur), `chapters.py` (les chapitres enchaînés), `listkit.py` (la base d'un chapitre et son contrat) | — |
+| `src/stories/` | une liste par fichier | le run |
+| `src/tools/controle.py` | le juge automatique, avant et après rendu | — |
 | `src/tools/coherence.py` | détecteur d'incohérences | — |
 
 `history.json → videos[]`, une entrée par vidéo produite : `name, date, theme, config,
@@ -161,7 +170,8 @@ Ce qui a été appris sur l'autre compte, et qui vaut ici sans rien imposer de l
 
 | skill | étape | contenu |
 |---|---|---|
-| `ecrire` | écrire | le format d'une config, ce que le moteur sait dessiner, le rendu test, la relecture |
+| `ecrire` | écrire | le sujet, la structure, les règles d'image, de son et de rythme, le script, le réglage |
+| `juger` | juger | le contrôle automatique, les trois juges, le verdict, l'apprentissage du circuit |
 | `publier` | publier | hébergement du mp4, post Metricool, créneaux |
 | `mesure` | mesurer | champs Metricool, rapprochement avec `history.json`, `daily` |
 | `veille` | hebdo | hashtags du moment, frontière des formats saturés de la niche |
