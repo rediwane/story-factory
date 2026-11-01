@@ -88,7 +88,12 @@ class CardHouse(Chapter):
                 if c["x"] < 30 or c["x"] > 1040:
                     c["vx"] = -c["vx"] * 0.5; c["x"] = min(1040, max(30, c["x"]))
                 L2 = c["L"] / 2
-                if settle_body(c, self.ground(c), math.pi, dt, [(-L2, -5), (L2, -5), (L2, 5), (-L2, 5)]) and c["rest"]:
+                grounded = settle_body(c, self.ground(c), math.pi, dt, [(-L2, -5), (L2, -5), (L2, 5), (-L2, 5)])
+                if not grounded and abs(c["vy"]) < 80:
+                    # appuyée sur une autre carte : elle glisse et se couche, elle ne tient pas en équilibre
+                    target = round(c["a"] / math.pi) * math.pi
+                    c["a"] += max(-2.5 * dt, min(2.5 * dt, target - c["a"]))
+                if grounded and c["rest"]:
                     b = int(c["x"] // 40)
                     if self.TX0 < c["x"] < self.TX1:
                         self.heap[b] = self.heap.get(b, 0.0) + 7.0
@@ -580,7 +585,7 @@ class Train(Chapter):
                 c["vy"] += self.g * dt
                 c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["w"] * dt
                 c["x"] = min(self.TX1 - 70, max(self.RAIL0 + 10, c["x"]))
-                settle_body(c, self.TOP, math.pi / 2, dt, self.car_shape(c))
+                settle_body(c, self.TOP, math.pi, dt, self.car_shape(c))     # sur le flanc ou à l'envers, jamais debout
             separate(self.fall, self.car_shape)
             if rest == len(self.fall) and not self.payoff:
                 self.finish("DERAILED")

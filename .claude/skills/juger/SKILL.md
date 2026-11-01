@@ -21,8 +21,10 @@ premières secondes), `chute_<n>.png` (neuf images autour de chaque chute), `cou
 
 Trois agents séparés (outil Agent), lancés **en même temps**, qui n'ont pas écrit la
 vidéo. On leur donne l'objectif du compte, l'identité de Bounce en trois lignes (une
-balle rose au visage blasé, qui ne dit que son nom, qui n'arrête jamais de rebondir et se
-met tout seul dans le pétrin), le chemin du mp4 et des planches. On ne leur donne pas
+balle rose au visage blasé, qui dit son nom à ses rebonds et réagit d'un mot à la fin de
+la vidéo, « Yes! » ou « Oh no. » selon l'issue, comme dans toutes les vidéos du compte ;
+qui n'arrête jamais de rebondir et se met tout seul dans le pétrin), le chemin du mp4 et
+des planches. On ne leur donne pas
 l'intention de l'auteur. Chacun rend : PASSE ou RECALÉE, puis ses défauts classés
 **bloquant** ou **mineur**, chacun avec son instant et ce qu'il voit.
 
@@ -73,12 +75,21 @@ niveaux), les planches de coupe. Il vérifie :
   dévoile la chute avant qu'elle arrive, est un défaut ;
 - la fin : le dernier son finit avant la dernière image.
 
-## Le verdict
+## Le verdict, et quand on s'arrête
 
-- **Publiable** : contrôle automatique à zéro et trois PASSE sans défaut bloquant.
-- Un défaut **mineur** se corrige s'il est simple ; sinon il est noté et la vidéo part.
-- Un défaut **bloquant** : on corrige, on repasse le contrôle (avant et après rendu), puis
-  on relance **les trois juges** si l'image a changé, seulement le juge concerné sinon.
+Trois juges exigeants trouveront toujours quelque chose : le circuit a une fin.
+
+- **Bloquant** = un bug qu'un spectateur verrait ou entendrait (objet qui traverse, se
+  téléporte, mot coupé, voix l'une sur l'autre), ou une chute qu'on ne comprend pas sans le
+  son. Tout le reste est **mineur**. Un « bloquant » qui contredit l'identité du compte
+  (ce que fait `base.py` dans toutes les vidéos) n'en est pas un : la consigne du juge
+  est corrigée.
+- **Publiable** : contrôle automatique à zéro et aucun défaut bloquant.
+- **Un défaut mineur ne fait jamais rerendre.** Il devient, dans le même commit, une
+  vérification du contrôle ou une règle de la skill `ecrire`, pour la vidéo suivante.
+- **Au plus un rerendu par vidéo**, pour les défauts bloquants. Après ce rerendu, le
+  contrôle passe, les juges repassent une fois, et la vidéo part ; ce qui reste est écrit
+  dans `notes`.
 - Les verdicts et leurs raisons vont dans `notes` de `history.json`.
 
 ## Ce qui rend le circuit meilleur à chaque vidéo
