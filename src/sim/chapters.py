@@ -43,7 +43,7 @@ class StorySim:
         # l'horloge du narrateur : une phrase ne commence qu'après la précédente ; le
         # chapitre ne se ferme pas avant que ses phrases soient dites
         import audio_kit as ak
-        hook = ak.hook_voice(cfg["hook_text"]) if (cfg["hook_voice"] and cfg["hook_text"]) else None
+        hook = base.hook_audio(cfg)
         self.narr_free = (0.15 + len(hook) / ak.SR + 0.3) if hook is not None else 0.3
         self._open(0)
 

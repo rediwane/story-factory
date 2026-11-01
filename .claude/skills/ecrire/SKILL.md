@@ -28,7 +28,7 @@ en vérifie la plupart, la skill `juger` le reste.
 
 | règle | valeur |
 |---|---|
-| durée totale | 60 à 66 s |
+| durée totale | 61 à 66 s : strictement plus d'une minute, sinon TikTok ne rémunère pas la vidéo |
 | première chute | avant 6 s : la moitié des spectateurs partent dans les six premières secondes |
 | un chapitre | 5,5 à 12,5 s ; la chute au moins 2 s après la coupe |
 | répliques du narrateur par chapitre | le titre dès la coupe, au plus une phrase de mécanique avant la chute, une phrase après |

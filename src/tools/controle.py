@@ -27,7 +27,7 @@ import base  # noqa: E402
 from listkit import penetration, disc_rect_overlap, SCENE_TOP, ZONES_UI, sat_depth  # noqa: E402
 
 SEUILS = {
-    "duree_min": 60.0, "duree_max": 66.0,          # une minute, sans s'étirer
+    "duree_min": 61.0, "duree_max": 66.0,          # plus d'une minute (sinon pas de rémunération TikTok), sans s'étirer
     "premiere_chute_max": 6.0,                      # on décroche à 0:01 : la première chute avant 6 s
     "chapitre_min": 5.5, "chapitre_max": 12.5,
     "chute_locale_min": 2.0,                        # une chute instantanée ne se comprend pas

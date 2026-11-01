@@ -217,13 +217,23 @@ def simulate(theme, cfg):
 
 
 # ------------------------------------------------------------------ narration
+def hook_audio(cfg):
+    """La voix de l'accroche : la voix d'accroche du compte, ou celle du narrateur si la
+    config le demande (`hook_narrator`)."""
+    if not (cfg["hook_voice"] and cfg["hook_text"]):
+        return None
+    if cfg.get("hook_narrator"):
+        return narr_voice.say(cfg["hook_text"], cfg["narrator_voice"], cfg["narrator_length"])
+    return ak.hook_voice(cfg["hook_text"])
+
+
 def build_narration(sim, cfg):
     """Synthétise les répliques du narrateur (sim.lines = [(t_declencheur, texte, cle)]) et
     les place dans le temps : jamais deux à la fois, jamais sous l'accroche, au plus tôt
     à leur déclencheur. Renvoie (narr, replies) : narr = [{start, end, text, key, audio}],
     replies = [t] les instants où Bounce répond (sim.replies = [(cle, delai)])."""
     lines = sorted(getattr(sim, "lines", []), key=lambda l: l[0])
-    hook = ak.hook_voice(cfg["hook_text"]) if (cfg["hook_voice"] and cfg["hook_text"]) else None
+    hook = hook_audio(cfg)
     cfg["_hook_voice"] = hook
     prev_end = (0.15 + len(hook) / ak.SR + 0.3) if hook is not None else 0.3
     narr = []
@@ -434,7 +444,7 @@ def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=()
     if cfg["hook_voice"] and cfg["hook_text"]:
         v = cfg.get("_hook_voice")
         if v is None:
-            v = ak.hook_voice(cfg["hook_text"])
+            v = hook_audio(cfg)
         if v is not None:
             n = min(len(v), len(buf))
             duck = np.ones(len(buf))
