@@ -442,9 +442,13 @@ class Machine(Chapter):
         # le début du looping : le moment où la bille passe le point le plus bas avant de monter
         lowest = max(range(len(C.t)), key=lambda k: C.y[k] if C.t[k] >= t0c else -1e9)
         self.loop_t0 = C.t[lowest] - 0.25
+        # le sommet du looping : la bille à l'envers
+        top = min((k for k in range(len(C.t)) if C.t[k] >= C.t[lowest]), key=lambda k: C.y[k])
+        self.loop_top_t = C.t[top]
         # le saut par-dessus le vide, et la réception sur la suite de la piste
         vx, vy = math.cos(ang) * v, math.sin(ang) * v
         x, y = pts[-1]
+        self.jump_t0 = t
         y_rx = y + 140
         t, x, y, vx, vy, ra = fly(C, t, x, y, vx, vy, lambda xx, yy, a, b: b > 0 and yy >= y_rx, ra=ra, spin=vx / RB)
         self.gap = (pts[-1][0], x)
@@ -712,6 +716,8 @@ class Machine(Chapter):
             (self.doms[-2]["t_c"] - 0.15, "The big one.", "big"),
             (m[4] + 0.6, "This part took him a week.", "week"),
             (m[5] + 0.4, "He never tested the loop.", "loop"),
+            (self.loop_top_t - 0.15, "Upside down.", "upside"),
+            (self.jump_t0 + 0.02, "There's no track.", "gap"),
             (self.jump_t1 + 0.05, "It works.", "works"),
             (m[7] + 0.6, "All the way back.", "back"),
             (self.drop_t0 - 2.4, "Almost there.", "almost"),
