@@ -34,6 +34,14 @@ en vérifie la plupart, la skill `juger` le reste.
 | répliques du narrateur par chapitre | le titre dès la coupe, au plus une phrase de mécanique avant la chute, une phrase après |
 | titre de chapitre à l'écran | le rang et le nom, en capitales (la progression retient) |
 
+- **Ce que dit la voix est à l'image au moment où elle le dit.** Une phrase qui pose le
+  gag (un objet, une solution évidente, un enjeu) tombe pendant que cet objet est à
+  l'écran : l'installation d'abord, la révélation ensuite.
+- **Jamais plus de cinq secondes sans événement nouveau** : un passage qui répète la même
+  action (une bille qui descend, un trajet) se raccourcit, se filme autrement (plan large,
+  ralenti sur le moment fort) ou porte une phrase.
+- **Le personnage reste à l'écran.** Si l'action s'éloigne de Bounce, on le garde visible
+  (un coin de l'image, un retour vers lui) : sans lui, ce n'est plus une vidéo du compte.
 - **Rien avant l'action.** L'image 0 montre Bounce déjà en l'air et l'objet du premier
   chapitre déjà menacé. Pas de phrase de présentation : l'accroche nomme Bounce, l'image
   montre qui il est.
