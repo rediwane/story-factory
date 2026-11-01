@@ -1,149 +1,184 @@
 {
-  "_schema": "videos : une entrée par vidéo produite. themes : une entrée par thème (une forme d'histoire décrite en une phrase), jamais supprimée. daily : métriques de compte par jour. veille : dernière veille hebdomadaire. notes : journal daté, une entrée par décision ou incident. era_start : date de la première vidéo publiée, vide tant que rien n'est publié.",
-  "era_start": "2026-10-31",
-  "videos": [
-    {
-      "name": "six_jobs_20261031",
-      "date": "2026-10-31",
-      "theme": "six_jobs",
-      "config": "configs/six_jobs_20261031.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Keep A Job?",
-      "duration_s": 61.15,
-      "hashtags": [
-        "#bouncingball",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/six_jobs_20261031.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-10-31T21:00:00+01:00",
-      "media_url": "https://h.uguu.se/yECsUvDU.mp4",
-      "metricool_post_id": 412415155,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702925099485203734",
-      "status": "published",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      }
-    },
-    {
-      "name": "halloween_20261031",
-      "date": "2026-10-31",
-      "theme": "halloween",
-      "config": "configs/halloween_20261031.json",
-      "role": "owner",
-      "hook_text": "It Only Says One Word",
-      "duration_s": 69.5,
-      "hashtags": [
-        "#halloween",
-        "#horror",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/halloween_20261031.md",
-      "slot": "22:35",
-      "scheduled_time": "2026-10-31T22:35:00+01:00",
-      "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
-      "metricool_post_id": 412482253,
-      "post_url": null,
-      "status": "scheduled",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      }
-    },
-    {
-      "name": "six_sports_20261101",
-      "date": "2026-11-01",
-      "theme": "six_sports",
-      "config": "configs/six_sports_20261101.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Win At Anything?",
-      "duration_s": 61.72,
-      "hashtags": [
-        "#bouncingball",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/six_sports_20261101.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-01T14:30:00+01:00",
-      "media_url": "https://n.uguu.se/KtpNKcTg.mp4",
-      "metricool_post_id": 412898560,
-      "post_url": null,
-      "status": "scheduled",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      }
-    }
-  ],
-  "themes": [
-    {
-      "name": "six_jobs",
-      "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
-      "state": "actif",
-      "created": "2026-10-31"
-    },
-    {
-      "name": "halloween",
-      "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
-      "state": "actif",
-      "created": "2026-10-31"
-    },
-    {
-      "name": "six_sports",
-      "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
-      "state": "actif",
-      "created": "2026-11-01"
-    }
-  ],
-  "daily": [],
-  "veille": {
-    "last_check": null,
-    "hashtags": [],
-    "formats_satures": "",
-    "sources": [],
-    "confiance": ""
+ "_schema": "videos : une entrée par vidéo produite. themes : une entrée par thème (une forme d'histoire décrite en une phrase), jamais supprimée. daily : métriques de compte par jour. veille : dernière veille hebdomadaire. notes : journal daté, une entrée par décision ou incident. era_start : date de la première vidéo publiée, vide tant que rien n'est publié.",
+ "era_start": "2026-10-31",
+ "videos": [
+  {
+   "name": "six_jobs_20261031",
+   "date": "2026-10-31",
+   "theme": "six_jobs",
+   "config": "configs/six_jobs_20261031.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Keep A Job?",
+   "duration_s": 61.15,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_jobs_20261031.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-10-31T21:00:00+01:00",
+   "media_url": "https://h.uguu.se/yECsUvDU.mp4",
+   "metricool_post_id": 412415155,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702925099485203734",
+   "status": "published",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   }
   },
-  "notes": [
-    {
-      "date": "2026-10-28",
-      "note": "Phase 0 : dépôt créé, moteur de rendu écrit et testé (tests/rendu_test.json), règles et skills en place. Genre décidé par le propriétaire : histoires racontées par une voix de synthèse sur des dessins simples animés. Identité, langue, voix, nom du compte, marque Metricool et protocole du test restent à trancher (CLAUDE.md, état du projet)."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
-    },
-    {
-      "date": "2026-11-01",
-      "note": "Deuxième liste, six_sports_20261101, programmée le 02/11 à 14h30 (post 412887374). Trois relectures : v1 recalée (golf de jour, tampons hors cadre), v2 recalée (étang et mur hors cadre, barre qui traverse le montant, carton sur Bounce, Bounce dans un joueur), v3 recalée (barre fantôme : il la traversait six fois avant la chute scriptée), v4 PASSE (vraie collision, joueurs écartés, golf à moitié dans l'eau). Leçon pour la skill d'écriture : chaque objet que Bounce peut toucher doit avoir une collision réelle dès le début, jamais seulement au moment de la chute. Moteur : stamp_y par chapitre, tampon qui tient dans la largeur. Signal : six_jobs a reçu l'Additional Reward de TikTok (RPM 1,95 $, environ dix fois le reste du compte)."
-    }
-  ]
+  {
+   "name": "halloween_20261031",
+   "date": "2026-10-31",
+   "theme": "halloween",
+   "config": "configs/halloween_20261031.json",
+   "role": "owner",
+   "hook_text": "It Only Says One Word",
+   "duration_s": 69.5,
+   "hashtags": [
+    "#halloween",
+    "#horror",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/halloween_20261031.md",
+   "slot": "22:35",
+   "scheduled_time": "2026-10-31T22:35:00+01:00",
+   "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
+   "metricool_post_id": 412482253,
+   "post_url": null,
+   "status": "scheduled",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   }
+  },
+  {
+   "name": "six_sports_20261101",
+   "date": "2026-11-01",
+   "theme": "six_sports",
+   "config": "configs/six_sports_20261101.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Win At Anything?",
+   "duration_s": 61.72,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_sports_20261101.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-01T14:30:00+01:00",
+   "media_url": "https://n.uguu.se/KtpNKcTg.mp4",
+   "metricool_post_id": 412898560,
+   "post_url": null,
+   "status": "scheduled",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   }
+  },
+  {
+   "name": "six_hobbies_20261102",
+   "date": "2026-11-02",
+   "theme": "six_hobbies",
+   "config": "configs/six_hobbies_20261102.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Find A Hobby?",
+   "duration_s": 62.98,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_hobbies_20261102.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-02T18:00:00+01:00",
+   "media_url": "https://h.uguu.se/kHqxazac.mp4",
+   "metricool_post_id": 413003770,
+   "post_url": null,
+   "status": "scheduled",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   }
+  }
+ ],
+ "themes": [
+  {
+   "name": "six_jobs",
+   "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
+   "state": "actif",
+   "created": "2026-10-31"
+  },
+  {
+   "name": "halloween",
+   "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
+   "state": "actif",
+   "created": "2026-10-31"
+  },
+  {
+   "name": "six_sports",
+   "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
+   "state": "actif",
+   "created": "2026-11-01"
+  }
+ ],
+ "daily": [],
+ "veille": {
+  "last_check": null,
+  "hashtags": [],
+  "formats_satures": "",
+  "sources": [],
+  "confiance": ""
+ },
+ "notes": [
+  {
+   "date": "2026-10-28",
+   "note": "Phase 0 : dépôt créé, moteur de rendu écrit et testé (tests/rendu_test.json), règles et skills en place. Genre décidé par le propriétaire : histoires racontées par une voix de synthèse sur des dessins simples animés. Identité, langue, voix, nom du compte, marque Metricool et protocole du test restent à trancher (CLAUDE.md, état du projet)."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
+  },
+  {
+   "date": "2026-11-01",
+   "note": "Deuxième liste, six_sports_20261101, programmée le 02/11 à 14h30 (post 412887374). Trois relectures : v1 recalée (golf de jour, tampons hors cadre), v2 recalée (étang et mur hors cadre, barre qui traverse le montant, carton sur Bounce, Bounce dans un joueur), v3 recalée (barre fantôme : il la traversait six fois avant la chute scriptée), v4 PASSE (vraie collision, joueurs écartés, golf à moitié dans l'eau). Leçon pour la skill d'écriture : chaque objet que Bounce peut toucher doit avoir une collision réelle dès le début, jamais seulement au moment de la chute. Moteur : stamp_y par chapitre, tampon qui tient dans la largeur. Signal : six_jobs a reçu l'Additional Reward de TikTok (RPM 1,95 $, environ dix fois le reste du compte)."
+  },
+  {
+   "date": "2026-11-01T16:25+01:00",
+   "note": "six_hobbies_20261102, première liste passée par le circuit industriel (skills ecrire et juger, controle.py) : 6 versions. v1 recalée par le contrôle automatique (image figée, ouverture lente, flash) ; v2 recalée par les trois juges (wagons téléportés, pièces sous l'interface, oiseaux invisibles, tirage-logo, voix superposées, fin coupée) ; v3 et v4 recalées par le juge de la facture (locomotive dans la table, oiseaux qui disparaissent ; cartes et wagons qui se traversent) ; v5 : deux juges PASSE, le troisième recalait sur la réaction finale « Yes! » (identité de base.py, consigne du juge corrigée) ; v6 : deux mineurs visibles corrigés (carte en équilibre, wagons debout), dernière relecture PASSE. Chaque défaut est devenu une vérification de controle.py ou une règle des skills. Le propriétaire a validé (« Elle est top ») et choisi le 02/11 à 18h00 (post Metricool 413003770). Règle d'arrêt écrite dans juger : un passage, au plus un rerendu, les mineurs deviennent des règles pour la vidéo suivante."
+  }
+ ]
 }

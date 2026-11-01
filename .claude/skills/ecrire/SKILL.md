@@ -90,6 +90,8 @@ en vérifie la plupart, la skill `juger` le reste.
   temps est écoulé.
 - **Le tampon et les sous-titres ne couvrent jamais Bounce ni l'objet de la chute** :
   choisir `stamp_y` pour chaque chapitre selon où se joue sa chute.
+- **Rien n'apparaît d'un coup** : un objet qui entre en scène (un tirage, un cadre, un
+  personnage) arrive en mouvement ou en fondu, jamais en une image.
 - Les décors des chapitres d'une même vidéo se distinguent au premier coup d'œil
   (couleur dominante, lieu).
 
