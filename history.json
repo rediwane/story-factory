@@ -63,6 +63,37 @@
         "shares": null,
         "measured_at": null
       }
+    },
+    {
+      "name": "six_sports_20261101",
+      "date": "2026-11-02",
+      "theme": "six_sports",
+      "config": "configs/six_sports_20261101.json",
+      "role": "owner",
+      "hook_text": "Can Bounce Win At Anything?",
+      "duration_s": 61.72,
+      "hashtags": [
+        "#bouncingball",
+        "#physics",
+        "#satisfying",
+        "#fyp"
+      ],
+      "caption": "captions/six_sports_20261101.md",
+      "slot": "14:30",
+      "scheduled_time": "2026-11-02T14:30:00+01:00",
+      "media_url": "https://n.uguu.se/OVvUShJG.mp4",
+      "metricool_post_id": 412887374,
+      "post_url": null,
+      "status": "scheduled",
+      "stats": {
+        "views_24h": null,
+        "views_48h": null,
+        "views": null,
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "measured_at": null
+      }
     }
   ],
   "themes": [
@@ -77,6 +108,12 @@
       "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
       "state": "actif",
       "created": "2026-10-31"
+    },
+    {
+      "name": "six_sports",
+      "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
+      "state": "actif",
+      "created": "2026-11-01"
     }
   ],
   "daily": [],
@@ -103,6 +140,10 @@
     {
       "date": "2026-10-31",
       "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
+    },
+    {
+      "date": "2026-11-01",
+      "note": "Deuxième liste, six_sports_20261101, programmée le 02/11 à 14h30 (post 412887374). Trois relectures : v1 recalée (golf de jour, tampons hors cadre), v2 recalée (étang et mur hors cadre, barre qui traverse le montant, carton sur Bounce, Bounce dans un joueur), v3 recalée (barre fantôme : il la traversait six fois avant la chute scriptée), v4 PASSE (vraie collision, joueurs écartés, golf à moitié dans l'eau). Leçon pour la skill d'écriture : chaque objet que Bounce peut toucher doit avoir une collision réelle dès le début, jamais seulement au moment de la chute. Moteur : stamp_y par chapitre, tampon qui tient dans la largeur. Signal : six_jobs a reçu l'Additional Reward de TikTok (RPM 1,95 $, environ dix fois le reste du compte)."
     }
   ]
 }
