@@ -542,9 +542,13 @@ class Machine(Chapter):
     def zoom_at(self, t):
         """1 en temps normal ; pendant le retour par le plafond, la caméra recule jusqu'à
         montrer toute la pièce (le rail en haut, la machine déjà jouée en bas)."""
+        if t < 2.2:
+            k = min(1.0, t / 2.2)
+            k = k * k * (3 - 2 * k)
+            return 1.55 - 0.70 * k                         # l'ouverture : de Bounce en gros plan à toute la chambre
         if t < 5.4:
-            k = min(1.0, t / 5.4)
-            return 0.80 + 0.22 * k * k * (3 - 2 * k)       # l'ouverture : un lent travelling avant
+            k = (t - 2.2) / 3.2
+            return 0.85 + 0.17 * k                         # puis un lent travelling avant
         if t < 6.0:
             return 1.02 - 0.02 * (t - 5.4) / 0.6
         if self.ceil_t0 is None:
@@ -603,7 +607,12 @@ class Machine(Chapter):
         if name == "cradle":
             return self.cr_x0 + 260, self.table_y - 180
         if name == "bounce":
-            return 0.5 * (300.0 + self.switch_x) + 40, FLOOR - 430
+            cxr, cyr = 0.5 * (300.0 + self.switch_x) + 40, FLOOR - 430
+            if t < 2.2:
+                bx, by = self.bounce_pos(t)
+                w = (t / 2.2) ** 2
+                return bx * (1 - w) + cxr * w, (by - 60) * (1 - w) + cyr * w
+            return cxr, cyr
         return 560.0, 1080.0
 
     def bounce_pos(self, t):
@@ -615,9 +624,10 @@ class Machine(Chapter):
             return x, y
         x0, y0 = self.bounce_base
         if t < self.t_bounce_on - 0.9:
-            period = 0.86
-            u = ((t - self.bounce_t0) % period) / period
-            h = 330.0 if t < 6.0 else 230.0
+            period = 0.62 if t < 5.6 else 0.86
+            t0b = self.bounce_t0 if t < 5.6 else 5.6
+            u = ((t - t0b) % period) / period
+            h = 340.0 if t < 5.6 else 230.0
             return x0, y0 - h * 4 * u * (1 - u)
         # le grand saut vers l'interrupteur
         t0 = self.t_bounce_on - 0.9
@@ -631,6 +641,10 @@ class Machine(Chapter):
     def bounce_landings(self):
         out = list(self.bounce_hits)
         t = self.bounce_t0
+        while t + 0.62 < 5.6:
+            t += 0.62
+            out.append(t)
+        t = 5.6
         while t < self.t_bounce_on - 0.9:
             t += 0.86
             if t < self.t_bounce_on - 0.9:
@@ -652,8 +666,10 @@ class Machine(Chapter):
             (self.doms[self.suspense]["track"].t[0] + 0.9, "Come on.", "come"),
             (m[4] + 0.6, "This part took him a week.", "week"),
             (m[5] + 0.4, "He never tested the loop.", "loop"),
+            (self.jump_t1 + 0.05, "It works.", "works"),
             (m[7] + 0.6, "All the way back.", "back"),
             (self.drop_t0 - 2.4, "Almost there.", "almost"),
+            (self.t_off - 0.5, "Here it comes.", "comes"),
             (self.t_off + 0.8, "Goodnight, Bounce.", "night"),
             (self.t_bounce_on + 1.0, "Tomorrow, a bigger machine.", "tomorrow"),
         ]
@@ -825,7 +841,7 @@ class Machine(Chapter):
             dr.rectangle([X(110), Y(1180), X(140), Y(FLOOR)], fill=(90, 66, 50))
             dr.rectangle([X(20), Y(1380), X(100), Y(FLOOR)], fill=(90, 66, 50))
             if lit > 0.5:
-                glow(dr, P, X(60) / P(1), Y(1240) / P(1), 300, (255, 200, 120), (30, 30, 46), 0.22, rings=9)
+                glow(dr, P, X(60) / P(1), Y(1240) / P(1), 260, (255, 205, 140), (30, 30, 46), 0.42, rings=10)
             dr.polygon([(X(30), Y(1250)), (X(90), Y(1250)), (X(76), Y(1205)), (X(44), Y(1205))], fill=(240, 210, 140) if lit > 0.5 else (90, 80, 70))
             dr.rectangle([X(57), Y(1250), X(63), Y(1380)], fill=(80, 70, 60))
         # des étagères, des cadres, des cartons le long du chemin : on sent la distance
