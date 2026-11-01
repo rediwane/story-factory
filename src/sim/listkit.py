@@ -15,9 +15,19 @@ Un chapitre hérite de `Chapter` et écrit :
   cette liste n'existe pas pour le contrôle : ne pas l'y mettre, c'est s'exposer à ce
   qu'il le traverse à l'image ;
 - `hero(s)` (facultatif) : (x, y, r) de Bounce, ou None s'il est volontairement caché ;
+- `focus(s)` : le rectangle (x0, y0, x1, y1) de **ce qui montre la chute** (l'objet qui
+  tombe, le tirage, la toile...), dans l'état `s`. Le contrôle exige qu'il soit dans le
+  cadre, hors des zones que l'interface TikTok recouvre (`ZONES_UI`) et hors du tampon,
+  de la chute à la fin du chapitre ;
+- `bodies(s)` : tous les objets qui bougent, en [(id, x, y, angle)], id stable d'une image
+  à l'autre. Le contrôle refuse un objet qui se téléporte, qui pivote d'un coup, ou qui
+  sort du cadre (sauf `bodies_exit_ok`, quand partir hors champ est la chute) ;
 - attributs : `title` (en haut pendant le chapitre), `stamp` (texte, couleur) à la chute,
   `stamp_y` (hauteur du tampon, en fraction de l'image), `mood` ("win"/"lose"),
   `hold_s` (tenue après la chute), `exit_ok` (vrai seulement si sortir du cadre est le gag).
+
+Pour dessiner une lumière, `glow()` : un halo mélangé vers la lumière à partir de la couleur
+du fond. Jamais `dim(lumière, petit facteur)`, qui donne un disque plus sombre que le mur.
 """
 import math
 import base
@@ -29,6 +39,9 @@ GREEN = (90, 210, 130)
 AMBER = (240, 190, 70)
 FLOOR_Y = 1500.0
 SCENE_TOP = 430.0
+# ce que l'interface TikTok recouvre sur 1080x1920 : la colonne des boutons à droite, la
+# légende et le nom du compte en bas. La chute ne s'y joue jamais.
+ZONES_UI = ((940.0, 820.0, 1080.0, 1700.0), (0.0, 1650.0, 1080.0, 1920.0))
 HOP = dict(start_h=300.0, gain=(0.9, 1.15), min_h=220.0, max_h=520.0, h_ref=300.0)
 
 
@@ -39,6 +52,7 @@ class Chapter(Hopper):
     mood = None
     hold_s = 1.2
     exit_ok = False
+    bodies_exit_ok = False
 
     def __init__(self, cfg, rng):
         self.cfg, self.rng = cfg, rng
@@ -62,6 +76,12 @@ class Chapter(Hopper):
         pass
 
     def solids(self, s):
+        return []
+
+    def focus(self, s):
+        return None
+
+    def bodies(self, s):
         return []
 
     def hero(self, s):
@@ -122,6 +142,17 @@ class Chapter(Hopper):
 
     def bounce(self, dr, P, s):
         base.ball(dr, P(s["bx"]), P(s["by"]), P(self.R * s.get("scale", 1.0)))
+
+
+def mix(a, b, k):
+    k = max(0.0, min(1.0, k))
+    return tuple(int(a[i] + (b[i] - a[i]) * k) for i in range(3))
+
+
+def glow(dr, P, x, y, r, light, bg, strength=0.25, rings=4):
+    """Un halo de lumière sur le fond `bg` : des anneaux de plus en plus clairs vers le centre."""
+    for k in range(rings, 0, -1):
+        circle(dr, P(x), P(y), P(r * k / rings), mix(bg, light, strength * (rings + 1 - k) / rings))
 
 
 # ---------------------------------------------------------------- géométrie du contrôle

@@ -35,7 +35,10 @@ l'audio. Il répond :
   ne comprend pas la cause ou la chute sans le son, c'est bloquant ;
 - comprend-il qu'il y a une série et que la dernière la retourne ;
 - à quel instant il aurait fait défiler, et pourquoi ;
-- aurait-il envie de commenter, et quoi.
+- aurait-il envie de commenter, et quoi ;
+- y a-t-il un objet du gag qu'il ne distingue pas sur un téléphone (trop petit, trop
+  sombre, sous les boutons de TikTok), ou une forme qui évoque autre chose (un logo, une
+  marque, un objet interdit) ?
 
 ### Juge 2 : la facture
 
@@ -49,7 +52,11 @@ script** du sujet. Il vérifie image par image autour de chaque chute et de chaq
   cause, calque dans le mauvais ordre ;
 - nuit partout, formes simples, décors lisibles sur téléphone, aucune ressemblance avec
   du contenu généré à la chaîne ;
-- Bounce grand, sauts francs, lisible à chaque chute.
+- Bounce grand, sauts francs, lisible à chaque chute ;
+- les lumières (halos, faisceaux) éclairent : un disque ou un faisceau plus sombre que
+  le mur est un défaut ;
+- les objets qui tombent se posent comme des objets : rebond, glissade, pile, jamais
+  aplatis d'un coup.
 
 ### Juge 3 : le rythme et le son
 
@@ -61,7 +68,10 @@ niveaux), les planches de coupe. Il vérifie :
 - la réplique de Bounce répond à une question, tombe dans sa scène, seule, audible ;
 - Bounce ne parle jamais sous le narrateur ; pas de silence de plus de 1,6 s ;
 - les tenues après chaque chute : assez pour lire le tampon, jamais une image morte ;
-- l'ouverture : la première chute arrive vite et se comprend.
+- l'ouverture : la première chute arrive vite et se comprend ;
+- chaque phrase du narrateur : drôle ou utile ; une phrase qui décrit l'image, ou qui
+  dévoile la chute avant qu'elle arrive, est un défaut ;
+- la fin : le dernier son finit avant la dernière image.
 
 ## Le verdict
 

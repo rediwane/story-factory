@@ -24,7 +24,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(ROOT, "src", "sim"))
 sys.path.insert(0, os.path.join(ROOT, "src", "stories"))
 import base  # noqa: E402
-from listkit import penetration, disc_rect_overlap, SCENE_TOP  # noqa: E402
+from listkit import penetration, disc_rect_overlap, SCENE_TOP, ZONES_UI  # noqa: E402
 
 SEUILS = {
     "duree_min": 60.0, "duree_max": 66.0,          # une minute, sans s'étirer
@@ -38,6 +38,9 @@ SEUILS = {
     "ouverture_mouvement_min": 1.6,                 # les 3 premières secondes bougent franchement (les métiers : 1,0, 43 % partis à 6 s)
     "silence_max_s": 1.6,
     "luma_haut_max": 110.0,                         # le compte est de nuit (moyenne glissante sur 1 s : un flash est permis)
+    "vitesse_corps_max": 2600.0,                    # px/s : au-delà, un objet se téléporte
+    "rotation_corps_max": 30.0,                     # rad/s : au-delà, un objet pivote d'un coup
+    "chutes_semblables_s": 1.2,                     # trois chapitres de suite qui tombent au même instant : la recette se voit
     "estimation_facteur": 1.2,                      # l'estimation avant rendu surestime le mp4 (0,85 × mesuré sur six_hobbies) : seuils relevés
 }
 
@@ -202,6 +205,96 @@ def pre(path, out):
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : le tampon recouvre Bounce à {t:.2f} s")
     for i, t in sub_seen.items():
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : un sous-titre recouvre Bounce autour de la chute ({t:.2f} s)")
+    # le son de Bounce : seul son atterrissage le fait parler, chaque mot tient entier
+    for (t, kind, data) in events:
+        if kind == "hit" and str(data) != "floor":
+            ko.append(f"événement « hit:{data} » à {t:.2f} s : seul l'atterrissage de Bounce le fait parler (utiliser « event »)")
+            break
+    name = base.hero_word(cfg["hero_name"], cfg)
+    nl = len(name) / base.ak.SR if name is not None else 0.8
+    mood = base.hero_mood(sim)
+    rw = base.hero_word(cfg["hero_win"] if mood == "win" else cfg["hero_lose"], cfg) if mood else None
+    words = base.place_words(events, total, cfg, getattr(sim, "payoff_t", None), mood, narr, replies,
+                             name_len=nl, react_len=(len(rw) / base.ak.SR if rw is not None else 0.8))
+    for (t0, kind, d, _tag) in words:
+        for n in narr:
+            if t0 < n["end"] + 0.05 and t0 + d > n["start"] - 0.05 and kind != "far":
+                ko.append(f"mot de Bounce ({kind}) {t0:.2f}–{t0 + d:.2f} s sous la phrase « {n['text'][:30]} »")
+        if t0 + d > total:
+            ko.append(f"mot de Bounce ({kind}) à {t0:.2f} s coupé par la fin de la vidéo ({total:.2f} s)")
+    for a_, b_ in zip(words, words[1:]):
+        if b_[0] < a_[0] + a_[2]:
+            ko.append(f"deux mots de Bounce se chevauchent à {b_[0]:.2f} s")
+    if mood and not any(w[1] == "react" for w in words):
+        ko.append("la réaction finale de Bounce n'a pas la place de tenir avant la fin (allonger end_hold_s)")
+    rep_words = [w for w in words if w[1] == "reply"]
+    for w in rep_words:
+        near = [x for x in words if x[1] != "reply" and abs(x[0] - w[0]) < w[2] + 0.3]
+        if near:
+            ko.append(f"la réplique de Bounce à {w[0]:.2f} s n'est pas seule (mot à {near[0][0]:.2f} s)")
+    for (key, _d) in sim.replies:
+        n = next((n for n in narr if n["key"] == key), None)
+        if n is not None and not n["text"].rstrip().endswith("?"):
+            ko.append(f"la réplique de Bounce répond à « {n['text']} », qui n'est pas une question")
+    # la chute se voit : son objet est déclaré, dans le cadre, hors de l'interface et du tampon
+    def inter(a, b):
+        return min(a[2], b[2]) - max(a[0], b[0]) > 0 and min(a[3], b[3]) - max(a[1], b[1]) > 0
+    foc_missing, foc_ui, foc_out, foc_stamp = set(), {}, {}, {}
+    prev_b, tele, rot, b_out = {}, {}, {}, {}
+    prev_t = None
+    for (t, s) in states:
+        i = s["i"]
+        ch = sims[i]
+        snap = s["snap"]
+        if s["end_local"] is not None:
+            f = ch.focus(snap)
+            if f is None:
+                foc_missing.add(i)
+            else:
+                if any(inter(f, z) for z in ZONES_UI):
+                    foc_ui.setdefault(i, (t, f))
+                if f[0] < 0 or f[2] > W or f[1] < SCENE_TOP - 4 or f[3] > H:
+                    foc_out.setdefault(i, (t, f))
+                rect = stamp_rect(ch)
+                if rect and inter(f, rect):
+                    foc_stamp.setdefault(i, t)
+        cur = {}
+        for (bid, bx, by, ba) in ch.bodies(snap):
+            cur[(i, bid)] = (bx, by, ba)
+            if not ch.bodies_exit_ok and (bx < -4 or bx > W + 4 or by < SCENE_TOP - 40 or by > H):
+                b_out.setdefault(i, (t, bid))
+        if prev_t is not None and t > prev_t:
+            dt_ = t - prev_t
+            for key, (bx, by, ba) in cur.items():
+                if key in prev_b:
+                    px, py, pa = prev_b[key]
+                    v = math.hypot(bx - px, by - py) / dt_
+                    w = abs(math.atan2(math.sin(ba - pa), math.cos(ba - pa))) / dt_
+                    if v > SEUILS["vitesse_corps_max"]:
+                        tele.setdefault(key[0], (t, key[1], v))
+                    if w > SEUILS["rotation_corps_max"]:
+                        rot.setdefault(key[0], (t, key[1], w))
+        prev_b, prev_t = cur, t
+    for i in sorted(foc_missing):
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : focus() non déclaré (ce qui montre la chute)")
+    for i, (t, f) in foc_ui.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : la chute se joue sous l'interface TikTok à {t:.2f} s ({[int(v) for v in f]})")
+    for i, (t, f) in foc_out.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : la chute sort du cadre à {t:.2f} s ({[int(v) for v in f]})")
+    for i, t in foc_stamp.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : le tampon recouvre la chute à {t:.2f} s")
+    for i, (t, bid, v) in tele.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} se téléporte à {t:.2f} s ({v:.0f} px/s)")
+    for i, (t, bid, w) in rot.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} pivote d'un coup à {t:.2f} s ({w:.0f} rad/s)")
+    for i, (t, bid) in b_out.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} sort du cadre à {t:.2f} s")
+    # les chutes ne tombent pas toutes au même instant de leur chapitre
+    locs = [getattr(ch, "_end_local", None) for ch in sims[1:-1]]
+    for k in range(len(locs) - 2):
+        trio = locs[k:k + 3]
+        if None not in trio and max(trio) - min(trio) < SEUILS["chutes_semblables_s"]:
+            ko.append(f"chapitres {k + 2} à {k + 4} : chutes à {', '.join(f'{v:.1f}' for v in trio)} s de leur début, la recette se voit")
     # mouvement estimé avant rendu : la scène dessinée en 54x96 à 10 i/s, sans les textes ni
     # le lissage de l'encodage ; elle surestime le mp4, d'où des seuils relevés
     from PIL import Image, ImageDraw

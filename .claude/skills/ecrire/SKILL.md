@@ -41,13 +41,18 @@ en vérifie la plupart, la skill `juger` le reste.
   chute vient après le tampon, jamais à sa place.
 - **Une phrase ne déborde jamais sur le chapitre suivant**, et la coupe attend la fin de
   la phrase et de la réplique de Bounce (le moteur le fait ; ne pas le contourner).
+- **Les chutes ne tombent pas toutes au même instant** de leur chapitre : trois de suite
+  au même moment, et le spectateur apprend la recette (le contrôle le mesure).
+- **La phrase du milieu ne dévoile pas la chute** et ne décrit pas l'image : elle installe
+  une ironie que la chute retourne. Le titre seul dit le lieu.
 - **Chaque chapitre a sa mécanique.** Deux chapitres d'une même vidéo ne tombent pas de
   la même façon : deux tours qui s'effondrent sont une seule mécanique.
 - **Le gag se comprend sans le son.** La cause (ses rebonds) et la conséquence se voient.
   Si la chute repose sur une règle que l'image ne montre pas d'elle-même (un score, un
   camp, une limite), un élément visible la montre : un tableau, une couleur, une ligne.
 - **La réplique de Bounce** : une par vidéo au plus, en réponse à une question explicite
-  du narrateur, dans la scène de la question, avant la coupe. Ailleurs il ne dit son nom
+  du narrateur (la phrase finit par « ? »), dans la scène de la question, avant la coupe,
+  seule : aucun autre mot de Bounce autour (le moteur réserve sa place). Ailleurs il ne dit son nom
   qu'à ses rebonds.
 - **Après la chute, la scène vit** : Bounce continue de rebondir (plus bas, sous le
   tampon), les débris roulent et s'arrêtent, un personnage réagit. Jamais 1,5 s d'image
@@ -61,8 +66,19 @@ en vérifie la plupart, la skill `juger` le reste.
   de détails pour se lire, c'est le mauvais objet.
 - **Bounce grand et franc** : rayon d'au moins 60 px, sauts d'au moins deux diamètres,
   dans le tiers inférieur de l'image mais jamais sous les sous-titres au moment d'une chute.
+- **La chute se joue hors de l'interface TikTok** : la colonne des boutons à droite et la
+  légende en bas recouvrent l'image (`listkit.ZONES_UI`). L'objet de la chute est déclaré
+  par `focus()` et le contrôle le place.
+- **Ce qui fait le gag se voit sur un téléphone** : objets clairs sur fond de nuit, assez
+  grands (une pièce, un oiseau : au moins 80 px), jamais une silhouette noire sur un ciel
+  sombre. Rien qui se lise comme un logo ou une marque.
+- **La cause se voit.** Si Bounce ne touche pas l'objet, la transmission est montrée : la
+  table tremble, la tour vacille dès l'image 0.
 - **Tout reste dans le cadre** : Bounce, les objets qui tombent, les éclaboussures, le
   point d'impact. Sortir du cadre n'est permis que si c'est le gag (`exit_ok`).
+- **Rien ne se téléporte ni ne pivote d'un coup** : un objet qui tombe rebondit, glisse et
+  se couche progressivement (`settle_body` dans les listes existantes) ; les objets qui
+  bougent sont déclarés par `bodies()` et le contrôle suit chacun d'une image à l'autre.
 - **Rien ne traverse un solide.** Tout objet que Bounce peut toucher a une collision
   réelle **dès la première image**, pas seulement au moment scripté de la chute, et figure
   dans `solids()`. Les personnages en font partie. Un objet qui doit tomber à cause de lui
@@ -76,7 +92,11 @@ en vérifie la plupart, la skill `juger` le reste.
 ## 4. Le son
 
 - Les deux voix seulement : le narrateur (Kokoro `am_fenrir`) et Bounce, au même niveau.
-- Bounce se tait pendant que le narrateur parle (le moteur le garantit).
+- Bounce se tait pendant que le narrateur parle, et un mot n'est dit que s'il tient entier
+  avant la phrase suivante et avant la fin (le moteur le garantit, le contrôle le vérifie).
+- **Seul l'atterrissage de Bounce le fait parler** : la chute d'un objet est un `event`,
+  jamais un `hit`.
+- `end_hold_s` laisse à sa réaction finale le temps d'être dite entière.
 - Jamais plus de 1,6 s sans voix.
 
 ## 5. Le script

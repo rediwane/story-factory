@@ -34,6 +34,7 @@ Le thème est lancé par :
 La config porte les clés communes ci-dessous (COMMON) et celles du thème (DEFAULTS).
 """
 import os, sys, json, math, colorsys, subprocess, tempfile
+import math
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
@@ -248,14 +249,22 @@ def in_narration(t, narr, pad=0.1):
 
 
 def sub_chunks(text, n_words):
-    words, out, cur = text.split(), [], []
-    for w in words:
+    """Les sous-titres d'une phrase : coupés aux ponctuations, puis en morceaux de taille
+    égale d'au plus n_words mots (jamais un mot seul qui traîne en fin de phrase)."""
+    out, cur = [], []
+    for w in text.split():
         cur.append(w)
-        if len(cur) >= n_words or w[-1:] in ".!?,;:":
-            out.append(" ".join(cur)); cur = []
+        if w[-1:] in ".!?,;:":
+            out.append(cur); cur = []
     if cur:
-        out.append(" ".join(cur))
-    return out
+        out.append(cur)
+    res = []
+    for seg in out:
+        k = max(1, math.ceil(len(seg) / n_words))
+        size = math.ceil(len(seg) / k)
+        for i in range(0, len(seg), size):
+            res.append(" ".join(seg[i:i + size]))
+    return res
 
 
 def subtitle_at(narr, t, n_words):
@@ -326,6 +335,59 @@ def drone(n, sr, env_fn, rng):
     return low * env * 0.5
 
 
+def place_words(events, total_dur, cfg, payoff_t=None, mood=None, narr=(), replies=(), name_len=0.8, react_len=0.8):
+    """Où Bounce parle : [(t, genre, durée, tag)], genre ∈ hit / far / scare / reply / react.
+    Un mot n'est placé que s'il tient entier : il ne chevauche ni la voix du narrateur, ni
+    l'accroche, ni sa réplique, ni le mot d'avant, et il finit avant la fin de la vidéo.
+    Le contrôle (src/tools/controle.py) lit ce même placement avant tout rendu."""
+    sr = ak.SR
+    pad = 0.1
+    busy = [(n["start"] - pad, n["end"] + pad) for n in narr]
+    hv = cfg.get("_hook_voice")
+    if hv is not None:
+        busy.append((0.0, 0.15 + len(hv) / sr + 0.1))
+    words = []
+    for tr in replies:
+        words.append((tr, "reply", name_len, ""))
+    reserved = [(tr - 0.35, tr + name_len + 0.35) for tr in replies]
+
+    def free(a, b, zones):
+        return all(b <= z0 or a >= z1 for (z0, z1) in zones)
+    last_end = -9.0
+    for (t0, kind, data) in events:
+        if kind != "hit":
+            continue
+        tag = str(data)
+        if t0 < last_end + 0.05 or t0 - (last_end - name_len) < cfg["hero_min_gap_s"]:
+            continue
+        a, b = t0, t0 + name_len
+        if b > total_dur - 0.1:
+            continue
+        if not free(a, b, reserved):
+            continue
+        if tag.startswith("scare"):
+            words.append((t0, "scare", name_len, tag)); last_end = b
+            continue
+        if not tag.startswith("far") and not free(a, b, busy):
+            continue                          # il se tait pendant que le narrateur parle
+        if hv is not None and a < 0.15 + len(hv) / sr + 0.1:
+            continue                          # et pendant l'accroche
+        words.append((t0, "far" if tag.startswith("far") else "hit", name_len, tag)); last_end = b
+    if payoff_t is not None and mood in ("win", "lose"):
+        tw = payoff_t + 0.15
+        taken = busy + [(w[0] - 0.05, w[0] + w[2] + 0.05) for w in words]
+        for _ in range(20):
+            clash = [z for z in taken if not (tw + react_len <= z[0] or tw >= z[1])]
+            if not clash:
+                break
+            tw = max(z[1] for z in clash) + 0.05
+        if tw + react_len <= total_dur - 0.05:
+            # le mot de rebond qui le chevaucherait se tait
+            words = [w for w in words if w[1] == "reply" or w[0] + w[2] <= tw - 0.05 or w[0] >= tw + react_len + 0.05]
+            words.append((tw, "react", react_len, ""))
+    return sorted(words)
+
+
 def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=(), replies=()):
     """Le son vient des collisions : à chaque `hit`, Bounce dit son nom. Deux mots ne
     sont jamais plus rapprochés que hero_min_gap_s : sur une rafale de rebonds, seuls
@@ -339,42 +401,30 @@ def render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=()
     if name is None:
         print(f"[{cfg['name']}] avertissement : aucune voix pour Bounce, rebonds muets", file=sys.stderr)
     else:
-        last = -9.0
         far = reverb(name, sr, 0.9, 0.5)
-        for (t0, kind, data) in events:
-            if kind != "hit" or t0 - last < cfg["hero_min_gap_s"]:
-                continue
-            tag = str(data)
-            if tag.startswith("scare"):
+        react = None
+        if payoff_t is not None and mood in ("win", "lose"):
+            react = hero_word(cfg["hero_win"] if mood == "win" else cfg["hero_lose"], cfg)
+        words = place_words(events, total_dur, cfg, payoff_t, mood if react is not None else None, narr, replies,
+                            name_len=len(name) / sr, react_len=(len(react) / sr if react is not None else 0.8))
+        for (t0, kind, _d, tag) in words:
+            if kind == "scare":
                 w = np.concatenate([name, np.zeros(int(0.05 * sr))])
                 ak.add(buf, w, t0, gain=1.6)
                 ak.add(buf, pitch(name, 0.6), t0 + 0.02, gain=1.2)
-                last = t0; said += 1
-                continue
-            if in_narration(t0, narr) and not tag.startswith("far"):
-                continue                      # il se tait pendant que le narrateur parle
-            hv = cfg.get("_hook_voice")
-            if hv is not None and t0 < 0.15 + len(hv) / sr + 0.1:
-                continue                      # et pendant l'accroche
-            if tag.startswith("far"):
+            elif kind == "far":
                 try:
                     g = float(tag.split(":")[1])
                 except Exception:
                     g = 0.3
                 ak.add(buf, pitch(far, 1.0 + rng.uniform(-0.02, 0.02)), t0, gain=g)
-            else:
+            elif kind == "hit":
                 ak.add(buf, pitch(name, 1.0 + rng.uniform(-0.03, 0.03)), t0, gain=cfg["hero_gain"])
-            last = t0; said += 1
-        for tr in replies:                    # ses répliques : pleines, après la phrase
-            ak.add(buf, name, tr, gain=cfg.get("hero_reply_gain", 1.4)); said += 1
-        if payoff_t is not None and mood in ("win", "lose"):
-            w = hero_word(cfg["hero_win"] if mood == "win" else cfg["hero_lose"], cfg)
-            if w is not None:
-                tw = payoff_t + 0.15
-                for n in narr:
-                    if n["start"] - 0.1 <= tw <= n["end"] + 0.1:
-                        tw = n["end"] + 0.25
-                ak.add(buf, w, tw, gain=1.0)
+            elif kind == "reply":
+                ak.add(buf, name, t0, gain=cfg.get("hero_reply_gain", 1.0))
+            elif kind == "react":
+                ak.add(buf, react, t0, gain=1.0)
+            said += 1
     for n in narr:
         ak.add(buf, n["audio"], n["start"], gain=1.0)
     env_fn = getattr(cfg.get("_sim"), "drone_env", None)
