@@ -142,6 +142,7 @@ class Machine(Chapter):
         self.evs = []                 # (t, kind, data) préparés
         self.marks = []               # (t, numéro d'étape)
         self.focus_segs = []          # (t_debut, nom du corps suivi)
+        self.ceil_t0 = None
         self.build()
         self.make_camera()
         self.ev_i = 0
@@ -392,7 +393,7 @@ class Machine(Chapter):
         bucket.add(tt, 0, self.bucket_top0); plat.add(tt, 0, FLOOR - 20)
         C = tr["C"] = Track(self.pul_x + 70, FLOOR - 20 - 14 - RB)
         while dist < rise:
-            vv += 230.0 * DT
+            vv += 205.0 * DT
             dist += vv * DT
             tt += DT
             bucket.add(tt, 0, self.bucket_top0 + min(dist, rise)); plat.add(tt, 0, FLOOR - 20 - min(dist, rise))
@@ -473,10 +474,11 @@ class Machine(Chapter):
         t, x, y, vx, vy, ra = fly(D, tr_, dx1, dy1, vx, vy, lambda x, y, vx, vy: vy > 0 and y >= self.ceil_y0, spin=-8)
         # --- 9. le rail du plafond : tout le chemin du retour
         self.step_mark(t, 9)
+        self.ceil_t0 = t + 0.4
         ang0 = math.atan2(vy, vx)
         self.switch_x = 790.0
         length = x - (self.switch_x + 2) - 200
-        pts, ang = path(x, y, ang0, [("a", (math.pi - math.radians(1.6)) - ang0, 150), ("s", length)])
+        pts, ang = path(x, y, ang0, [("a", (math.pi - math.radians(3.2)) - ang0, 150), ("s", length)])
         self.ceiling = pts
         t, v, ang, ra = roll(D, pts, t, math.hypot(vx, vy) * 0.5, mu=0.03, c=6.0)
         # la butée au-dessus de l'interrupteur, puis la chute
@@ -485,6 +487,7 @@ class Machine(Chapter):
         t += 0.04
         D.add(t, xe, ye)
         self.step_mark(t, 10)
+        self.drop_t0 = t
         self.focus_segs.append((t, "Ddrop"))
         btn_top = FLOOR - 22
         t, x, y, vx, vy, ra = fly(D, t, xe, ye, 0.0, 0.0, lambda x, y, vx, vy: y >= btn_top - RB, ra=ra)
@@ -496,7 +499,19 @@ class Machine(Chapter):
         self.focus_segs.append((t + 0.2, "bounce"))
         self.t_bounce_on = t + 3.8
         self.t_on = None
-        self.T_total = self.t_bounce_on + 9.0
+        self.T_total = self.t_bounce_on + 10.5
+
+    def zoom_at(self, t):
+        """1 en temps normal ; pendant le retour par le plafond, la caméra recule jusqu'à
+        montrer toute la pièce (le rail en haut, la machine déjà jouée en bas)."""
+        if self.ceil_t0 is None:
+            return 1.0
+        t0, t1 = self.ceil_t0, self.drop_t0 - 0.6
+        if t < t0 or t > t1 + 0.8:
+            return 1.0
+        k = min(1.0, (t - t0) / 0.9, (t1 + 0.8 - t) / 0.8)
+        k = k * k * (3 - 2 * k)
+        return 1.0 - 0.5 * k
 
     def make_camera(self):
         """La caméra suit le corps actif, lissée (amortissement critique)."""
@@ -506,13 +521,18 @@ class Machine(Chapter):
         t = 0.0
         w = 6.0
         while t < self.T_total + 1:
+            Z = self.zoom_at(t)
             fx, fy = self.focus_at(t)
+            if Z < 0.999:
+                fy = (CEIL + FLOOR) / 2 + 40
             ax = w * w * (fx - cx) - 2 * w * vx
             ay = w * w * (fy - cy) - 2 * w * vy
             vx += ax * DT * 2; vy += ay * DT * 2
             cx += vx * DT * 2; cy += vy * DT * 2
-            cy = max(CEIL + 560, min(FLOOR - 430, cy))
-            self.cam.add(t, cx, cy)
+            lo = CEIL + (SCREEN_CY - SCENE_TOP - 60) / Z
+            hi = FLOOR - (self.H - SCREEN_CY - 430) / Z
+            cy = max(lo, min(hi, cy)) if lo <= hi else (lo + hi) / 2
+            self.cam.add(t, cx, cy, Z)
             t += DT * 2
 
     def focus_at(self, t):
@@ -525,6 +545,8 @@ class Machine(Chapter):
             x, y, _ = tr["D" if name == "Ddrop" else name].at(t)
             if name == "Ddrop":
                 return x - 120, min(y, FLOOR - 430)
+            if name == "D" and self.ceil_t0 is not None and t >= self.ceil_t0:
+                return x - 260, y                  # le retour : la caméra recule, la machine défile dessous
             return x + 120, y
         if name == "dom":
             # le domino qui tombe en ce moment
@@ -645,30 +667,31 @@ class Machine(Chapter):
 
     def draw(self, dr, s, t, S):
         W, H = self.W, self.H
-        cx, cy, _ = s["cam"]
-        ox, oy = W / 2 - cx, SCREEN_CY - cy
+        cx, cy, Z = s["cam"]
         P = lambda v: v * S
-        X = lambda x: (x + ox) * S
-        Y = lambda y: (y + oy) * S
-        vis = lambda x0, x1: x1 + ox > -100 and x0 + ox < W + 100
+        Q = lambda v: v * S * Z
+        X = lambda x: ((x - cx) * Z + W / 2) * S
+        Y = lambda y: ((y - cy) * Z + SCREEN_CY) * S
+        vis = lambda x0, x1: (x1 - cx) * Z + W / 2 > -100 and (x0 - cx) * Z + W / 2 < W + 100
+        self.Zc = Z
         wall = (30, 30, 46)
         dr.rectangle([0, P(SCENE_TOP), P(W), P(H)], fill=wall)
         # plafond, sol, plinthe, et des repères au mur pour sentir le déplacement
         dr.rectangle([0, Y(CEIL - 400), P(W), Y(CEIL)], fill=(20, 20, 30))
         dr.rectangle([0, Y(FLOOR), P(W), Y(FLOOR + 600)], fill=(56, 40, 34))
         dr.rectangle([0, Y(FLOOR - 24), P(W), Y(FLOOR)], fill=(40, 38, 56))
-        self.decor(dr, X, Y, P, t, vis)
-        x = math.floor((cx - W) / 320) * 320
-        while x < cx + W:
+        self.decor(dr, X, Y, Q, t, vis)
+        x = math.floor((cx - W / Z) / 320) * 320
+        while x < cx + W / Z:
             if x > 1150:
                 dr.rectangle([X(x), Y(CEIL), X(x + 6), Y(FLOOR - 24)], fill=(34, 34, 52))
             dr.rectangle([X(x), Y(FLOOR), X(x + 160), Y(FLOOR + 12)], fill=(62, 46, 38))
             x += 320
-        self.machine(dr, X, Y, P, t, vis, S)
+        self.machine(dr, X, Y, Q, t, vis, S * Z)
         bx, by = self.bounce_pos(t)
         if self.lit(t) < 0.5:
             base.HERO["expr"] = "calm"
-        base.ball(dr, X(bx), Y(by), P(self.R))
+        base.ball(dr, X(bx), Y(by), Q(self.R))
         # la nuit : tout s'assombrit sauf la lune et Bounce
         if self.lit(t) < 0.5:
             from PIL import Image
@@ -676,7 +699,7 @@ class Machine(Chapter):
             reg = dr._image.crop(box)
             dark = Image.blend(reg, Image.new("RGB", reg.size, (2, 2, 6)), 0.78)
             dr._image.paste(dark, box[:2])
-            base.ball(dr, X(bx), Y(by), P(self.R))
+            base.ball(dr, X(bx), Y(by), Q(self.R))
         dr.rectangle([0, 0, P(W), P(SCENE_TOP) - 1], fill=tuple(self.cfg["bg_color"]))
         self.hud(dr, P, t, S)
 
