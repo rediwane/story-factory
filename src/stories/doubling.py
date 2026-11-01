@@ -228,10 +228,12 @@ class Doubling(Chapter):
         space = max(0.0, min(1.0, (math.log10(V) - 4.3) / 1.6))
         sky = mix((22, 30, 58), BG, space)
         dr.rectangle([0, P(SCENE_TOP), P(W), P(FLOOR_Y)], fill=sky)
+        span_y = FLOOR_Y - SCENE_TOP
         for i, (x, y, b, r) in enumerate(self.stars):
             if space > 0:
                 tw = 0.65 + 0.35 * math.sin(t * 3.0 + i * 1.7)          # elles scintillent
-                circle(dr, P(x), P(y), P(r), mix(sky, (210, 214, 236), space * b * tw))
+                yy = SCENE_TOP + (y - SCENE_TOP + t * (30 + 25 * r)) % span_y   # et défilent : le voyage
+                circle(dr, P(x), P(yy), P(r), mix(sky, (210, 214, 236), space * b * tw))
         self.earth(dr, P, px, space)
         for m in MARKS:
             self.mark(dr, P, m, px, V, t, s)
