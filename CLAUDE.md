@@ -55,12 +55,16 @@ Décidé, et qui ne se rediscute pas sans le propriétaire :
   propriétaire devient, dans le même commit que sa correction, une vérification dans
   `src/tools/controle.py` ou une règle dans une skill.
 
+- **La routine** (décidé le 01/11) : chaque nuit vers 3h, Opus 5.5, **une liste par jour**,
+  sur **un des cinq créneaux du compte tiré au hasard** parmi ceux encore libres ; le run
+  de `bouncefactory` (6h) produit alors une vidéo de moins. La liste est programmée avant
+  5h45, ou rien ne part ce jour-là : jamais deux producteurs en même temps.
+
 À trancher par le propriétaire :
-1. **La part des créneaux** : combien de listes par jour sur les cinq créneaux du compte.
-2. **L'automatisation** : la routine qui écrit, contrôle, fait juger et publie une liste
-   chaque nuit (architecture à plusieurs routines décrite en session le 31/10 : un
-   gérant qui attribue les créneaux, une routine par format, un juge commun).
-3. **YouTube Shorts et Instagram Reels** : comptes à créer et relier à Metricool.
+1. **L'architecture à plusieurs routines** décrite en session le 31/10 : un gérant qui
+   attribue les créneaux selon les stats de chaque format, une routine par format, un
+   juge commun, un dépôt partagé pour la direction artistique.
+2. **YouTube Shorts et Instagram Reels** : comptes à créer et relier à Metricool.
 
 Une session qui reprend le projet commence par cette section, propose, et laisse le
 propriétaire trancher. Quand une décision est prise, elle s'écrit ici et la liste se
@@ -131,28 +135,54 @@ comments, shares, measured_at}`. `themes[]` : une entrée par thème, c'est-à-d
 forme d'histoire qui se décrit en une phrase (`name, description, state, created`).
 `era_start` : la date de la première vidéo publiée ; rien d'antérieur ne compte.
 
-## La méthode, à appliquer quand la routine démarrera
+## Le run quotidien (vers 3h, Europe/Paris)
 
-Ce qui a été appris sur l'autre compte, et qui vaut ici sans rien imposer de la forme :
+**0. Nettoyer.** `python3 src/tools/coherence.py`. Toute entrée `scheduled` d'un jour
+précédent est rapprochée de `getScheduledPosts` : `PUBLISHED` → `published`, `publicUrl`
+dans `post_url` ; sinon `abandoned`.
 
-- **La routine du matin** : nettoyer (`coherence.py`, rapprocher les posts de la veille
-  avec Metricool), mesurer (skill `mesure`), juger, choisir les vidéos du jour, les
-  écrire (skill `ecrire`), les rendre, les relire, les publier (skill `publier`),
-  consigner et pousser sur `main`. Une fois par semaine, la veille (skill `veille`).
-- **Les seuils** sont relatifs à la médiane M des vues à 48 h depuis `era_start` : une
-  vidéo réussit loin au-dessus, échoue loin en dessous. Aucun verdict avant une dizaine
-  de vidéos mesurées.
-- **La nouveauté est la valeur** : un thème fait ses meilleures vues le jour où il sort.
-  Une copie ne se joue que derrière une réussite, et seulement tant qu'elle tient.
-- **Le test de nouveauté** ne regarde que les 14 derniers jours.
-- **La relecture indépendante** : avant d'être publiée, chaque vidéo est jugée par un
-  agent séparé qui ne l'a pas écrite, sur les images et le son seuls d'abord, avec la
-  question de l'objectif. L'auteur ne valide jamais seul sa propre vidéo.
+**1. Mesurer** — skill `mesure`.
+
+**2. Le jour est-il déjà pris ?** Si une entrée de ce dépôt est déjà programmée
+aujourd'hui (une liste faite en session avec le propriétaire), le run s'arrête là après
+avoir consigné. Une liste par jour, jamais plus.
+
+**3. Écrire** — skill `ecrire` : le sujet (test de nouveauté contre les `themes[]` des
+deux dépôts sur 14 jours), le script, la config, puis `controle.py` jusqu'à zéro défaut
+bloquant avant tout rendu.
+
+**4. Rendre**, puis `controle.py --post` à zéro.
+
+**5. Juger** — skill `juger` : trois juges en parallèle, la règle d'arrêt. L'auteur ne
+valide jamais seul sa vidéo.
+
+**6. Publier** — skill `publier` : un créneau tiré au hasard parmi les libres du jour.
+
+**7. Consigner et pousser.** L'entrée dans `videos[]`, le thème dans `themes[]`, les
+verdicts des juges dans `notes`, puis commit et `git push origin HEAD:main` (la session
+travaille sur une branche imposée : pousser explicitement sur `main`). Jamais les mp4.
+
+**L'heure limite.** Le run de `bouncefactory` démarre à 6h. Si la liste n'est pas
+programmée à **5h45**, le run arrête tout, ne publie rien, et l'écrit dans `notes` :
+le créneau reste libre pour l'autre run.
+
+**Chaque semaine** — skill `veille`, si `veille.last_check` a plus de 7 jours, après la
+publication et seulement s'il reste du temps avant 5h45.
+
+**Pannes.** Metricool en panne → stats connues, et sans `getScheduledPosts` rien ne se
+publie (on ne tire pas un créneau à l'aveugle). Un rendu échoue → une seconde tentative,
+sinon rien ne part. Tout s'écrit dans `notes`.
+
+## Ce qui vaut sans imposer la forme
+
+- **Les seuils** sont relatifs à la médiane M des vues à 48 h des listes depuis
+  `era_start`. Aucun verdict avant une dizaine de listes mesurées.
+- **La nouveauté est la valeur** : chaque liste a un sujet neuf.
 - **La fin ne se devine pas** : ni son moment, ni son issue.
 - **Le run suit à la lettre ce qui se mesure** et contourne ce qui ne se mesure pas :
   un critère important qui ne se vérifie pas par un chiffre se vérifie par la relecture.
-- **Le regard du propriétaire et les commentaires des spectateurs** ont donné les
-  meilleures règles de l'autre compte. Ils passent avant toute métrique.
+- **Le regard du propriétaire et les commentaires des spectateurs** passent avant toute
+  métrique.
 - **Ne pas changer plusieurs règles à la fois** : sinon on ne sait plus laquelle a agi.
 
 ## Contraintes
@@ -172,7 +202,7 @@ Ce qui a été appris sur l'autre compte, et qui vaut ici sans rien imposer de l
 |---|---|---|
 | `ecrire` | écrire | le sujet, la structure, les règles d'image, de son et de rythme, le script, le réglage |
 | `juger` | juger | le contrôle automatique, les trois juges, le verdict, l'apprentissage du circuit |
-| `publier` | publier | hébergement du mp4, post Metricool, créneaux |
+| `publier` | publier | hébergement du mp4, post Metricool, tirage du créneau |
 | `mesure` | mesurer | champs Metricool, rapprochement avec `history.json`, `daily` |
 | `veille` | hebdo | hashtags du moment, frontière des formats saturés de la niche |
 

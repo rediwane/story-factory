@@ -5,19 +5,21 @@ description: Publier une video : hebergement du mp4 (uguu, repli litterbox, veri
 
 # Publier
 
-**Le `brandId` Metricool de ce compte n'est pas encore connu** : le propriétaire crée la
-marque dans Metricool, puis il s'écrit ici et dans la skill `mesure`. Sans lui, rien ne
-se publie.
+Metricool : `blogId` / `brandId` **7069324**, fuseau Europe/Paris, le même compte que
+`bouncefactory`.
 
-## Créneaux (Europe/Paris)
+## Le créneau
 
-La cadence et les créneaux se décident avec le propriétaire au démarrage, et s'écrivent
-ici. La première semaine d'un compte neuf : une ou deux vidéos par jour au plus.
-Attribution des créneaux **au hasard**, tirage noté dans `notes`, pour que l'effet de
-l'heure se lise dans les stats.
+Les cinq créneaux du compte : **8h00, 11h30, 14h30, 18h00, 21h00**, partagés avec le run
+de `bouncefactory` (cinq vidéos par jour au plus, toutes routines confondues).
 
-Avant toute création : `getScheduledPosts` sur la journée. Un créneau déjà occupé → la
-vidéo prévue dessus passe `generated_not_selected`, raison dans `notes`.
+1. `getScheduledPosts` sur la journée (dates avec leur décalage, `+01:00` ou `+02:00`).
+2. Les créneaux libres : ceux où aucun post n'est programmé. Un créneau déjà passé à
+   l'heure de la publication n'est pas libre.
+3. Tirage **au hasard** parmi les libres (`python3 -c "import random; print(random.choice([...]))"`),
+   noté dans `notes` avec la liste des libres : l'effet de l'heure doit se lire dans les
+   stats.
+4. Aucun créneau libre → `generated_not_selected`, raison dans `notes`.
 
 ## Hébergement du mp4
 
@@ -46,7 +48,8 @@ Ne jamais créer un post avec une URL non vérifiée.
   moment (`history.json → veille.hashtags`) ;
 - média : l'URL vérifiée ; `publicationDate` : le créneau, en Europe/Paris ;
 - `tiktokData.title` : **obligatoire** (Metricool refuse le post sans lui) : l'accroche ;
-- `privacyOption: PUBLIC_TO_EVERYONE`, commentaires, duet et stitch activés ;
+- `privacyOption: PUBLIC_TO_EVERYONE`, commentaires, duet et stitch activés,
+  `autoAddMusic: false` ;
 - l'étiquette de contenu généré par IA, si Metricool la propose ; sinon le noter dans
   `notes` et le signaler au propriétaire.
 

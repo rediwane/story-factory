@@ -8,8 +8,8 @@ description: Mesurer : lire les vues des videos publiees via Metricool, ecrire s
 Remplir `stats` de chaque vidéo `published` et `daily` du jour. Ne pas juger : les
 verdicts sont une autre étape.
 
-**Le `brandId` Metricool de ce compte n'est pas encore connu** : il s'écrit ici quand le
-propriétaire a créé la marque.
+Metricool : `brandId` **7069324** (le compte est partagé avec `bouncefactory` : ne
+rattacher que les posts dont l'entrée est dans ce dépôt).
 
 ## Appel
 

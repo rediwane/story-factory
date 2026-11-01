@@ -145,6 +145,12 @@
    "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
    "state": "actif",
    "created": "2026-11-01"
+  },
+  {
+   "name": "six_hobbies",
+   "description": "Liste à sketches : les six loisirs que Bounce a essayés, un décor et une mécanique de chute par loisir, le sixième (peinture) retourne la série.",
+   "state": "actif",
+   "created": "2026-11-01"
   }
  ],
  "daily": [],
@@ -179,6 +185,10 @@
   {
    "date": "2026-11-01T16:25+01:00",
    "note": "six_hobbies_20261102, première liste passée par le circuit industriel (skills ecrire et juger, controle.py) : 6 versions. v1 recalée par le contrôle automatique (image figée, ouverture lente, flash) ; v2 recalée par les trois juges (wagons téléportés, pièces sous l'interface, oiseaux invisibles, tirage-logo, voix superposées, fin coupée) ; v3 et v4 recalées par le juge de la facture (locomotive dans la table, oiseaux qui disparaissent ; cartes et wagons qui se traversent) ; v5 : deux juges PASSE, le troisième recalait sur la réaction finale « Yes! » (identité de base.py, consigne du juge corrigée) ; v6 : deux mineurs visibles corrigés (carte en équilibre, wagons debout), dernière relecture PASSE. Chaque défaut est devenu une vérification de controle.py ou une règle des skills. Le propriétaire a validé (« Elle est top ») et choisi le 02/11 à 18h00 (post Metricool 413003770). Règle d'arrêt écrite dans juger : un passage, au plus un rerendu, les mineurs deviennent des règles pour la vidéo suivante."
+  },
+  {
+   "date": "2026-11-01T17:10+01:00",
+   "note": "Décision du propriétaire : routine quotidienne vers 3h (Opus 5.5), une liste par jour sur un créneau tiré au hasard parmi les libres ; le run de bouncefactory produit une vidéo de moins. Premier run : nuit du 02 au 03/11 (le 02/11 est déjà pris par six_hobbies, programmée en session)."
   }
  ]
 }
