@@ -378,8 +378,8 @@ def place_words(events, total_dur, cfg, payoff_t=None, mood=None, narr=(), repli
         if tag.startswith("scare"):
             words.append((t0, "scare", name_len, tag)); last_end = b
             continue
-        if not tag.startswith("far") and not free(a, b, busy):
-            continue                          # il se tait pendant que le narrateur parle
+        if not free(a, b, busy):
+            continue                          # il se tait pendant que le narrateur parle, même au loin
         if hv is not None and a < 0.15 + len(hv) / sr + 0.1:
             continue                          # et pendant l'accroche
         words.append((t0, "far" if tag.startswith("far") else "hit", name_len, tag)); last_end = b
