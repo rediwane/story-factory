@@ -80,6 +80,9 @@ en vérifie la plupart, la skill `juger` le reste.
   se couche progressivement (`listkit.settle_body`, avec les sommets réels de sa forme,
   saillies comprises, sinon il s'enfonce dans le sol) ; les objets qui
   bougent sont déclarés par `bodies()` et le contrôle suit chacun d'une image à l'autre.
+- **Deux objets libres ne se traversent pas** (cartes, wagons, débris) : `bodies()` donne
+  leur polygone, `listkit.separate()` les écarte doucement à chaque pas, le contrôle mesure.
+  Leur vitesse latérale est bornée (frottement), sinon les chocs les projettent hors du décor.
 - **Rien ne traverse un solide.** Tout objet que Bounce peut toucher a une collision
   réelle **dès la première image**, pas seulement au moment scripté de la chute, et figure
   dans `solids()`. Les personnages en font partie. Un objet qui doit tomber à cause de lui

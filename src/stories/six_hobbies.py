@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import base
 from base import dim, circle
 from chapters import StorySim
-from listkit import Chapter, HOP, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body
+from listkit import Chapter, HOP, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body, separate, body_poly
 
 R_BOUNCE = 68.0
 
@@ -52,7 +52,7 @@ class CardHouse(Chapter):
                 self.cards.append([a - 6, top - 3, b + 6, top - 3, lv])
             base_y = top - 6
         self.sway = 0.05                    # la tour tremble dès l'image 0 : elle est déjà menacée
-        self.need = int(rng.integers(4, 6))
+        self.need = 5
         self.fall = None                    # corps des cartes en chute
         self.heap = {}
 
@@ -65,13 +65,13 @@ class CardHouse(Chapter):
             for (x0, y0, x1, y1) in self.card_segments({"fall": None, "sway": self.sway, "t": self.t}):
                 cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
                 self.fall.append({"x": cx, "y": cy, "L": math.hypot(x1 - x0, y1 - y0), "a": math.atan2(y1 - y0, x1 - x0),
-                                  "vx": self.rng.uniform(-80, 80) - 0.8 * (cx - 700), "vy": self.rng.uniform(-240, -20),
+                                  "vx": self.rng.uniform(-40, 40) + 0.35 * (cx - 700), "vy": self.rng.uniform(-240, -20),
                                   "w": self.rng.uniform(-5, 5), "rest": False})
             evs.append(("event", "cards fall t %.2f" % self.t))
 
     def ground(self, c):
         x = c["x"]
-        if self.TX0 < x < self.TX1:
+        if self.TX0 < x < self.TX1 and c["y"] < self.TOP + 10:
             return self.TOP - self.heap.get(int(x // 40), 0.0)
         return FLOOR_Y
 
@@ -92,9 +92,21 @@ class CardHouse(Chapter):
                     b = int(c["x"] // 40)
                     if self.TX0 < c["x"] < self.TX1:
                         self.heap[b] = self.heap.get(b, 0.0) + 7.0
-            if resting > 0.6 * len(self.fall) and not self.payoff:
+            separate(self.fall, self.card_shape)
+            for c in self.fall:                 # des cartes : le frottement les arrête vite, elles restent sur la table
+                c["vx"] = max(-120.0, min(120.0, c["vx"]))
+                lo, hi = self.TX0 + 40, self.TX1 - 40
+                if c["x"] < lo or c["x"] > hi:
+                    c["x"] = min(hi, max(lo, c["x"])); c["vx"] = 0.0
+            top = min(c["y"] - abs(math.sin(c["a"])) * c["L"] / 2 for c in self.fall)
+            if top > self.TOP - 150 and not self.payoff:
                 self.finish("COLLAPSED")
                 self.line("Two hours to build. Five seconds to fall.", "punch", self.t + 1.4)
+
+    @staticmethod
+    def card_shape(c):
+        L2 = c["L"] / 2 - 2                   # forme de contact un peu plus fine que le dessin :
+        return [(-L2, -2), (L2, -2), (L2, 2), (-L2, 2)]   # les cartes de la tour se touchent aux sommets
 
     def card_segments(self, s):
         segs = []
@@ -129,6 +141,8 @@ class CardHouse(Chapter):
         return (min(xs), min(ys), max(xs), max(ys))
 
     def bodies(self, s):
+        if s["fall"] is not None:
+            return [(k, c["x"], c["y"], c["a"], body_poly(c, self.card_shape(c))) for k, c in enumerate(s["fall"])]
         return [(k, (x0 + x1) / 2, (y0 + y1) / 2, math.atan2(y1 - y0, x1 - x0)) for k, (x0, y0, x1, y1) in enumerate(self.card_segments(s))]
 
     def draw(self, dr, s, t, S):
@@ -153,7 +167,7 @@ class CardHouse(Chapter):
 # ---------------------------------------------------------------- 2. échecs
 class Chess(Chapter):
     title = "2/6 · CHESS"
-    stamp = ("CHECKMATE", RED)
+    stamp = ("RESIGNED", RED)
     stamp_y = 0.30
     mood = "lose"
     hold_s = 1.8
@@ -165,7 +179,7 @@ class Chess(Chapter):
         rng = self.rng
         self.hop_init(240.0, self.TOP, wobble=50.0, xmin=200, xmax=280, **dict(HOP, start_h=300.0, min_h=260.0, max_h=340.0, gain=(0.95, 1.08)))
         self.line("Hobby two. Chess.", "title", 0.0)
-        self.line("His opponent had not even moved yet.", "mid", 1.4)
+        self.line("He studied the board for hours.", "mid", 1.4)
         self.pieces = []
         for k, x in enumerate([720.0, 778.0]):
             white = k == 0
@@ -218,7 +232,7 @@ class Chess(Chapter):
             if self.ka >= math.pi / 2:
                 self.ka, self.kw = math.pi / 2, 0.0
                 if not self.payoff:
-                    self.finish("CHECKMATE")
+                    self.finish("RESIGNED")
                     self.nod = 1.0
                     self.line("Lost in zero moves.", "punch", self.t + 0.9)
         if self.payoff:
@@ -275,7 +289,7 @@ class Chess(Chapter):
             dr.rectangle([P(x), P(self.TOP + 30), P(x + 24), P(FLOOR_Y)], fill=dim(wood, 0.8))
         for k in range(8):
             x = self.BX0 + k * (self.BX1 - self.BX0) / 8
-            dr.rectangle([P(x), P(self.TOP - 12), P(x + (self.BX1 - self.BX0) / 8), P(self.TOP)], fill=(210, 200, 180) if k % 2 else (90, 70, 56))
+            dr.rectangle([P(x), P(self.TOP - 12), P(x + (self.BX1 - self.BX0) / 8), P(self.TOP)], fill=(226, 216, 196) if k % 2 else (36, 28, 26))
         for p in s["pieces"]:
             self.draw_piece(dr, P, p["x"], self.TOP - 12 - p["z"], p["h"], p["white"], p["king"])
         # le roi blanc
@@ -333,7 +347,7 @@ class Birds(Chapter):
             elif b["st"] == "fly":
                 b["vy"] -= 160 * dt
                 b["x"] += b["vx"] * dt; b["y"] += b["vy"] * dt
-                if b["y"] < -70 or b["x"] < -80 or b["x"] > self.W + 80:
+                if b["y"] < SCENE_TOP - 70 or b["x"] < -80 or b["x"] > self.W + 80:
                     b["st"] = "gone"
         if sitting == 0 and not self.payoff:
             self.finish("NO BIRDS")
@@ -386,7 +400,11 @@ class Birds(Chapter):
         for b in s["birds"]:
             if b["st"] != "gone":
                 self.bird(dr, P, b["x"], b["y"], b["flap"], b["st"] == "fly")
+        dr.rectangle([0, 0, P(W), P(SCENE_TOP) - 1], fill=(0, 0, 0) if False else self.cfg_bg())
         self.bounce(dr, P, s)
+
+    def cfg_bg(self):
+        return tuple(self.cfg["bg_color"])
 
 
 # ---------------------------------------------------------------- 4. photographie
@@ -481,12 +499,15 @@ class Photo(Chapter):
         if s["flash"] is not None and 0 <= t - s["flash"] < 0.18:
             k = 1 - (t - s["flash"]) / 0.18
             from PIL import Image
-            box = (0, int(P(SCENE_TOP)), int(P(W)), int(P(FLOOR_Y)))
+            box = (0, int(P(SCENE_TOP)), int(P(W)), int(P(H)))
             reg = dr._image.crop(box)
-            dr._image.paste(Image.blend(reg, Image.new("RGB", reg.size, (200, 200, 205)), 0.55 * k), box[:2])
+            dr._image.paste(Image.blend(reg, Image.new("RGB", reg.size, (255, 255, 250)), 0.35 * k), box[:2])
         if s["print_t"] is not None:
             u = min(1.0, (t - s["print_t"]) / 0.6)      # le tirage se révèle
             x0, y0, x1, y1 = self.PR
+            dr.line([(P(380), P(SCENE_TOP + 70)), (P(980), P(SCENE_TOP + 70))], fill=(90, 86, 100), width=max(1, int(P(4))))
+            dr.rectangle([P((x0 + x1) / 2 - 3), P(SCENE_TOP + 70), P((x0 + x1) / 2 + 3), P(y0)], fill=(90, 86, 100))
+            dr.rectangle([P((x0 + x1) / 2 - 16), P(y0 - 14), P((x0 + x1) / 2 + 16), P(y0 + 12)], fill=(150, 146, 160))
             dr.rectangle([P(x0), P(y0), P(x1), P(y1)], fill=(236, 232, 224))
             ix0, iy0, ix1, iy1 = int(P(x0 + 24)), int(P(y0 + 24)), int(P(x1 - 24)), int(P(y1 - 70))
             w, h = max(2, ix1 - ix0), max(2, iy1 - iy0)
@@ -508,21 +529,22 @@ class Train(Chapter):
     hold_s = 1.8
     TX0, TX1, TOP = 140.0, 900.0, 1180.0
     RAIL0, RAIL1 = 410.0, 880.0
-    SP = 92.0
+    SP = 124.0
+    K = 1.3                                    # échelle des voitures : lisibles sur un téléphone
 
     def setup(self):
         rng = self.rng
         self.hop_init(260.0, self.TOP, wobble=50.0, xmin=215, xmax=300, **dict(HOP, start_h=300.0, min_h=260.0, max_h=360.0))
         self.line("Hobby five. Model trains.", "title", 0.0)
         self.line("The trains ran perfectly on time.", "mid", 1.4)
-        self.tx = 760.0; self.tv = -120.0          # la locomotive (en tête à droite), vitesse
+        self.tx = 760.0; self.tv = -110.0          # la locomotive (en tête à droite), vitesse
         self.hop = 0.0; self.hv = 0.0
         self.shake = 0.0
         self.need = int(rng.integers(8, 10))
         self.fall = None
 
     def cars(self):
-        return [self.tx - k * self.SP for k in range(3)]
+        return [self.tx - k * self.SP for k in range(2)]
 
     def on_land(self, k, evs):
         self.shake = min(10.0, self.shake + 5.0 * k)
@@ -532,7 +554,7 @@ class Train(Chapter):
         if self.hits >= self.need:
             self.fall = []
             for k2, x in enumerate(self.cars()):
-                self.fall.append({"id": k2, "x": x, "y": self.TOP - 30 + self.hop, "vx": self.rng.uniform(-50, 70),
+                self.fall.append({"id": k2, "x": x, "y": self.TOP - 30 * self.K + self.hop, "vx": (self.rng.uniform(40, 80) if k2 == 0 else self.rng.uniform(-80, -40)),
                                   "vy": -self.rng.uniform(720, 900), "a": 0.0, "w": self.rng.uniform(3.0, 5.0) * (1 if k2 % 2 else -1),
                                   "rest": False, "eng": k2 == 0})
             evs.append(("event", "derail t %.2f" % self.t))
@@ -541,9 +563,9 @@ class Train(Chapter):
         self.shake = max(0.0, self.shake - 30.0 * dt)
         if self.fall is None:
             self.tx += self.tv * dt
-            if self.tx > self.RAIL1 - 54 and self.tv > 0:
+            if self.tx > self.RAIL1 - 70 and self.tv > 0:
                 self.tv = -abs(self.tv)
-            if self.tx - 2 * self.SP < self.RAIL0 + 54 and self.tv < 0:
+            if self.tx - self.SP < self.RAIL0 + 70 and self.tv < 0:
                 self.tv = abs(self.tv)
             if self.hop < 0 or self.hv < 0:
                 self.hv += self.g * 0.9 * dt
@@ -557,14 +579,19 @@ class Train(Chapter):
                     rest += 1; continue
                 c["vy"] += self.g * dt
                 c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["w"] * dt
-                c["x"] = min(self.TX1 - 50, max(self.RAIL0 - 20, c["x"]))
-                pts = [(-44, -26), (44, -26), (44, 32), (-44, 32)]
-                if c["eng"]:
-                    pts += [(10, -48), (30, -48), (-40, -40), (-6, -40)]
-                settle_body(c, self.TOP, math.pi / 2, dt, pts)
+                c["x"] = min(self.TX1 - 70, max(self.RAIL0 + 10, c["x"]))
+                settle_body(c, self.TOP, math.pi / 2, dt, self.car_shape(c))
+            separate(self.fall, self.car_shape)
             if rest == len(self.fall) and not self.payoff:
                 self.finish("DERAILED")
                 self.line("Delays are expected.", "punch", self.t + 0.9)
+
+    def car_shape(self, c):
+        K = self.K
+        pts = [(-44, -26), (44, -26), (44, 32), (-44, 32)]
+        if c["eng"]:
+            pts = [(-44, -48), (44, -48), (44, 32), (-44, 32)]
+        return [(dx * K, dy * K) for dx, dy in pts]
 
     def snapshot(self):
         s = self.base_snap()
@@ -574,26 +601,30 @@ class Train(Chapter):
 
     def car_list(self, s):
         if s["fall"] is None:
-            return [(k, x, self.TOP - 30 + s["hop"], 0.0, k == 0) for k, x in enumerate(s["cars"])]
+            return [(k, x, self.TOP - 30 * self.K + s["hop"], 0.0, k == 0) for k, x in enumerate(s["cars"])]
         return [(c["id"], c["x"], c["y"], c["a"], c["eng"]) for c in s["fall"]]
 
     def solids(self, s):
         sh = [("rect", self.TX0, self.TOP, self.TX1, self.TOP + 26), ("rect", self.RAIL0 - 10, self.TOP - 30, self.RAIL0 + 6, self.TOP)]
         for (_id, x, y, a, eng) in self.car_list(s):
-            sh.append(("circle", x, y, 44))
+            sh.append(("circle", x, y, 44 * self.K))
         return sh
 
     def focus(self, s):
         cl = self.car_list(s)
-        return (min(c[1] for c in cl) - 50, min(c[2] for c in cl) - 50, max(c[1] for c in cl) + 50, max(c[2] for c in cl) + 34)
+        return (min(c[1] for c in cl) - 64, min(c[2] for c in cl) - 64, max(c[1] for c in cl) + 64, max(c[2] for c in cl) + 44)
 
     def bodies(self, s):
-        return [(c[0], c[1], c[2], c[3]) for c in self.car_list(s)]
+        if s["fall"] is None:
+            return [(c[0], c[1], c[2], c[3]) for c in self.car_list(s)]
+        return [(c["id"], c["x"], c["y"], c["a"], body_poly(c, self.car_shape(c))) for c in s["fall"]]
 
     def car(self, dr, P, x, y, a, eng):
         ca, sa = math.cos(a), math.sin(a)
+        K = self.K
 
         def T(dx, dy):
+            dx, dy = dx * K, dy * K
             return (P(x + dx * ca - dy * sa), P(y + dx * sa + dy * ca))
         col = (190, 50, 60) if eng else (50, 90, 160)
         dr.polygon([T(-44, -26), T(44, -26), T(44, 18), T(-44, 18)], fill=col)
@@ -604,7 +635,7 @@ class Train(Chapter):
             for wx in (-24, 4):
                 dr.polygon([T(wx, -18), T(wx + 18, -18), T(wx + 18, -2), T(wx, -2)], fill=(255, 220, 140))
         for wx in (-26, 26):
-            circle(dr, *T(wx, 22), P(10), (30, 30, 34))
+            circle(dr, *T(wx, 22), P(10 * K), (30, 30, 34))
 
     def draw(self, dr, s, t, S):
         P = lambda v: v * S
@@ -635,13 +666,13 @@ class Painting(Chapter):
     stamp_y = 0.30
     mood = "win"
     hold_s = 3.8
-    CV = (480.0, 700.0, 840.0, 1140.0)
+    CV = (480.0, 700.0, 820.0, 1140.0)
     PUDDLES = ((190.0, (220, 60, 70)), (300.0, (240, 200, 70)), (410.0, (70, 130, 220)))
 
     def setup(self):
         self.hop_init(290.0, FLOOR_Y, wobble=110.0, xmin=170, xmax=385, **dict(HOP, start_h=300.0, min_h=260.0, max_h=430.0))
         self.line("Hobby six. Painting.", "title", 0.0)
-        self.line("Every bounce, a brushstroke.", "mid", 1.4)
+        self.line("No talent. Only rhythm.", "mid", 1.4)
         self.drops = []
         self.splats = []
         self.need = self.cfg["paint_splats"]
@@ -679,12 +710,12 @@ class Painting(Chapter):
             self.line("A museum hung it the next day.", "punch", self.t + 0.9)
             self.line("Finally, a hobby.", "end", self.t + 3.0)
         if self.payoff:
-            self.critic = max(922.0, self.critic - 300 * dt)
+            self.critic = max(892.0, self.critic - 300 * dt)
             self.nod = 0.5 + 0.5 * math.sin(self.t * 5)
 
     def snapshot(self):
         s = self.base_snap()
-        s["drops"] = [(d["id"], d["x"], d["y"], d["r"], d["c"]) for d in self.drops]
+        s["drops"] = [(d["id"], d["x"], d["y"], d["r"] * 0.6 + (d["rr"] - d["r"] * 0.6) * (d["age"] / d["T"]) ** 3, d["c"]) for d in self.drops]
         s["splats"] = list(self.splats); s["critic"] = self.critic; s["nod"] = self.nod
         return s
 
@@ -707,7 +738,11 @@ class Painting(Chapter):
         ended = s["end"] is not None
         if ended:
             k = min(1.0, (t - s["end"]) / 0.4)
-            dr.polygon([(P(620), P(SCENE_TOP)), (P(700), P(SCENE_TOP)), (P(x1 + 60), P(FLOOR_Y)), (P(x0 - 60), P(FLOOR_Y))], fill=mix(wall, (255, 236, 190), 0.16 * k))
+            from PIL import Image, ImageDraw as _ID
+            im = dr._image
+            mask = Image.new("L", im.size, 0)
+            _ID.Draw(mask).polygon([(P(610), P(SCENE_TOP)), (P(690), P(SCENE_TOP)), (P(x1 + 60), P(FLOOR_Y + 40)), (P(x0 - 60), P(FLOOR_Y + 40))], fill=int(255 * 0.16 * k))
+            im.paste(Image.new("RGB", im.size, (255, 236, 190)), (0, 0), mask)
         dr.line([(P(x0 + 45), P(y1)), (P(x0 + 20), P(FLOOR_Y))], fill=(110, 80, 56), width=int(P(14)))
         dr.line([(P(x1 - 45), P(y1)), (P(x1 - 20), P(FLOOR_Y))], fill=(110, 80, 56), width=int(P(14)))
         dr.rectangle([P(x0 - 10), P(y1), P(x1 + 10), P(y1 + 16)], fill=(110, 80, 56))
@@ -719,7 +754,7 @@ class Painting(Chapter):
         for (px, c) in self.PUDDLES:
             dr.ellipse([P(px - 55), P(FLOOR_Y - 8), P(px + 55), P(FLOOR_Y + 14)], fill=dim(c, 0.85))
         for (_id, x, y, r, c) in s["drops"]:
-            circle(dr, P(x), P(y), P(r * 0.6), c)
+            circle(dr, P(x), P(y), P(r), c)
         if s["critic"] < 1100:
             self.figure(dr, P, s["critic"], FLOOR_Y, (60, 64, 90), h=260, w=96, tilt=0.3 * s["nod"])
         self.bounce(dr, P, s)

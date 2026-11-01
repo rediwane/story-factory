@@ -24,7 +24,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(ROOT, "src", "sim"))
 sys.path.insert(0, os.path.join(ROOT, "src", "stories"))
 import base  # noqa: E402
-from listkit import penetration, disc_rect_overlap, SCENE_TOP, ZONES_UI  # noqa: E402
+from listkit import penetration, disc_rect_overlap, SCENE_TOP, ZONES_UI, sat_depth  # noqa: E402
 
 SEUILS = {
     "duree_min": 60.0, "duree_max": 66.0,          # une minute, sans s'étirer
@@ -39,7 +39,8 @@ SEUILS = {
     "silence_max_s": 1.6,
     "luma_haut_max": 110.0,                         # le compte est de nuit (moyenne glissante sur 1 s : un flash est permis)
     "vitesse_corps_max": 2600.0,                    # px/s : au-delà, un objet se téléporte
-    "rotation_corps_max": 30.0,                     # rad/s : au-delà, un objet pivote d'un coup
+    "rotation_corps_max": 30.0,
+    "interpenetration_max": 6.0,                    # px : deux objets libres ne se traversent pas                     # rad/s : au-delà, un objet pivote d'un coup
     "chutes_semblables_s": 1.2,                     # trois chapitres de suite qui tombent au même instant : la recette se voit
     "estimation_facteur": 1.2,                      # l'estimation avant rendu surestime le mp4 (0,85 × mesuré sur six_hobbies) : seuils relevés
 }
@@ -251,7 +252,7 @@ def pre(path, out):
     def inter(a, b):
         return min(a[2], b[2]) - max(a[0], b[0]) > 0 and min(a[3], b[3]) - max(a[1], b[1]) > 0
     foc_missing, foc_ui, foc_out, foc_stamp = set(), {}, {}, {}
-    prev_b, tele, rot, b_out = {}, {}, {}, {}
+    prev_b, tele, rot, b_out, overlap = {}, {}, {}, {}, {}
     prev_t = None
     for (t, s) in states:
         i = s["i"]
@@ -270,10 +271,23 @@ def pre(path, out):
                 if rect and inter(f, rect):
                     foc_stamp.setdefault(i, t)
         cur = {}
-        for (bid, bx, by, ba) in ch.bodies(snap):
+        polys = []
+        for body in ch.bodies(snap):
+            bid, bx, by, ba = body[:4]
+            if len(body) > 4 and body[4]:
+                polys.append((bid, body[4]))
             cur[(i, bid)] = (bx, by, ba)
             if not ch.bodies_exit_ok and (bx < -4 or bx > W + 4 or by < SCENE_TOP - 40 or by > H):
                 b_out.setdefault(i, (t, bid))
+        if i not in overlap and len(polys) > 1 and int(round(t * 30)) % 2 == 0:
+            for a_i in range(len(polys)):
+                for b_i in range(a_i + 1, len(polys)):
+                    dpt = sat_depth(polys[a_i][1], polys[b_i][1])
+                    if dpt > SEUILS["interpenetration_max"]:
+                        overlap[i] = (t, polys[a_i][0], polys[b_i][0], dpt)
+                        break
+                if i in overlap:
+                    break
         if prev_t is not None and t > prev_t:
             dt_ = t - prev_t
             for key, (bx, by, ba) in cur.items():
@@ -298,6 +312,8 @@ def pre(path, out):
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} se téléporte à {t:.2f} s ({v:.0f} px/s)")
     for i, (t, bid, w) in rot.items():
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} pivote d'un coup à {t:.2f} s ({w:.0f} rad/s)")
+    for i, (t, b1, b2, dpt) in overlap.items():
+        ko.append(f"chapitre {i + 1} ({sims[i].title}) : les objets {b1} et {b2} se traversent à {t:.2f} s ({dpt:.0f} px)")
     for i, (t, bid) in b_out.items():
         ko.append(f"chapitre {i + 1} ({sims[i].title}) : l'objet {bid} sort du cadre à {t:.2f} s")
     # les chutes ne tombent pas toutes au même instant de leur chapitre

@@ -19,9 +19,12 @@ Un chapitre hérite de `Chapter` et écrit :
   tombe, le tirage, la toile...), dans l'état `s`. Le contrôle exige qu'il soit dans le
   cadre, hors des zones que l'interface TikTok recouvre (`ZONES_UI`) et hors du tampon,
   de la chute à la fin du chapitre ;
-- `bodies(s)` : tous les objets qui bougent, en [(id, x, y, angle)], id stable d'une image
-  à l'autre. Le contrôle refuse un objet qui se téléporte, qui pivote d'un coup, ou qui
-  sort du cadre (sauf `bodies_exit_ok`, quand partir hors champ est la chute) ;
+- `bodies(s)` : tous les objets qui bougent, en [(id, x, y, angle)] ou
+  [(id, x, y, angle, polygone)], id stable d'une image à l'autre. Le contrôle refuse un
+  objet qui se téléporte, qui pivote d'un coup, ou qui sort du cadre (sauf
+  `bodies_exit_ok`, quand partir hors champ est la chute). Le polygone (sommets convexes,
+  coordonnées de l'image) se donne pour un objet **libre** (qui vole, tombe, glisse) : deux
+  objets libres ne doivent jamais s'interpénétrer (`separate()` les écarte) ;
 - attributs : `title` (en haut pendant le chapitre), `stamp` (texte, couleur) à la chute,
   `stamp_y` (hauteur du tampon, en fraction de l'image), `mood` ("win"/"lose"),
   `hold_s` (tenue après la chute), `exit_ok` (vrai seulement si sortir du cadre est le gag).
@@ -170,6 +173,76 @@ def settle_body(c, gy, flat_step, dt, corners, rest_ok=True):
     if rest_ok and abs(target - c["a"]) < 1e-3 and abs(c["vx"]) < 8:
         c["rest"] = True
     return True
+
+
+def body_poly(c, corners):
+    """Le polygone d'un corps rigide c = {x, y, a} dont la forme est `corners` (local)."""
+    ca, sa = math.cos(c["a"]), math.sin(c["a"])
+    return [(c["x"] + dx * ca - dy * sa, c["y"] + dx * sa + dy * ca) for dx, dy in corners]
+
+
+def sat_mtv(p1, p2):
+    """Interpénétration de deux polygones convexes : (profondeur, nx, ny), la normale allant
+    de p1 vers p2 ; (0, 0, 0) s'ils ne se touchent pas."""
+    best, bn = 1e18, (0.0, 0.0)
+    c1 = (sum(x for x, y in p1) / len(p1), sum(y for x, y in p1) / len(p1))
+    c2 = (sum(x for x, y in p2) / len(p2), sum(y for x, y in p2) / len(p2))
+    for poly in (p1, p2):
+        n = len(poly)
+        for i in range(n):
+            (ax, ay), (bx, by) = poly[i], poly[(i + 1) % n]
+            nx, ny = -(by - ay), bx - ax
+            L = math.hypot(nx, ny) or 1e-9
+            nx, ny = nx / L, ny / L
+            a = [x * nx + y * ny for x, y in p1]
+            b = [x * nx + y * ny for x, y in p2]
+            o = min(max(a), max(b)) - max(min(a), min(b))
+            if o <= 0:
+                return 0.0, 0.0, 0.0
+            if o < best:
+                best, bn = o, (nx, ny)
+    nx, ny = bn
+    if (c2[0] - c1[0]) * nx + (c2[1] - c1[1]) * ny < 0:
+        nx, ny = -nx, -ny
+    return best, nx, ny
+
+
+def sat_depth(p1, p2):
+    """Profondeur d'interpénétration de deux polygones convexes (0 s'ils ne se touchent pas)."""
+    return sat_mtv(p1, p2)[0]
+
+
+def separate(bodies, shape_of, iters=3, max_step=3.0):
+    """Écarte doucement les corps libres qui s'interpénètrent (cartes, wagons, débris) : chaque
+    paire en contact est repoussée le long de son axe de contact, d'au plus `max_step` px par
+    passe (jamais de saut visible), et les vitesses de rapprochement sont annulées.
+    `shape_of(c)` donne les sommets locaux de c ; un corps `rest` ne bouge plus."""
+    for _ in range(iters):
+        moved = False
+        polys = [body_poly(c, shape_of(c)) for c in bodies]
+        for i in range(len(bodies)):
+            for j in range(i + 1, len(bodies)):
+                c1, c2 = bodies[i], bodies[j]
+                if c1.get("rest") and c2.get("rest"):
+                    continue
+                d, nx, ny = sat_mtv(polys[i], polys[j])
+                if d <= 0.5:
+                    continue
+                m1 = 0.0 if c1.get("rest") else 1.0
+                m2 = 0.0 if c2.get("rest") else 1.0
+                tot = m1 + m2
+                k = min(d, max_step)
+                c1["x"] -= nx * k * m1 / tot; c1["y"] -= ny * k * m1 / tot
+                c2["x"] += nx * k * m2 / tot; c2["y"] += ny * k * m2 / tot
+                rel = (c2["vx"] - c1["vx"]) * nx + (c2["vy"] - c1["vy"]) * ny
+                if rel < 0:
+                    if m1:
+                        c1["vx"] += nx * rel * m1 / tot; c1["vy"] += ny * rel * m1 / tot
+                    if m2:
+                        c2["vx"] -= nx * rel * m2 / tot; c2["vy"] -= ny * rel * m2 / tot
+                moved = True
+        if not moved:
+            break
 
 
 def mix(a, b, k):
