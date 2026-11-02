@@ -25,6 +25,7 @@ BX = 210.0                             # Bounce sur sa chaise
 ZONE = BX + R_BOUNCE + 40.0            # à gauche de ça : la place de Bounce, aucun objet n'y reste
 XMAX = 760.0                           # à droite de ça : les boutons de TikTok
 WIN = (400.0, 640.0, 700.0, 1010.0)    # la fenêtre, derrière le recruteur
+STUB = 1400.0                          # le dessus du pied du bureau, une fois le plateau cassé
 HOP_T = 0.92                           # un petit rebond : assez long pour dire son nom en entier
 PAUSE = 0.35                           # le temps de se concentrer, avant le grand rebond
 BIG_T = 0.95
@@ -173,7 +174,7 @@ class Question(Chapter):
                     self.kick(o, 1100, vx=170.0)          # la lampe part droit dans la vitre
                 else:
                     self.kick(o, 700 + 60 * L, 0.5)
-            elif o["tier"] < L and o["free"] and o["kind"] not in ("wood", "deskhalf"):
+            elif o["tier"] < L and o["free"] and o["kind"] not in ("wood", "slab"):
                 self.kick(o, 260 + 40 * L, 0.5)
         if L == 1:
             OFFICE["spill_on"] = True
@@ -207,15 +208,16 @@ class Question(Chapter):
         new_obj(objs, "wood", BX + 20, 1150.0, 18.0, 200.0, 5, WOOD, rest=False, oid=62, vx=700.0, vy=-420.0, w=4.0)
 
     def break_desk(self):
+        """Le plateau casse en deux planches, le pied du bureau s'écrase en tas."""
         OFFICE["desk"] = "broken"
         x0, x1, top = DESK
         mid = (x0 + x1) / 2
         objs = OFFICE["objs"]
         for k, cx in enumerate(((x0 + mid) / 2, (mid + x1) / 2)):
-            new_obj(objs, "deskhalf", cx, (top + FLOOR_Y) / 2 - 2, (x1 - x0) / 2 - 8, FLOOR_Y - top - 4, 9, WOOD,
-                    rest=False, oid=70 + k, vx=(-1 if k == 0 else 1) * 70.0, vy=-240.0, w=(-1 if k == 0 else 1) * 2.4)
+            new_obj(objs, "slab", cx, top + 13, (x1 - x0) / 2 - 10, 26.0, 9, WOOD,
+                    rest=False, oid=70 + k, vx=(-1 if k == 0 else 1) * 60.0, vy=-380.0, w=(-1 if k == 0 else 1) * 3.0)
         for o in objs:
-            if o["kind"] not in ("deskhalf",) and not o.get("gone") and o["rest"]:
+            if o["kind"] not in ("slab",) and not o.get("gone") and o["rest"]:
                 o["rest"] = False; o["free"] = True
 
     @staticmethod
@@ -225,11 +227,17 @@ class Question(Chapter):
         return min(xs), min(ys), max(xs), max(ys)
 
     def ground(self, o):
-        """Le sol d'un objet : le bureau, la moquette, ou le dessus d'un objet posé juste
-        en dessous, seulement si son centre de gravité est au-dessus de cet appui."""
+        """Le sol d'un objet : le bureau (ou ce qu'il en reste), la moquette, ou le dessus
+        d'un objet posé juste en dessous, seulement si son centre de gravité est au-dessus
+        de cet appui."""
         x0, x1, top = DESK
-        g = top if (OFFICE["desk"] == "ok" and x0 <= o["x"] <= x1 and o["y"] < top) else FLOOR_Y
-        if o["kind"] in ("wood", "deskhalf"):
+        if o["kind"] == "wood":
+            return FLOOR_Y                    # les planches de la chaise tombent devant le bureau, au sol
+        if OFFICE["desk"] == "ok":
+            g = top if (x0 <= o["x"] <= x1 and o["y"] < top) else FLOOR_Y
+        else:
+            g = STUB if (x0 + 16 <= o["x"] <= x1 - 16 and o["y"] < STUB) else FLOOR_Y
+        if o["kind"] in ("slab",):
             return g                          # les gros débris reposent sur le bureau ou le sol, jamais en équilibre
         ax0, ay0, ax1, ay1 = self.aabb(o)
         for r in OFFICE["objs"]:
@@ -366,6 +374,8 @@ class Question(Chapter):
         out = []
         if s["desk"] == "ok":
             out.append(("rect", X(DESK[0]), Y(DESK[2]), X(DESK[1]), Y(FLOOR_Y)))
+        else:
+            out.append(("rect", X(DESK[0] + 16), Y(STUB), X(DESK[1] - 16), Y(FLOOR_Y)))
         if s["chair"] == "ok":
             out.append(("rect", X(116), Y(1040), X(134), Y(SEAT_Y)))
             out.append(("rect", X(116), Y(SEAT_Y), X(304), Y(SEAT_Y + 20)))
@@ -384,7 +394,7 @@ class Question(Chapter):
         for o in s["objs"]:
             if o["free"]:
                 poly = [(X(x), Y(y)) for (x, y) in body_poly(o, rect(o["wd"] - 8, o["ht"] - 8))]
-                out.append((o["id"], X(o["x"]), Y(o["y"]), o["a"], poly if o["kind"] not in ("deskhalf", "wood") else None))
+                out.append((o["id"], X(o["x"]), Y(o["y"]), o["a"], poly if o["kind"] not in ("wood",) else None))
         for p in s["papers"]:
             out.append((p["id"], X(p["x"]), Y(p["y"]), p["a"]))
         return out
@@ -458,6 +468,14 @@ class Question(Chapter):
             if s["spill"] > 0:
                 w = 80 * s["spill"]
                 dr.ellipse([X(458 - w * 0.3), Y(top - 6), X(458 + w), Y(top + 4)], fill=(96, 60, 36))
+        else:
+            x0, x1, top = DESK
+            pts = [(X(x0 + 16), Y(FLOOR_Y))]
+            for k in range(9):
+                xx = x0 + 16 + k * (x1 - x0 - 32) / 8
+                pts.append((X(xx), Y(STUB - (14 if k % 2 else 0))))
+            pts.append((X(x1 - 16), Y(FLOOR_Y)))
+            dr.polygon(pts, fill=dim(WOOD, 0.7))
         # la chaise
         if s["chair"] == "ok":
             rr(dr, [X(116), Y(1040), X(134), Y(SEAT_Y)], fill=WOOD)
@@ -509,10 +527,8 @@ class Question(Chapter):
             c = body_poly(o, [(0, -8)])[0]
             circle(dr, X(c[0]), Y(c[1]), Q(12), (90, 94, 116))
             return
-        if k == "deskhalf":
-            dr.polygon(poly, fill=dim(WOOD, 0.7))
-            slab = body_poly(o, [(-o["wd"] / 2, -o["ht"] / 2), (-o["wd"] / 2 + 26, -o["ht"] / 2), (-o["wd"] / 2 + 26, o["ht"] / 2), (-o["wd"] / 2, o["ht"] / 2)])
-            dr.polygon([(X(x), Y(y)) for (x, y) in slab], fill=WOOD)
+        if k == "slab":
+            dr.polygon(poly, fill=WOOD)
             return
         dr.polygon(poly, fill=o["col"])
 
