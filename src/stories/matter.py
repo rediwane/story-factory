@@ -80,7 +80,8 @@ class Matter(Chapter):
         if d is None:
             import voice as nv
             x = nv.say(text, self.cfg["narrator_voice"], self.cfg["narrator_length"])
-            d = Matter._durs[text] = (len(x) / nv.SR) if x is not None else 0.9
+            d = (len(x) / nv.SR) if x is not None else 0.9
+            d = Matter._durs[text] = math.ceil(d / 0.1) * 0.1 + 0.05    # arrondi vers le haut : la synthèse varie un peu
         return d
 
     def talk(self, text, key):
@@ -353,7 +354,7 @@ class Bubbles(Matter):
     stamp = ("9/10", GREEN)
     zc = (500.0, 1420.0)
     mood = "win"
-    hold_s = 1.6
+    hold_s = 1.95
     X0 = 120.0
     BR = 40.0
     NB = 9
@@ -687,7 +688,7 @@ class Sand(Matter):
             self.by = self.surf(self.bx) - self.R
             if self.landings >= self.LANDS:
                 self.buried = True
-                self.later("BURIED", "Two. He dug that hole himself.", "score", delay=0.4, after=0.4)
+                self.later("BURIED", "Two. He dug that hole himself.", "score", delay=0.4, after=0.75)
                 return
             self.hop(440.0)
 
@@ -722,7 +723,7 @@ class Trampoline(Matter):
             z += 0.06 * max(0.0, s["t"] - s["end"] - 2.2)      # la caméra continue d'avancer sur lui
         return z
     mood = "win"
-    hold_s = 2.6
+    hold_s = 3.0
     MAT = 1330.0
     CEIL = 430.0
     ROOF = -250.0
@@ -902,7 +903,7 @@ DEFAULTS = {
     "ball_r": R_BOUNCE, "gravity": G,
     "chapter_max_s": 12.0,
     "counter_font_size": 84, "counter_y": 0.19, "hook_text_s": 2.4,
-    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 2.0, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
+    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 2.3, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
 }
 
 CHAPTERS = [(Jelly, {}), (Bubbles, {}), (Glass, {}), (Honey, {}), (Sand, {}), (Trampoline, {"chapter_max_s": 30.0})]
