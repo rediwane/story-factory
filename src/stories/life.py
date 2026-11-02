@@ -11,7 +11,49 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import base
 from base import dim, circle
 from chapters import StorySim
-from listkit import Chapter, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body, separate, body_poly
+from listkit import Chapter as _Chapter, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body, separate, body_poly
+
+
+class Chapter(_Chapter):
+    """Le rythme de la voix : Bounce retombe au plus une fois par seconde, il tombe dans
+    chaque nouvel âge pendant que le narrateur le nomme, et après la chute il se pose (sauf
+    à la fin) : aucune réplique ne tombe sur une retombée, chaque choc est dit."""
+    settle_after = True
+    drop_in = True
+
+    def start_drop(self):
+        """Il arrive d'en haut : sa première retombée tombe après le titre."""
+        if not self.drop_in:
+            return
+        T = 1.2
+        h = min(0.5 * self.g * T ** 2, self.floor_y - 2 * self.R - SCENE_TOP - 10)
+        self.by = self.floor_y - self.R - h
+        self.vy = 0.0
+        self.vx = 0.0
+        self.on = "air"
+        self.wait_until = T - math.sqrt(2 * h / self.g)
+
+    def next_landing(self):
+        if self.on != "air":
+            return self.t
+        a, b, c = 0.5 * self.g, self.vy, self.by - (self.floor_y - self.R)
+        d = b * b - 4 * a * c
+        return self.t + ((-b + math.sqrt(d)) / (2 * a) if d >= 0 else 0.0)
+
+    def leap(self, h):
+        """Un grand saut, assez long pour qu'une réplique tienne entre deux mots."""
+        self.on = "air"
+        self.vy = -math.sqrt(2 * self.g * h)
+        self.vx = 0.0
+        self.by = min(self.by, self.floor_y - self.R)
+
+    def hop_step(self, dt, evs):
+        if self.t < getattr(self, "wait_until", 0.0):
+            return
+        n0 = self.hits
+        super().hop_step(dt, evs)
+        if self.settle_after and self.payoff and self.hits > n0 and self.on == "air":
+            self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
 
 PINK = (255, 120, 200)
 TEAL = (90, 200, 210)
@@ -41,14 +83,14 @@ class DayOne(Chapter):
     stamp = ("IT'S A BOUNCE!", AMBER)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 1.5
+    hold_s = 1.2
     BX0, BX1, RIM, BOT = 330.0, 790.0, 1090.0, 1230.0
 
     def setup(self):
         self.R = 46.0
         self.hop_init(560.0, self.BOT, start_h=150.0, gain=(1.0, 1.0), min_h=80.0, max_h=700.0, wobble=30.0,
                       xmin=520, xmax=600, h_ref=250.0)
-        self.hops = [180.0, 220.0, 260.0, 300.0, 340.0, 380.0]
+        self.hops = [166.0, 166.0, 420.0, 380.0]
         self.rock = 0.0
         self.rock_w = 0.0
         self.line("Day one.", "title", 0.0)
@@ -60,7 +102,7 @@ class DayOne(Chapter):
         if self.leave:
             if self.floor_y == FLOOR_Y and not self.payoff:
                 self.finish("OUT")
-                self.line("His first word.", "word", self.t + 0.9)
+                self.line("His first word.", "word", self.t + 0.95)
             return
         if n <= len(self.hops):
             self.h = self.hops[n - 1]
@@ -146,7 +188,7 @@ class School(Chapter):
     stamp = ("DETENTION", RED)
     stamp_y = 0.30
     mood = "lose"
-    hold_s = 1.8
+    hold_s = 1.2
     DX0, DX1, DTOP = 300.0, 600.0, 1230.0
     BW, BH, N = 150.0, 34.0, 8
 
@@ -155,8 +197,8 @@ class School(Chapter):
         self.seat = 1330.0
         self.hop_init(705.0, self.seat, start_h=260.0, gain=(0.95, 1.12), min_h=220.0, max_h=380.0, wobble=14.0,
                       xmin=695, xmax=718, h_ref=280.0)
+        self.start_drop()
         self.line("Age seven.", "title", 0.0)
-        self.line("The board says sit still.", "board", 1.3)
         self.off = [0.0] * self.N
         self.fall = None
         self.turn = 0.0
@@ -170,7 +212,7 @@ class School(Chapter):
         # le centre de gravité d'une pile au-dessus d'un livre sort de son appui : elle tombe
         for j in range(1, self.N):
             above = sum(self.off[j:]) / (self.N - j)
-            if abs(above - self.off[j - 1]) > self.BW * 0.42 or self.hits >= 7:
+            if abs(above - self.off[j - 1]) > self.BW * 0.42 or self.hits >= 4:
                 self.topple(j)
                 break
 
@@ -207,7 +249,7 @@ class School(Chapter):
             separate(self.fall, self.shape, iters=3, max_step=3.0)
             if not self.payoff and any(not c["rest"] and c["y"] > FLOOR_Y - 80 for c in self.fall):
                 self.finish("DETENTION")
-                self.line("Detention.", "det", self.t + 0.9)
+                self.line("Detention.", "det", self.next_landing() + 0.95)
         if self.payoff:
             self.turn = min(1.0, self.turn + dt * 4)
         self.sway = max(0.15, getattr(self, "sway", 0.2) - 0.25 * dt)
@@ -295,13 +337,14 @@ class FirstLove(Chapter):
     stamp = ("PERFECT MATCH", PINK)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 2.2
+    hold_s = 1.3
     SEAT = 1300.0
 
     def setup(self):
         self.R = 54.0
         self.hop_init(420.0, self.SEAT, start_h=260.0, gain=(0.92, 1.1), min_h=245.0, max_h=320.0, wobble=10.0,
                       xmin=410, xmax=430, h_ref=240.0)
+        self.start_drop()
         self.line("Sixteen.", "title", 0.0)
         self.her = {"x": 680.0, "y": self.SEAT - 50.0, "vy": 0.0, "on": "rest", "h": 0.0, "last": -9.0}
         self.r2 = 50.0
@@ -309,10 +352,11 @@ class FirstLove(Chapter):
         self.hearts = []
         self.said = False
 
-    need_sync = 3
+    need_sync = 4
+    blend_n = 2
 
     def on_match(self):
-        self.line("Perfect timing.", "timing", self.t + 0.9)
+        pass                                   # le tampon le dit
 
     def next_land(self):
         """Le prochain instant où Bounce retombe sur le banc."""
@@ -331,9 +375,7 @@ class FirstLove(Chapter):
             if hr["kick"] >= 2:
                 hr["on"] = "air"
                 hr["vy"] = -math.sqrt(2 * self.g * 90.0)
-                if not self.said:
-                    self.said = True
-                    self.line("She bounces too.", "too", self.t + 0.1)
+                self.said = True
 
     def after(self, dt, evs):
         hr = self.her
@@ -344,22 +386,41 @@ class FirstLove(Chapter):
                 hr["y"] = self.SEAT - self.r2
                 hr["last"] = self.t
                 tn0 = self.next_land()
-                if abs(self.t - self.hit_t) < 0.07 or (tn0 is not None and tn0 - self.t < 0.07):
-                    self.sync += 1
-                else:
-                    self.sync = 0
-                if self.sync >= self.need_sync and not self.payoff:
+                if self.payoff:
+                    hr["on"] = "rest"; hr["vy"] = 0.0
+                elif (abs(self.t - self.hit_t) < 0.07 or (tn0 is not None and tn0 - self.t < 0.07)) \
+                        and self.sync + 1 >= self.need_sync:
+                    # leurs rebonds tombent ensemble : ils vont s'envoler à sa prochaine retombée
                     self.finish("MATCH")
-                    self.on_match()
+                    self.match_pending = True
+                    hr["on"] = "rest"; hr["vy"] = 0.0
+                else:
+                    if abs(self.t - self.hit_t) < 0.07 or (tn0 is not None and tn0 - self.t < 0.07):
+                        self.sync += 1
+                    else:
+                        self.sync = 0
+                    self.plan_her(hr)
+        if getattr(self, "match_pending", False) and (self.hit_t == self.t or abs(self.hit_t - self.t) < 0.075):
+            # leurs rebonds sont tombés ensemble : ils se posent côte à côte
+            self.match_pending = False
+            self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
+            self.on_match()
+        self._her_tail(dt)
+
+    def plan_her(self, hr):
+        if True:
+            if True:
                 # son prochain saut : réglé pour retomber un peu plus près de lui
                 tn = self.next_land()
                 T = (tn - self.t) if tn is not None else 0.7
                 if T < 0.45:
                     T += 2 * math.sqrt(2 * self.h / self.g)
                 want = self.g * T * T / 8.0
-                hr["h"] = want if hr.get("n", 0) >= 2 else 0.5 * (want + 160.0)
+                hr["h"] = want if hr.get("n", 0) >= self.blend_n else 0.5 * (want + 160.0)
                 hr["n"] = hr.get("n", 0) + 1
                 hr["vy"] = -math.sqrt(2 * self.g * max(60.0, min(420.0, hr["h"])))
+
+    def _her_tail(self, dt):
         if self.payoff:
             if self.rng.random() < dt * 9:
                 self.hearts.append([550 + self.rng.uniform(-120, 120), self.SEAT - 200, self.t])
@@ -395,12 +456,18 @@ class FirstLove(Chapter):
         for i in range(30):
             circle(dr, P((i * 7919 + 211) % self.W), P(460 + (i * 104729 + 37) % 520), P(2), (150, 155, 190))
         circle(dr, P(860), P(600), P(40), MOON)
+        for k in range(14):
+            a = s["t"] * (0.7 + 0.1 * (k % 4)) + k * 0.9
+            fx = 540 + (180 + 40 * (k % 3)) * math.cos(a)
+            fy = 960 + (110 + 30 * (k % 2)) * math.sin(1.3 * a)
+            circle(dr, P(fx), P(fy), P(6), (250, 240, 150))
         # les arbres du parc
         for (x, r) in ((80, 150), (980, 170)):
             dr.rectangle([P(x - 16), P(1100), P(x + 16), P(FLOOR_Y)], fill=(50, 40, 36))
             circle(dr, P(x), P(1040), P(r), (26, 50, 40))
         # le réverbère
-        glow(dr, P, 540, 900, 300, (255, 220, 150), sky, 0.26, rings=8)
+        fl = 0.26 + 0.12 * math.sin(s["t"] * 5.0) * math.sin(s["t"] * 1.7)
+        glow(dr, P, 540, 900, 380, (255, 220, 150), sky, fl, rings=8)
         dr.rectangle([P(536), P(900), P(548), P(FLOOR_Y)], fill=(70, 70, 84))
         dr.rectangle([P(500), P(880), P(584), P(906)], fill=(250, 226, 160))
         dr.rectangle([0, P(FLOOR_Y), P(self.W), P(self.H)], fill=(30, 50, 34))
@@ -429,7 +496,7 @@ class Apartment(Chapter):
     stamp = ("NEW ROOMMATE", AMBER)
     stamp_y = 0.30
     mood = "lose"
-    hold_s = 1.8
+    hold_s = 1.3
     FL = 1060.0
     H0, H1 = 430.0, 650.0
     COUCH = 1360.0
@@ -438,8 +505,8 @@ class Apartment(Chapter):
         self.R = 62.0
         self.hop_init(540.0, self.FL, start_h=220.0, gain=(0.95, 1.15), min_h=200.0, max_h=330.0, wobble=8.0,
                       xmin=535, xmax=545, h_ref=240.0)
+        self.start_drop()
         self.line("Twenty five.", "title", 0.0)
-        self.line("His own place.", "own", 1.2)
         self.crack = 0.0
         self.open = None
         self.dust = []
@@ -449,8 +516,11 @@ class Apartment(Chapter):
 
     def on_land(self, k, evs):
         if self.open is not None:
+            if not self.payoff and self.t - self.open > 0.2:
+                self.finish("FELL")
+                self.line("Their place now.", "now", self.t + 0.95)
             return
-        self.crack += 0.21 * k * self.rng.uniform(0.8, 1.2)
+        self.crack += 0.32 * k * self.rng.uniform(0.8, 1.2)
         self.lamp_w += 2.4 * k
         for _ in range(int(4 * k) + 2):
             self.dust.append([self.rng.uniform(self.H0, self.H1), self.FL + 30, self.rng.uniform(-30, 30), self.t])
@@ -459,6 +529,9 @@ class Apartment(Chapter):
         if self.crack >= 1.0:
             # le plancher cède sous lui : deux trappes s'ouvrent, il tombe
             self.open = self.t
+            self.lamp_w += 9.0
+            for _ in range(40):
+                self.dust.append([self.rng.uniform(self.H0, self.H1), self.FL + 30, self.rng.uniform(-260, 260), self.t])
             self.floor_y = self.COUCH
             self.on = "air"; self.vy = 0.0; self.vx = 0.0
             self.xmin = self.xmax = 540.0
@@ -466,15 +539,17 @@ class Apartment(Chapter):
     def flap(self, t):
         if self.open is None:
             return 0.0
-        return min(math.pi / 2 * 0.95, (t - self.open) * 14.0)
+        u = t - self.open
+        base_a = min(math.pi / 2 * 0.95, u * 14.0)
+        if u * 14.0 < math.pi / 2 * 0.95:
+            return base_a
+        # les trappes pendent et se balancent
+        return math.pi / 2 * 0.95 - 0.35 * math.exp(-0.8 * u) * abs(math.sin(u * 7.0))
 
     def after(self, dt, evs):
         self.lamp_w += -9.0 * self.lamp * dt - 0.8 * self.lamp_w * dt
         self.lamp += self.lamp_w * dt
-        self.dust = [d for d in self.dust if self.t - d[3] < 1.3]
-        if self.open is not None and not self.payoff and self.on == "air" and self.by >= self.COUCH - self.R - 1 and self.t - self.open > 0.2:
-            self.finish("FELL")
-            self.line("Their place now.", "now", self.t + 0.9)
+        self.dust = [d for d in self.dust if self.t - d[3] < 1.8]
 
     def snapshot(self):
         s = self.base_snap()
@@ -536,7 +611,9 @@ class Apartment(Chapter):
             pts = [(P(540 + ((-1) ** k) * 14 * s["crack"] + (k - n / 2) * 10 * s["crack"]), P(self.FL + 40 * k / n)) for k in range(n + 1)]
             dr.line(pts, fill=(40, 30, 28), width=int(P(4)))
         # en bas : le voisin, son canapé, sa lampe qui se balance
-        lx = 540 + 60 * math.sin(s["lamp"])
+        lx = 540 + 110 * math.sin(s["lamp"])
+        if s["flap"] > 0:
+            glow(dr, P, lx, self.FL + 200, 330, (255, 220, 150), down, 0.12 + 0.12 * abs(math.sin(s["t"] * 13.0)), rings=6)
         dr.line([(P(540), P(self.FL + 40)), (P(lx), P(self.FL + 150))], fill=(150, 150, 160), width=int(P(3)))
         dr.polygon([(P(lx - 40), P(self.FL + 190)), (P(lx + 40), P(self.FL + 190)), (P(lx + 20), P(self.FL + 150)), (P(lx - 20), P(self.FL + 150))], fill=(240, 210, 140))
         dr.rectangle([P(330), P(self.COUCH), P(750), P(self.COUCH + 60)], fill=(150, 70, 70))
@@ -545,14 +622,17 @@ class Apartment(Chapter):
         dr.rectangle([P(730), P(self.COUCH - 40), P(770), P(FLOOR_Y)], fill=(120, 54, 54))
         poke = max(0.0, 1.0 - (s["t"] - s["broom"]) / 0.9) if s["broom"] > 0 else 0.0
         top = self.FL + 40 + (1 - math.sin(poke * math.pi * 3) ** 2) * 60 * (1 if poke > 0 else 3)
-        self.figure(dr, P, 860, FLOOR_Y, (80, 110, 90), h=280, w=100)
-        dr.line([(P(830), P(1330)), (P(800), P(top))], fill=(170, 130, 80), width=int(P(10)))
-        dr.rectangle([P(770), P(top - 10), P(830), P(top + 26)], fill=(200, 180, 90))
+        jump = 0.0
+        if s.get("flap", 0.0) > 0:
+            jump = abs(math.sin(s["t"] * 9.0)) * 50.0
+        self.figure(dr, P, 860, FLOOR_Y - jump, (80, 110, 90), h=280, w=100)
+        dr.line([(P(830), P(1330 - jump)), (P(800), P(top - jump))], fill=(170, 130, 80), width=int(P(10)))
+        dr.rectangle([P(770), P(top - 10 - jump), P(830), P(top + 26 - jump)], fill=(200, 180, 90))
         for (x, y, vx, t0) in s["dust"]:
             age = s["t"] - t0
             yy = y + 260 * age + 200 * age * age
             if yy < FLOOR_Y - 6:
-                circle(dr, P(x + vx * age), P(yy), P(5), (200, 190, 170))
+                circle(dr, P(x + vx * age), P(yy), P(9), (200, 190, 170))
         self.bounce(dr, P, s)
 
 
@@ -562,16 +642,20 @@ class Wedding(FirstLove):
     en rebondissant, et quand leurs rebonds tombent ensemble, les confettis partent."""
     title = "AGE 29"
     stamp = ("JUST MARRIED", PINK)
-    hold_s = 1.4
+    hold_s = 1.2
+    need_sync = 2
+    blend_n = 0
     SEAT = FLOOR_Y
 
     def setup(self):
         self.R = 64.0
         self.hop_init(430.0, self.SEAT, start_h=260.0, gain=(0.95, 1.08), min_h=245.0, max_h=310.0, wobble=8.0,
                       xmin=424, xmax=436, h_ref=220.0)
+        self.start_drop()
         self.line("Twenty nine.", "title", 0.0)
-        self.line("Do you take her?", "vow", 1.2)
+        self.line("Do you take her?", "vow", 2.12)
         self.reply("vow", 0.35)
+        self.resume = 4.3
         self.her = {"x": 660.0, "y": self.SEAT - 54.0, "vy": 0.0, "on": "rest", "h": 0.0, "last": -9.0}
         self.r2 = 54.0
         self.sync = 0
@@ -585,14 +669,19 @@ class Wedding(FirstLove):
 
     def on_land(self, k, evs):
         hr = self.her
-        if hr["on"] == "rest" and self.t > 3.6:
-            hr["on"] = "air"
-            hr["vy"] = -math.sqrt(2 * self.g * 120.0)
-            if not self.said:
-                self.said = True
-                self.line("She does.", "does", self.t + 0.1)
+        pass
 
     def after(self, dt, evs):
+        # à l'autel, il se tient (presque) tranquille pendant la question, puis répond
+        if self.hits >= 1 and self.t < self.resume and self.on == "air" and self.hit_t == self.t:
+            self.on = "still"; self.vy = 0.0; self.by = self.floor_y - self.R
+        if self.on == "still" and self.t >= self.resume and not self.payoff:
+            self.on = "ground"
+        hr = self.her
+        if hr["on"] == "rest" and self.t >= self.resume and self.on == "air" and self.vy < 0 and not self.payoff:
+            # elle répond en rebondissant avec lui, calée sur sa retombée
+            T = self.next_landing() - self.t
+            hr["on"] = "air"; hr["vy"] = -self.g * T / 2; hr["n"] = 1
         was = self.payoff
         super().after(dt, evs)
         if self.payoff and not was:
@@ -659,15 +748,15 @@ class Dad(Chapter):
     stamp = ("LIKE FATHER", AMBER)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 2.0
+    hold_s = 1.2
     CX0, CX1, CBOT, CRIM = 560.0, 840.0, 1300.0, 1120.0
 
     def setup(self):
         self.R = 66.0
         self.hop_init(330.0, FLOOR_Y, start_h=260.0, gain=(0.95, 1.1), min_h=220.0, max_h=330.0, wobble=40.0,
                       xmin=280, xmax=380, h_ref=260.0)
+        self.start_drop()
         self.line("Thirty three.", "title", 0.0)
-        self.line("Shh.", "shh", 1.6)
         self.baby = {"x": 700.0, "y": self.CBOT - 26.0, "vy": 0.0, "on": "sleep", "w": 0.0, "last": -9.0, "n": 0}
         self.rb = 26.0
 
@@ -688,7 +777,9 @@ class Dad(Chapter):
             T = (-self.vy + math.sqrt(self.vy * self.vy - 4 * a * c)) / (2 * a)
             b["on"] = "air"
             b["vy"] = -self.g * T / 2
-        if b["on"] == "air":
+        if b["on"] == "rest":
+            pass
+        elif b["on"] == "air":
             b["vy"] += self.g * dt
             b["y"] += b["vy"] * dt
             if b["vy"] > 0 and b["y"] >= self.CBOT - self.rb:
@@ -699,9 +790,11 @@ class Dad(Chapter):
                 if abs(self.t - self.hit_t) > 0.05:
                     evs.append(("hit", "floor"))
                 if b["n"] == 1 and not self.payoff:
+                    # le bébé retombe avec son père : ils se posent ensemble
                     self.finish("LIKE")
-                    self.line("Like father.", "like", self.t + 0.9)
-                b["vy"] = -math.sqrt(2 * self.g * (110.0 + 30.0 * min(b["n"], 3)))
+                    self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
+                    b["on"] = "rest"; b["vy"] = 0.0
+                    self.line("Like father.", "like", self.t + 0.95)
 
     def snapshot(self):
         s = self.base_snap()
@@ -725,12 +818,22 @@ class Dad(Chapter):
         wall = (40, 36, 58)
         self.room(dr, P, wall, (64, 52, 56))
         night_window(dr, P, 120, 620, 330, 840, wall, moon=(280, 680))
-        glow(dr, P, 960, 980, 150, (255, 210, 150), wall, 0.2)
-        circle(dr, P(960), P(980), P(22), (250, 220, 160))
+        glow(dr, P, 900, 980, 260, (255, 210, 150), wall, 0.18 + 0.1 * math.sin(s["t"] * 3.0))
+        circle(dr, P(900), P(980), P(22), (250, 220, 160))
         # des étoiles peintes au mur
         for i in range(9):
             dr.regular_polygon((P(470 + (i * 97) % 520), P(520 + (i * 61) % 260), P(12)), 5, fill=(70, 66, 100))
         x, y, on, w, stir = s["baby"]
+        # le mobile au-dessus du lit, comme celui de son premier jour
+        ang = s["t"] * 3.2
+        dr.line([(P(700), P(SCENE_TOP)), (P(700), P(900))], fill=(150, 150, 165), width=int(P(5)))
+        dr.line([(P(700 - 170 * math.cos(ang)), P(900)), (P(700 + 170 * math.cos(ang)), P(900))], fill=(170, 170, 185), width=int(P(5)))
+        for k in range(4):
+            a = ang + k * math.pi / 2
+            mx = 700 + 170 * math.cos(a)
+            dr.line([(P(mx), P(900)), (P(mx), P(960))], fill=(150, 150, 165), width=int(P(3)))
+            dr.regular_polygon((P(mx), P(985), P(30 + 8 * math.sin(a))), 5,
+                               fill=[(250, 220, 90), (130, 200, 250), (250, 150, 180), (160, 230, 160)][k])
         # le lit à barreaux
         wood = (220, 220, 232)
         dr.rectangle([P(self.CX0), P(self.CBOT), P(self.CX1), P(self.CBOT + 30)], fill=wood)
@@ -753,6 +856,7 @@ class Dad(Chapter):
 
 # ---------------------------------------------------------------- 88 ans
 class Old(Chapter):
+    settle_after = False
     """Sur la véranda, dans son rocking-chair, à 88 ans. Ses rebonds sont devenus petits ;
     pour la première fois de sa vie, il s'arrête. Un compteur le chronomètre. Un de ses
     petits-enfants lui saute dessus, et c'est reparti."""
@@ -760,13 +864,15 @@ class Old(Chapter):
     stamp = ("NEVER STOPPED", GREEN)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 2.8
-    SEAT = 1310.0
+    hold_s = 2.4
+    stamp_y = 0.255
+    SEAT = 1350.0
 
     def setup(self):
         self.R = 62.0
-        self.hop_init(400.0, self.SEAT, start_h=70.0, gain=(0.82, 0.86), min_h=8.0, max_h=110.0, wobble=0.0,
+        self.hop_init(400.0, self.SEAT, start_h=175.0, gain=(1.0, 1.0), min_h=175.0, max_h=175.0, wobble=0.0,
                       xmin=400, xmax=400, h_ref=120.0)
+        self.start_drop()
         self.line("Eighty eight.", "title", 0.0)
         self.still_t = None
         self.kids = [{"x": 760.0, "y": FLOOR_Y - 24, "vy": -700.0, "vx": 0.0, "r": 24.0, "col": (255, 150, 210)},
@@ -779,15 +885,13 @@ class Old(Chapter):
 
     def on_land(self, k, evs):
         self.rock_w += 0.6 * k
-        if not self.back and self.h < 20 and self.still_t is None:
+        if not self.back and self.hits >= 3 and self.still_t is None:
             self.on = "still"
             self.by = self.SEAT - self.R
             self.still_t = self.t
-            self.line("He finally sat still.", "still", self.t + 0.3)
+            self.line("He finally sat still.", "still", self.t + 0.95)
             self.line("A new record.", "record", self.t + 2.2)
-        if self.back and not self.payoff:
-            self.finish("NEVER")
-            self.line("Never stopped.", "never", self.t + 0.9)
+
 
     def after(self, dt, evs):
         self.rock_w += (-14.0 * self.rock - 1.4 * self.rock_w) * dt
@@ -801,7 +905,7 @@ class Old(Chapter):
                 kd["y"] = FLOOR_Y - kd["r"]
                 kd["vy"] = -math.sqrt(2 * self.g * (150.0 + 40 * i))
         # au bout de trois secondes immobile, le plus petit lui saute dessus
-        if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 2.6:
+        if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 3.1:
             kd = self.kids[0]
             if kd["vy"] > 0:
                 self.jump = kd
@@ -817,14 +921,15 @@ class Old(Chapter):
             if d < self.R + kd["r"] and kd["vy"] > 0 and not self.back:
                 # le petit retombe sur lui : il repart
                 self.back = True
-                self.on = "air"
-                # le petit lui tombe dessus : un choc, il dit son nom
+                # le petit lui tombe dessus : un choc, il dit son nom, et il bondit comme jamais
                 if self.t - self.last_hit >= 0.15:
                     self.last_hit = self.t
                     evs.append(("hit", "floor"))
                 self.hit_t = self.t
-                self.min_h, self.max_h, self.gain, self.h = 200.0, 280.0, (0.95, 1.1), 240.0
-                self.vy = -math.sqrt(2 * self.g * 240.0)
+                self.min_h, self.max_h, self.gain, self.h = 240.0, 300.0, (0.95, 1.1), 260.0
+                self.leap(650.0)                 # un bond de joie : sa réaction tient dedans
+                if not self.payoff:
+                    self.finish("NEVER")
                 kd["vy"] = -900.0; kd["vx"] = 260.0
                 self.jump = None
             if kd["x"] > 1000 or kd["y"] > FLOOR_Y - kd["r"]:
@@ -843,7 +948,7 @@ class Old(Chapter):
         return [("rect", 300, self.SEAT, 500, self.SEAT + 24)]
 
     def focus(self, s):
-        return (s["bx"] - 100, s["by"] - 120, s["bx"] + 120, s["by"] + self.R + 20)
+        return (290.0, self.SEAT - 140, 530.0, 1450.0)        # le fauteuil, là où le petit lui tombe dessus
 
     def bodies(self, s):
         return [(k, x, y, 0.0) for k, (x, y, r, c) in enumerate(s["kids"])]
@@ -894,10 +999,10 @@ class Old(Chapter):
 
 
 DEFAULTS = {
-    "ball_r": 60.0, "gravity": 3000.0,
+    "ball_r": 60.0, "gravity": 1600.0,
     "chapter_max_s": 13.0,
     "counter_font_size": 84, "counter_y": 0.19, "hook_text_s": 2.4,
-    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.8, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
+    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.4, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
 }
 
 CHAPTERS = [(DayOne, {}), (School, {}), (FirstLove, {}), (Apartment, {}), (Wedding, {}), (Dad, {}), (Old, {"chapter_max_s": 20.0})]
