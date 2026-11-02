@@ -723,8 +723,14 @@ class Wedding(FirstLove):
             fx, fy = 540 + 240 * math.cos(a), 1120 + 360 * math.sin(a)
             circle(dr, P(fx), P(fy), P(18), [(250, 140, 180), (250, 220, 120), (240, 240, 250)][k % 3])
         dr.rectangle([P(250), P(FLOOR_Y - 10), P(830), P(FLOOR_Y + 30)], fill=(150, 40, 60))
-        for (x, col) in ((80, (90, 100, 140)), (170, (120, 90, 120)), (910, (100, 120, 100)), (1000, (130, 110, 80))):
-            self.figure(dr, P, x, FLOOR_Y, col, h=230, w=80)
+        for k, (x, col) in enumerate(((80, (90, 100, 140)), (170, (120, 90, 120)), (910, (100, 120, 100)), (1000, (130, 110, 80)))):
+            sway = 10 * math.sin(s["t"] * 2.0 + k)
+            self.figure(dr, P, x + sway, FLOOR_Y, col, h=230, w=80)
+            # les invités prennent des photos : des flashs
+            u = (s["t"] * 1.7 + k * 0.29) % 1.0
+            if u < 0.09:
+                glow(dr, P, x + sway + 30, FLOOR_Y - 300, 260, (255, 255, 250), wall, 0.55 * (1 - u / 0.09), rings=6)
+                circle(dr, P(x + sway + 30), P(FLOOR_Y - 300), P(14), (255, 255, 255))
         x, y = s["her"]
         small_ball(dr, P, x, y, self.r2, TEAL)
         # le voile
