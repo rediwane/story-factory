@@ -801,11 +801,11 @@ class Old(Chapter):
                 kd["y"] = FLOOR_Y - kd["r"]
                 kd["vy"] = -math.sqrt(2 * self.g * (150.0 + 40 * i))
         # au bout de trois secondes immobile, le plus petit lui saute dessus
-        if self.still_t is not None and self.jump is None and self.t - self.still_t > 3.0:
+        if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 2.6:
             kd = self.kids[0]
-            if kd["vy"] > 0 and kd["y"] > FLOOR_Y - kd["r"] - 30:
+            if kd["vy"] > 0:
                 self.jump = kd
-                T = 0.75
+                T = 0.6
                 tx, ty = self.bx + 10, self.by - self.R - kd["r"]
                 kd["vx"] = (tx - kd["x"]) / T
                 kd["vy"] = (ty - kd["y"] - 0.5 * self.g * T * T) / T
@@ -818,6 +818,11 @@ class Old(Chapter):
                 # le petit retombe sur lui : il repart
                 self.back = True
                 self.on = "air"
+                # le petit lui tombe dessus : un choc, il dit son nom
+                if self.t - self.last_hit >= 0.15:
+                    self.last_hit = self.t
+                    evs.append(("hit", "floor"))
+                self.hit_t = self.t
                 self.min_h, self.max_h, self.gain, self.h = 200.0, 280.0, (0.95, 1.1), 240.0
                 self.vy = -math.sqrt(2 * self.g * 240.0)
                 kd["vy"] = -900.0; kd["vx"] = 260.0
