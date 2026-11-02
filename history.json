@@ -193,6 +193,40 @@
     "measured_at": null
    },
    "script": "src/stories/machine.py (branche proto-machine)"
+  },
+  {
+   "name": "cats_proto",
+   "date": "2026-11-03",
+   "theme": "cats",
+   "config": "configs/cats_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Wake 1000 Cats?",
+   "duration_s": 64.03,
+   "hashtags": [
+    "#catsoftiktok",
+    "#cats",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/cats_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-03T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-11737630764517771814.mp4",
+   "metricool_post_id": 414251495,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (Bounce réveille 1, 10, 100 puis 1000 chats), cherché et fait seul par Claude le 02/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/cats.py (branche proto-cats)"
   }
  ],
  "themes": [
