@@ -102,7 +102,7 @@ class DayOne(Chapter):
         if self.leave:
             if self.floor_y == FLOOR_Y and not self.payoff:
                 self.finish("OUT")
-                self.line("His first word.", "word", self.t + 0.95)
+                self.line("His first word.", "word", self.t + 1.05)
             return
         if n <= len(self.hops):
             self.h = self.hops[n - 1]
@@ -249,7 +249,7 @@ class School(Chapter):
             separate(self.fall, self.shape, iters=3, max_step=3.0)
             if not self.payoff and any(not c["rest"] and c["y"] > FLOOR_Y - 80 for c in self.fall):
                 self.finish("DETENTION")
-                self.line("Detention.", "det", self.next_landing() + 0.95)
+                self.line("Detention.", "det", self.next_landing() + 1.05)
         if self.payoff:
             self.turn = min(1.0, self.turn + dt * 4)
         self.sway = max(0.15, getattr(self, "sway", 0.2) - 0.25 * dt)
@@ -518,7 +518,7 @@ class Apartment(Chapter):
         if self.open is not None:
             if not self.payoff and self.t - self.open > 0.2:
                 self.finish("FELL")
-                self.line("Their place now.", "now", self.t + 0.95)
+                self.line("Their place now.", "now", self.t + 1.05)
             return
         self.crack += 0.32 * k * self.rng.uniform(0.8, 1.2)
         self.lamp_w += 2.4 * k
@@ -613,7 +613,7 @@ class Apartment(Chapter):
         # en bas : le voisin, son canapé, sa lampe qui se balance
         lx = 540 + 110 * math.sin(s["lamp"])
         if s["flap"] > 0:
-            glow(dr, P, lx, self.FL + 200, 330, (255, 220, 150), down, 0.12 + 0.12 * abs(math.sin(s["t"] * 13.0)), rings=6)
+            glow(dr, P, lx, self.FL + 200, 330, (255, 220, 150), down, 0.05 + 0.07 * abs(math.sin(s["t"] * 13.0)), rings=6)
         dr.line([(P(540), P(self.FL + 40)), (P(lx), P(self.FL + 150))], fill=(150, 150, 160), width=int(P(3)))
         dr.polygon([(P(lx - 40), P(self.FL + 190)), (P(lx + 40), P(self.FL + 190)), (P(lx + 20), P(self.FL + 150)), (P(lx - 20), P(self.FL + 150))], fill=(240, 210, 140))
         dr.rectangle([P(330), P(self.COUCH), P(750), P(self.COUCH + 60)], fill=(150, 70, 70))
@@ -665,7 +665,7 @@ class Wedding(FirstLove):
         self.petals = [[300 + k * 37.0 % 480, 760.0 + (k * 97) % 700, 0.0, k * 1.3] for k in range(8)]
 
     def on_match(self):
-        self.line("He meant yes.", "yes", self.t + 0.9)
+        self.line("He meant yes.", "yes", self.t + 1.05)
 
     def on_land(self, k, evs):
         hr = self.her
@@ -794,7 +794,7 @@ class Dad(Chapter):
                     self.finish("LIKE")
                     self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
                     b["on"] = "rest"; b["vy"] = 0.0
-                    self.line("Like father.", "like", self.t + 0.95)
+                    self.line("Like father.", "like", self.t + 1.05)
 
     def snapshot(self):
         s = self.base_snap()
