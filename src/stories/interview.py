@@ -203,7 +203,7 @@ class Question(Chapter):
         objs = OFFICE["objs"]
         # l'assise se fend : une moitié part à gauche, l'autre et le dossier à droite
         new_obj(objs, "wood", BX - 50, SEAT_Y + 10, 96.0, 18.0, 5, WOOD, rest=False, oid=60, vx=-760.0, vy=-380.0, w=-6.0)
-        new_obj(objs, "wood", BX + 50, SEAT_Y + 10, 96.0, 18.0, 5, WOOD, rest=False, oid=61, vx=650.0, vy=-420.0, w=6.0)
+        new_obj(objs, "wood", BX + 50, SEAT_Y + 10, 96.0, 18.0, 5, WOOD, rest=False, oid=61, vx=330.0, vy=-420.0, w=6.0)
         # le dossier est trop long pour la place à gauche : il part à droite
         new_obj(objs, "wood", BX + 20, 1150.0, 18.0, 200.0, 5, WOOD, rest=False, oid=62, vx=700.0, vy=-420.0, w=4.0)
 
