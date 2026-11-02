@@ -481,10 +481,10 @@ class Machine(Chapter):
             om *= (1 - 0.15 * DT)
             phi += om * DT
             tt += DT
-            if self.cat_hit is not None:
-                # elle a frappé le cran : elle retombe et s'immobilise contre les autres
-                phi = max(0.0, phi)
-                om = -abs(om) * 0.35 if phi > 0.02 else 0.0
+            if self.cat_hit is not None and phi < 0.0:
+                # elle a frappé le cran et retombe : elle cogne la quatrième et s'immobilise
+                phi = 0.0
+                om = abs(om) * 0.25 if abs(om) > 0.4 else 0.0
             cr.add(tt, 0, 0, max(0.0, phi))
             cr1.add(tt, 0, 0, 0.0)
             if self.cat_hit is None and phi >= math.radians(30):
@@ -529,7 +529,10 @@ class Machine(Chapter):
         length = x - (self.switch_x + 2) - 200
         pts, ang = path(x, y, ang0, [("a", (math.pi - math.radians(4.0)) - ang0, 150), ("s", length)])
         self.ceiling = pts
-        t, v, ang, ra = roll(D, pts, t, math.hypot(vx, vy) * 0.5, mu=0.03, c=6.0)
+        t, v, ang, ra = roll(D, pts, t, math.hypot(vx, vy) * 0.85, mu=0.03, c=6.0)
+        # le moment où la bille D passe au-dessus des grands dominos déjà tombés
+        x_over = self.doms[-1]["x"] + 200
+        self.over_doms_t = next(D.t[k] for k in range(len(D.t)) if D.t[k] > self.ceil_t0 and D.x[k] <= x_over)
         # la butée au-dessus de l'interrupteur, puis la chute
         xe, ye = pts[-1]
         self.bumpers.append((xe - RB - 6, ye))
@@ -720,6 +723,7 @@ class Machine(Chapter):
             (self.jump_t0 + 0.02, "There's no track.", "gap"),
             (self.jump_t1 + 0.05, "It works.", "works"),
             (m[7] + 0.6, "All the way back.", "back"),
+            (self.over_doms_t, "Over the dominoes.", "over"),
             (self.drop_t0 - 2.4, "Almost there.", "almost"),
             (self.t_off - 0.5, "Here it comes.", "comes"),
             (self.t_off + 0.35, "Goodnight, Bounce.", "night"),
@@ -1019,8 +1023,13 @@ class Machine(Chapter):
             ex, ey = cpx + math.cos(ca) * self.cat_len, cpy - math.sin(ca) * self.cat_len
             dr.line([(X(cpx), Y(cpy)), (X(ex), Y(ey))], fill=WOOD, width=max(1, int(P(14))))
             dr.ellipse([X(ex - 30), Y(ey - 18), X(ex + 30), Y(ey + 6)], fill=dim(WOOD, 0.8))
-            if ca < 0.05:
-                dr.rectangle([X(self.cat_x - 4), Y(ty - 70), X(self.cat_x + 4), Y(ty)], fill=(220, 80, 80))
+            # le cran : la cinquième bille le fait basculer, il reste couché contre le pied
+            ka = 0.0 if t < self.cat_hit else min(math.radians(45), (t - self.cat_hit) * 7.0)
+            ca_, sa_ = math.cos(ka), math.sin(ka)
+            hx = self.cat_x
+            pts = [(hx - 4, 0), (hx + 4, 0), (hx + 4, -70), (hx - 4, -70)]
+            dr.polygon([(X(hx + (px_ - hx) * ca_ - py_ * sa_), Y(ty + (px_ - hx) * sa_ + py_ * ca_)) for (px_, py_) in pts],
+                       fill=(220, 80, 80))
         # les billes
         Z = getattr(self, "Zc", 1.0)
         for name in ("A", "B", "C", "D"):
