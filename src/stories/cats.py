@@ -149,6 +149,7 @@ class CatRoom(Chapter):
         evs = []
         self.bounce_step(dt, evs)
         self.cats_step(dt, evs)
+        self.spread(dt)
         self.cam_step(dt)
         self.cam = self.cam_at()
         self.story(evs)
@@ -332,8 +333,9 @@ class CatRoom(Chapter):
                 if self.on == "out":
                     continue
                 sp = 330.0
-                if abs(dx) > 240:
-                    c["x"] += math.copysign(min(sp * dt, abs(dx) - 240), dx)
+                stop = 170.0 + (c["id"] * 7919 % 290)              # chacun s'arrête à sa distance
+                if abs(dx) > stop:
+                    c["x"] += math.copysign(min(sp * dt, abs(dx) - stop), dx)
                 elif t >= c["cool"] and self.pin is None:
                     c["st"] = "crouch"; c["t_st"] = t; c["dur"] = float(self.rng.uniform(0.3, 0.6))
             elif st in ("pin", "pile"):
@@ -345,6 +347,18 @@ class CatRoom(Chapter):
                     c["x"] += dx / d * stp; c["y"] += dy / d * stp
                 else:
                     c["x"], c["y"] = c["gx"], c["gy"]
+
+    def spread(self, dt):
+        """Les chasseurs au sol ne s'entassent pas au même endroit : chacun garde un peu de
+        place derrière celui qui est plus près de Bounce (sans jamais sauter)."""
+        hs = [c for c in self.cats if c["st"] in ("hunt", "crouch") and c["lane"]]
+        for side in (-1, 1):
+            row = sorted([c for c in hs if (c["x"] - self.bx) * side >= 0], key=lambda c: abs(c["x"] - self.bx))
+            for a, b in zip(row, row[1:]):
+                need = 58.0 * max(a["sc"], b["sc"])
+                gap = (b["x"] - a["x"]) * side
+                if gap < need and b["st"] == "hunt":
+                    b["x"] += side * min(need - gap, 260.0 * dt)
 
     def cat_contact(self, c, evs):
         if self.on in ("pinned",):
@@ -455,7 +469,7 @@ class CatRoom(Chapter):
         s["cam"] = self.cam
         s["cats"] = [(c["id"], c["st"], c["x"], c["y"], c["sc"], c["f"], c["fur"], c["ph"],
                       c["w"] / c["th"], c["twitch"], c["t_st"], c.get("dur", 0.6), c["vx"], c["vy"], c.get("t_wake", -9.0)) for c in self.cats]
-        s["rings"] = [r for r in self.rings if self.t - r[0] < 0.6]
+        s["rings"] = [r for r in self.rings if self.t - r[0] < 0.65]
         s["prog"] = clamp((self.bx - self.start_x) / (self.exit_x - self.start_x), 0.0, 1.0)
         s["pin"] = self.pin
         return s
@@ -538,25 +552,29 @@ class CatRoom(Chapter):
         # l'onde de chaque rebond : c'est ça qui réveille les chats
         for (t0, rx, ry) in s.get("rings", []):
             age = self.t - t0
-            if age < 0 or age > 0.55:
+            if age < 0 or age > 0.6:
                 continue
             for k2 in (0, 1):
                 a2 = age - k2 * 0.12
                 if a2 <= 0:
                     continue
-                rad = Q(self.R * 0.9 + 420 * a2)
-                col = mix((255, 230, 170), wall, min(1.0, a2 / 0.5))
+                rad = Q(self.R * 0.9 + 480 * a2)
+                col = mix((255, 236, 180), wall, min(1.0, a2 / 0.6) ** 1.5)
                 cxp, cyp = X(rx), Y(ry)
-                dr.arc([cxp - rad, cyp - rad * 0.55, cxp + rad, cyp + rad * 0.55], 180, 360, fill=col, width=max(1, int(Q(5))))
+                dr.arc([cxp - rad, cyp - rad * 0.55, cxp + rad, cyp + rad * 0.55], 180, 360, fill=col, width=max(1, int(Q(8))))
         self.marks(dr, X, Y, Q, s, t, xl, xr)
         if s.get("on") == "pinned":
             base.HERO["expr"] = "lose" if s["end"] is not None and self.t - s["end"] > 0.6 else "shock"
+        bump = 0.0
+        if s.get("on") == "pinned":
+            bump = max(0.0, 1.0 - (self.t - s["hit_t"]) / 0.3)      # chaque « Bounce » soulève la pile
+        lift = lambda c: c[:3] + (c[3] - 16 * bump,) + c[4:]
         for c in sorted([c for c in pile if c[1] == "pile"], key=lambda c: c[3]):
-            self.cat(dr, X, Y, Q, c, t)
+            self.cat(dr, X, Y, Q, lift(c), t)
         base.ball(dr, X(s["bx"]), Y(s["by"]), Q(self.R))
         for c in pile:
             if c[1] == "pin":
-                self.cat(dr, X, Y, Q, c, t)
+                self.cat(dr, X, Y, Q, lift(c), t)
         for c in air:
             self.cat(dr, X, Y, Q, c, t)
         dr.rectangle([0, 0, P(W), P(SCENE_TOP) - 1], fill=tuple(self.cfg["bg_color"]))
@@ -702,8 +720,8 @@ class CatRoom(Chapter):
         if st == "hunt":
             run = math.sin(t * 18 + ph)
             E(0, -20, 46, 16)
-            E(-14 + 6 * run, -6, 6, 8, 0.0, fill=dim(col, 0.85))
-            E(18 - 6 * run, -6, 6, 8, 0.0, fill=dim(col, 0.85))
+            E(-14 + 6 * run, -8, 6, 7, 0.0, fill=dim(col, 0.85))
+            E(18 - 6 * run, -8, 6, 7, 0.0, fill=dim(col, 0.85))
             E(-56, -30, 28, 6, -0.4, fill=dim(col, 0.85))
             E(44, -26, 21, 17)
             tri([(32, -36), (36, -56), (46, -40)], col)
@@ -739,7 +757,7 @@ class OneCat(CatRoom):
         # un seul chat, mais énorme, couché en travers du passage
         self.cats.append({"hx": 480.0, "hy": FLOOR_Y, "hsc": 4.2, "lane": True, "th": 0.5, "lazy": True, "fur": 0, "f": -1})
 
-    lam = 420.0
+    lam = 160.0
 
     def lines_setup(self):
         self.line("One cat.", "title", 0.0)
@@ -801,7 +819,7 @@ class TenCats(CatRoom):
 
     def decor(self, dr, X, Y, Q, s):
         dr.rectangle([X(520), Y(740), X(800), Y(920)], fill=(16, 22, 44))
-        circle(dr, X(575), Y(870), Q(24), (226, 228, 236))
+        circle(dr, X(760), Y(790), Q(24), (226, 228, 236))
         dr.rectangle([X(500), Y(930), X(820), Y(946)], fill=(70, 56, 46))
         # la bibliothèque
         dr.rectangle([X(90), Y(700), X(270), Y(FLOOR_Y)], fill=(60, 44, 36))
@@ -875,8 +893,7 @@ class HundredCats(CatRoom):
         for k in range(3):
             x0 = 260 + k * 560
             dr.rectangle([X(x0), Y(540), X(x0 + 200), Y(660)], fill=(16, 22, 44))
-            if k == 1:
-                circle(dr, X(x0 + 150), Y(590), Q(20), (226, 228, 236))
+            pass
 
 
 # ---------------------------------------------------------------- 1000 chats
@@ -900,6 +917,8 @@ class ThousandCats(CatRoom):
     COLS = 40
 
     def build(self):
+        self.on = "wait"
+        self.bx = -400.0
         for r in range(self.ROWS):
             yy = 1390.0 - r * 57.0
             for k in range(self.COLS):
@@ -913,20 +932,21 @@ class ThousandCats(CatRoom):
 
     def bounce_step(self, dt, evs):
         # le plan large d'ouverture : il rebondit sur place à l'entrée
-        if self.t < self.tilt[1] + 0.3:
-            self.vy += G * dt
-            self.by += self.vy * dt
-            if self.vy > 0 and self.by >= FLOOR_Y - self.R:
-                self.by = FLOOR_Y - self.R
-                if self.t - self.last_hit >= 0.15:
-                    self.last_hit = self.t; self.hits += 1
-                    evs.append(("hit", "floor"))
-                self.hit_t = self.t
-                h = 250.0
-                self.vy = -math.sqrt(2 * G * h)
-                self.vx = 0.0
-            return
+        if self.on == "wait":
+            if self.t < self.tilt[1] - 0.5:
+                return
+            # il entre par la gauche, en l'air, quand la caméra arrive en bas
+            self.on = "air"
+            self.bx = self.cx - 540.0 / self.follow[0] - self.R - 10
+            self.by = FLOOR_Y - self.R - 260
+            self.vx, self.vy = 420.0, -300.0
         super().bounce_step(dt, evs)
+
+    def hero(self, s):
+        X, Y, Z = self.xf(s)
+        if s.get("on") == "wait" or X(s["bx"]) - self.R * Z < 0:
+            return None                    # pas encore entré dans le cadre
+        return (X(s["bx"]), Y(s["by"]), self.R * Z)
 
     def join_ok(self):
         return True
@@ -939,15 +959,11 @@ class ThousandCats(CatRoom):
         if self.pin is not None:
             return
         awake = sum(1 for c in self.cats if c["st"] != "sleep")
-        for (n, text, key) in ((1, "One's awake.", "first"), (50, "Fifty.", "fifty")):
-            if awake >= n and self.once(key):
-                self.line(text, key, self.t)
+        _ = awake
         if self.bx > self.exit_x * 0.55 and self.once("half"):
             self.line("Halfway.", "half", self.t)
         if self.bx > self.exit_x * 0.8 and "wrong" not in self.events_said and self.once("almost"):
             self.line("Almost.", "almost", self.t)
-        if sum(1 for c in self.cats if c["st"] == "leap") >= 40 and self.once("rain"):
-            self.line("Here they come.", "rain", self.t)
         if "wrong" in self.events_said and self.bx > self.exit_x * 0.75 and self.once("close"):
             self.line("So close.", "close", self.t)
         # renvoyé en arrière par les pattes, puis reparti
@@ -999,8 +1015,8 @@ DEFAULTS = {
     "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 2.0, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
 }
 
-CHAPTERS = [(OneCat, {"cat_seed": 11}), (TenCats, {"cat_seed": 11}), (HundredCats, {"cat_seed": 58}),
-            (ThousandCats, {"cat_seed": 16, "chapter_max_s": 40.0})]
+CHAPTERS = [(OneCat, {"cat_seed": 11}), (TenCats, {"cat_seed": 52}), (HundredCats, {"cat_seed": 79}),
+            (ThousandCats, {"cat_seed": 30, "chapter_max_s": 40.0})]
 
 
 class Sim(StorySim):
