@@ -252,8 +252,14 @@ class Jelly(Matter):
     def init(self):
         self.u = np.zeros(self.N)            # creux de la surface (vers le bas positif)
         self.w = np.zeros(self.N)
-        self.bx, self.by = 540.0, self.TOP - self.R - 200
-        self.state = "fall"                  # fall -> held (la gelée l'avale) -> hop -> flung -> held
+        # dès l'image 0 : il est posé sur la gelée qui tremble déjà, il monte et descend avec elle
+        xs = self.xs()
+        self.u = 70.0 * np.sin(np.pi * (xs - self.X0) / (self.X1 - self.X0))
+        self.w = np.zeros(self.N)
+        self.bx = 540.0
+        self.by = self.surf(self.bx) - self.R
+        self.state = "held"                  # held (il chevauche la gelée, sans choc) -> air -> flung -> held
+        self.sink = 0.0
         self.flung = False
         self.line("Jelly.", "title", 0.0)
         # la voix de l'accroche puis « Jelly. » : il ne retombe pour de bon qu'après
@@ -284,8 +290,12 @@ class Jelly(Matter):
             self.u += self.w * d
             self.u[0] = self.u[-1] = 0.0
         if self.state == "held":
-            # avalé à moitié : il tremble avec la gelée, sans rebondir (pas de choc)
-            self.by = self.surf(self.bx) - self.R + self.sink
+            # posé sur la gelée : il monte et descend avec elle, sans choc ; elle est relancée
+            # sous lui pour ne jamais s'arrêter de trembler
+            if not self.flung:
+                k = int((self.bx - self.X0) / (self.X1 - self.X0) * (self.N - 1))
+                self.w[max(1, k - 3):k + 4] += 900.0 * math.sin(self.t * 7.5) * dt * 6
+            self.by = self.surf(self.bx) - self.R
             if not self.flung and self.t >= self.release:
                 self.state = "air"
                 T = self.first_land - self.t
@@ -299,7 +309,6 @@ class Jelly(Matter):
                 # la gelée l'attrape en douceur : elle l'avale à moitié
                 self.poke(self.vy * 1.1)
                 self.state = "held"
-                self.sink = self.R * 0.55
                 return
             self.poke(self.vy * 1.1)
             self.say(evs)
@@ -339,12 +348,6 @@ class Jelly(Matter):
             k = (bx - self.X0) / (self.X1 - self.X0) * (self.N - 1)
             circle(dr, P(bx), P(by + 0.5 * u[int(k)]), P(r), (120, 220, 150))
         self.bounce(dr, P, s)
-        # la gelée par-dessus le bas de Bounce quand elle l'avale : on le voit à travers
-        if s["by"] + self.R > self.TOP + float(np.min(u)) + 2:
-            dr.polygon(top + [(P(self.X1), P(FLOOR_Y)), (P(self.X0), P(FLOOR_Y))], fill=(80, 200, 120))
-            r = self.R
-            bx, by = P(s["bx"]), P(s["by"])
-            dr.ellipse([bx - P(r) * 0.95, by - P(r) * 0.95, bx + P(r) * 0.95, by + P(r) * 0.95], outline=(60, 150, 95), width=int(P(4)))
         dr.line(top, fill=(180, 250, 190), width=int(P(12)), joint="curve")
         dr.ellipse([P(self.X0 + 40), P(self.TOP + 30), P(self.X0 + 140), P(self.TOP + 60)], fill=(150, 235, 170))
 
@@ -754,7 +757,11 @@ class Trampoline(Matter):
         self.holes = []
         self.debris = []
         self.moon_g = 420.0
-        self.fall_in(540.0, self.MAT, "Trampoline.")
+        # il part de la toile, déjà en l'air, sous le plafond : premier choc juste après le titre
+        self.line("Trampoline.", "title", 0.0)
+        T = self.ldur("Trampoline.") + 0.45
+        self.bx, self.by = 540.0, self.MAT - self.R - 1.0
+        self.vx, self.vy = 0.0, -math.sqrt(2 * self.g * self.h_for(T))
 
     def phys(self, dt, evs):
         # la toile du trampoline
@@ -836,10 +843,13 @@ class Trampoline(Matter):
         w = 9.0
         self.camv += (w * w * (target - self.cam) - 2 * w * self.camv) * dt
         self.cam += self.camv * dt
-        # jamais hors cadre, même quand il file
+        # jamais hors cadre, même quand il file (sauf pendant son entrée par le haut :
+        # la caméra reste sur le trampoline)
         sy = self.by + self.cam
-        if sy < 560:
-            self.cam += 560 - sy
+        if self.hit_t < 0:
+            self.cam, self.camv = 0.0, 0.0
+        elif sy < 600:
+            self.cam += 600 - sy
         elif sy > 1400 and self.phase != "moon":
             self.cam = max(0.0, self.cam - (sy - 1400))
 
