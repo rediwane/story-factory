@@ -159,6 +159,40 @@
     "measured_at": null
    },
    "script": "src/stories/doubling.py (branche proto-doubling)"
+  },
+  {
+   "name": "machine_proto",
+   "date": "2026-11-02",
+   "theme": "machine",
+   "config": "configs/machine_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce's Machine Work?",
+   "duration_s": 61.78,
+   "hashtags": [
+    "#rubegoldberg",
+    "#chainreaction",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/machine_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-02T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15602535638271660673.mp4",
+   "metricool_post_id": 413582183,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (la machine de Bounce), cherché et fait seul par Claude la nuit du 01/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/machine.py (branche proto-machine)"
   }
  ],
  "themes": [
