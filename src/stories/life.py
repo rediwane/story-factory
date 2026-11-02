@@ -90,7 +90,7 @@ class DayOne(Chapter):
         self.R = 46.0
         self.hop_init(560.0, self.BOT, start_h=150.0, gain=(1.0, 1.0), min_h=80.0, max_h=700.0, wobble=30.0,
                       xmin=520, xmax=600, h_ref=250.0)
-        self.hops = [166.0, 166.0, 420.0, 380.0]
+        self.hops = [260.0, 104.0, 380.0, 380.0]
         self.rock = 0.0
         self.rock_w = 0.0
         self.line("Day one.", "title", 0.0)
@@ -108,8 +108,8 @@ class DayOne(Chapter):
             self.h = self.hops[n - 1]
             self.min_h = self.max_h = self.h
         self.rock_w += 1.4 * k * (1 if n % 2 else -1)
-        if self.h > 280:
-            self.spin += 3.0
+        if self.h >= 240:
+            self.spin += 3.5
         if n == len(self.hops):
             # le dernier saut : par-dessus le bord du berceau, jusqu'au sol
             self.leave = True
@@ -129,6 +129,7 @@ class DayOne(Chapter):
         s = self.base_snap()
         s["spin"] = self.spin
         s["rock"] = self.rock
+        s["end"] = self.end_t
         return s
 
     def solids(self, s):
@@ -150,7 +151,7 @@ class DayOne(Chapter):
             x, y = 560 + rr * math.cos(a), 900 + 0.7 * rr * math.sin(a)
             if SCENE_TOP + 30 < y < FLOOR_Y - 40:
                 dr.regular_polygon((P(x), P(y), P(18 + 6 * (k % 2))), 5, fill=mix(wall, (255, 225, 140), 0.45))
-        night_window(dr, P, 780, 520, 1010, 760, wall, moon=(950, 580))
+        night_window(dr, P, 800, 760, 1000, 960, wall, moon=(950, 810))
         # le mobile au-dessus de son berceau
         cx, my = 560.0, 790.0
         dr.line([(P(cx), P(SCENE_TOP)), (P(cx), P(my))], fill=(150, 150, 165), width=int(P(5)))
@@ -178,6 +179,13 @@ class DayOne(Chapter):
             box(x, self.BOT + 26, x + 14, FLOOR_Y, (150, 150, 165))
         dr.text(rot(px, self.BOT + 80), "BOUNCE", fill=(130, 120, 150), anchor="mm", font=base.font(int(P(40))))
         self.bounce(dr, P, s)
+        # son premier mot, dans une bulle
+        if s["end"] is not None and 0 <= s["t"] - s["end"] < 1.6:
+            bx, by = s["bx"], s["by"]
+            x0, y0, x1, y1 = bx + 60, by - 230, bx + 420, by - 110
+            dr.rounded_rectangle([P(x0), P(y0), P(x1), P(y1)], radius=int(P(30)), fill=(250, 250, 252))
+            dr.polygon([(P(x0 + 40), P(y1 - 4)), (P(x0 + 100), P(y1 - 4)), (P(bx + 40), P(by - 50))], fill=(250, 250, 252))
+            dr.text((P((x0 + x1) / 2), P((y0 + y1) / 2)), "BOUNCE!", fill=(30, 20, 40), anchor="mm", font=base.font(int(P(64))))
 
 
 # ---------------------------------------------------------------- 7 ans
@@ -245,8 +253,7 @@ class School(Chapter):
                 c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["w"] * dt
                 if c["x"] < 90:
                     c["x"] = 90; c["vx"] = abs(c["vx"]) * 0.3
-                settle_body(c, self.ground(c), math.pi / 2, dt, self.shape(c))
-            separate(self.fall, self.shape, iters=3, max_step=3.0)
+                settle_body(c, self.ground(c), math.pi, dt, self.shape(c))
             if not self.payoff and any(not c["rest"] and c["y"] > FLOOR_Y - 80 for c in self.fall):
                 self.finish("DETENTION")
                 self.line("Detention.", "det", self.next_landing() + 1.05)
@@ -397,6 +404,7 @@ class FirstLove(Chapter):
                 else:
                     if abs(self.t - self.hit_t) < 0.07 or (tn0 is not None and tn0 - self.t < 0.07):
                         self.sync += 1
+                        self.hearts.append([hr["x"] - 80, self.SEAT - 140, self.t])
                     else:
                         self.sync = 0
                     self.plan_her(hr)
@@ -455,7 +463,7 @@ class FirstLove(Chapter):
         dr.rectangle([0, P(SCENE_TOP), P(self.W), P(FLOOR_Y)], fill=sky)
         for i in range(30):
             circle(dr, P((i * 7919 + 211) % self.W), P(460 + (i * 104729 + 37) % 520), P(2), (150, 155, 190))
-        circle(dr, P(860), P(600), P(40), MOON)
+        circle(dr, P(890), P(790), P(40), MOON)
         for k in range(14):
             a = s["t"] * (0.7 + 0.1 * (k % 4)) + k * 0.9
             fx = 540 + (180 + 40 * (k % 3)) * math.cos(a)
@@ -490,70 +498,87 @@ class FirstLove(Chapter):
 
 # ---------------------------------------------------------------- 25 ans
 class Apartment(Chapter):
-    """Son premier appartement, au-dessus de chez quelqu'un. Chaque retombée fissure le
-    plancher ; le voisin tape au plafond avec son balai ; le plancher cède."""
+    """Son premier appartement, juste au-dessus du voisin qui regarde la télé. Chaque
+    retombée fissure le plancher, le plâtre tombe chez le voisin ; le plancher cède et
+    Bounce atterrit sur son canapé."""
     title = "AGE 25"
     stamp = ("NEW ROOMMATE", AMBER)
     stamp_y = 0.30
     mood = "lose"
     hold_s = 1.3
-    FL = 1060.0
-    H0, H1 = 430.0, 650.0
+    drop_in = False
+    FL, TH = 1040.0, 80.0
+    H0, H1 = 420.0, 660.0
     COUCH = 1360.0
+    GO = 2.5
 
     def setup(self):
         self.R = 62.0
-        self.hop_init(540.0, self.FL, start_h=220.0, gain=(0.95, 1.15), min_h=200.0, max_h=330.0, wobble=8.0,
-                      xmin=535, xmax=545, h_ref=240.0)
-        self.start_drop()
+        self.hop_init(540.0, self.FL, start_h=0.0, gain=(0.95, 1.08), min_h=280.0, max_h=320.0, wobble=6.0,
+                      xmin=535, xmax=545, h_ref=300.0, start_air=False)
+        self.on = "still"; self.by = self.FL - self.R; self.h = 300.0
         self.line("Twenty five.", "title", 0.0)
+        self.line("Downstairs neighbor.", "neighbor", 0.9)
         self.crack = 0.0
         self.open = None
         self.dust = []
-        self.broom = -9.0
+        self.chunks = []
         self.lamp = 0.0
-        self.lamp_w = 0.0
+        self.lamp_w = 2.5
 
     def on_land(self, k, evs):
         if self.open is not None:
             if not self.payoff and self.t - self.open > 0.2:
                 self.finish("FELL")
-                self.line("Their place now.", "now", self.t + 1.05)
+                self.line("Roommates now.", "now", self.t + 1.05)
             return
-        self.crack += 0.32 * k * self.rng.uniform(0.8, 1.2)
-        self.lamp_w += 2.4 * k
-        for _ in range(int(4 * k) + 2):
-            self.dust.append([self.rng.uniform(self.H0, self.H1), self.FL + 30, self.rng.uniform(-30, 30), self.t])
-        if self.hits >= 3 and self.t - self.broom > 1.5:
-            self.broom = self.t
+        self.crack += 0.55 * k * self.rng.uniform(0.95, 1.1)
+        self.lamp_w += 3.0 * k
+        for _ in range(8):
+            self.dust.append([self.rng.uniform(self.H0 - 60, self.H1 + 60), self.FL + self.TH, self.rng.uniform(-40, 40), self.t,
+                              self.rng.uniform(8, 16)])
         if self.crack >= 1.0:
-            # le plancher cède sous lui : deux trappes s'ouvrent, il tombe
+            # le plancher cède sous lui : deux trappes s'ouvrent, il tombe chez le voisin
             self.open = self.t
             self.lamp_w += 9.0
-            for _ in range(40):
-                self.dust.append([self.rng.uniform(self.H0, self.H1), self.FL + 30, self.rng.uniform(-260, 260), self.t])
+            for k2 in range(12):
+                side = -1 if k2 % 2 == 0 else 1
+                x = (self.H0 + 20 if side < 0 else self.H1 - 20) + self.rng.uniform(-20, 20)
+                self.chunks.append({"x": x, "y": self.FL + self.TH / 2, "vx": side * self.rng.uniform(90, 260),
+                                    "vy": self.rng.uniform(-200, 50), "a": 0.0, "w": self.rng.uniform(-6, 6),
+                                    "s": self.rng.uniform(18, 34), "rest": False, "id": k2})
             self.floor_y = self.COUCH
-            self.on = "air"; self.vy = 0.0; self.vx = 0.0
             self.xmin = self.xmax = 540.0
 
     def flap(self, t):
         if self.open is None:
             return 0.0
         u = t - self.open
-        base_a = min(math.pi / 2 * 0.95, u * 14.0)
-        if u * 14.0 < math.pi / 2 * 0.95:
-            return base_a
-        # les trappes pendent et se balancent
-        return math.pi / 2 * 0.95 - 0.35 * math.exp(-0.8 * u) * abs(math.sin(u * 7.0))
+        if u * 12.0 < math.pi / 2 * 0.95:
+            return u * 12.0
+        return math.pi / 2 * 0.95 - 0.3 * math.exp(-0.8 * u) * abs(math.sin(u * 7.0))
 
     def after(self, dt, evs):
+        if self.on == "still" and self.open is None and self.t >= self.GO:
+            self.on = "ground"
+        if self.open is not None and self.t - self.open < 1e-9 + dt and self.on == "air":
+            self.vy = -400.0                    # le plancher se dérobe sous lui : un petit sursaut, puis la chute
         self.lamp_w += -9.0 * self.lamp * dt - 0.8 * self.lamp_w * dt
         self.lamp += self.lamp_w * dt
-        self.dust = [d for d in self.dust if self.t - d[3] < 1.8]
+        self.dust = [d for d in self.dust if self.t - d[3] < 1.6]
+        for c in self.chunks:
+            if c["rest"]:
+                continue
+            c["vy"] += self.g * dt
+            c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["w"] * dt
+            gy = (self.COUCH if 330 < c["x"] < 750 else FLOOR_Y) - c["s"] * 0.35
+            if c["y"] >= gy:
+                c["y"] = gy; c["rest"] = True
 
     def snapshot(self):
         s = self.base_snap()
-        s.update(crack=self.crack, flap=self.flap(self.t), dust=[tuple(d) for d in self.dust], broom=self.broom, lamp=self.lamp)
+        s.update(crack=self.crack, flap=self.flap(self.t), dust=[tuple(d) for d in self.dust], lamp=self.lamp,
+                 chunks=[dict(c) for c in self.chunks])
         return s
 
     def flaps(self, s):
@@ -566,13 +591,13 @@ class Apartment(Chapter):
         return out
 
     def solids(self, s):
-        sh = [("rect", 0, self.FL, self.H0, self.FL + 40), ("rect", self.H1, self.FL, self.W, self.FL + 40),
+        sh = [("rect", 0, self.FL, self.H0, self.FL + self.TH), ("rect", self.H1, self.FL, self.W, self.FL + self.TH),
               ("rect", 330, self.COUCH, 750, self.COUCH + 60)]
         for (x0, y0, x1, y1) in self.flaps(s):
             dx, dy = x1 - x0, y1 - y0
             L = math.hypot(dx, dy) or 1
             nx, ny = -dy / L * 14, dx / L * 14
-            if ny < 0 or (abs(ny) < 1e-6 and nx != 0 and False):
+            if ny < 0:
                 nx, ny = -nx, -ny
             sh.append(("poly", [(x0, y0), (x1, y1), (x1 + nx, y1 + ny), (x0 + nx, y0 + ny)]))
         return sh
@@ -581,58 +606,80 @@ class Apartment(Chapter):
         return (s["bx"] - 110, s["by"] - 110, s["bx"] + 110, s["by"] + self.R + 20)
 
     def bodies(self, s):
-        return [(k, (x0 + x1) / 2, (y0 + y1) / 2, math.atan2(y1 - y0, x1 - x0)) for k, (x0, y0, x1, y1) in enumerate(self.flaps(s))]
+        out = [(k, (x0 + x1) / 2, (y0 + y1) / 2, math.atan2(y1 - y0, x1 - x0)) for k, (x0, y0, x1, y1) in enumerate(self.flaps(s))]
+        out += [("c%d" % c["id"], c["x"], c["y"], 0.0) for c in s["chunks"]]
+        return out
 
     def draw(self, dr, s, t, S):
         P = lambda v: v * S
-        up, down = (44, 40, 60), (40, 48, 44)
-        dr.rectangle([0, P(SCENE_TOP), P(self.W), P(self.FL)], fill=up)
-        dr.rectangle([0, P(self.FL), P(self.W), P(FLOOR_Y)], fill=down)
+        up, down = (46, 42, 64), (42, 52, 48)
+        FL, TH = self.FL, self.TH
+        dr.rectangle([0, P(SCENE_TOP), P(self.W), P(FL)], fill=up)
+        dr.rectangle([0, P(FL), P(self.W), P(FLOOR_Y)], fill=down)
         dr.rectangle([0, P(FLOOR_Y), P(self.W), P(self.H)], fill=(52, 42, 38))
         # en haut : des cartons de déménagement, une fenêtre
-        night_window(dr, P, 760, 560, 960, 760, up, moon=(900, 610))
-        for (x, w, h) in ((90, 150, 120), (110, 110, 90), (780, 170, 140)):
-            y0 = self.FL - h if x != 110 else self.FL - 120 - h
+        night_window(dr, P, 770, 720, 950, 900, up, moon=(905, 760))
+        for (x, w, h, y_off) in ((70, 160, 130, 0), (95, 110, 90, 130), (760, 180, 110, 0)):
+            y0 = FL - h - y_off
             dr.rectangle([P(x), P(y0), P(x + w), P(y0 + h)], fill=(170, 130, 86))
-            dr.rectangle([P(x), P(y0 + h / 2 - 5), P(x + w), P(y0 + h / 2 + 5)], fill=(140, 104, 66))
-        # le plancher, la fissure, les trappes
-        slab = (110, 92, 80)
-        dr.rectangle([0, P(self.FL), P(self.H0), P(self.FL + 40)], fill=slab)
-        dr.rectangle([P(self.H1), P(self.FL), P(self.W), P(self.FL + 40)], fill=slab)
+            dr.rectangle([P(x), P(y0 + h / 2 - 6), P(x + w), P(y0 + h / 2 + 6)], fill=(140, 104, 66))
+        # en bas : la télé du voisin, qui clignote
+        tv = [(70, 120, 200), (200, 90, 140), (90, 180, 120), (220, 200, 90)][int(s["t"] * 10) % 4]
+        dr.rectangle([P(30), P(1180), P(330), P(1400)], fill=(30, 30, 34))
+        dr.rectangle([P(46), P(1196), P(314), P(1384)], fill=tv)
+        dr.rectangle([P(140), P(1400), P(220), P(FLOOR_Y)], fill=(70, 56, 46))
+        # le plancher, épais ; la fissure ; les trappes
+        slab = (120, 100, 86)
+        dr.rectangle([0, P(FL), P(self.H0), P(FL + TH)], fill=slab)
+        dr.rectangle([P(self.H1), P(FL), P(self.W), P(FL + TH)], fill=slab)
         for (x0, y0, x1, y1) in self.flaps(s):
             dx, dy = x1 - x0, y1 - y0
             L = math.hypot(dx, dy) or 1
-            nx, ny = -dy / L * 40, dx / L * 40
-            if s["flap"] == 0.0:
-                nx, ny = 0, 40
+            nx, ny = -dy / L * TH, dx / L * TH
+            if ny < 0:
+                nx, ny = -nx, -ny
             dr.polygon([(P(x0), P(y0)), (P(x1), P(y1)), (P(x1 + nx), P(y1 + ny)), (P(x0 + nx), P(y0 + ny))], fill=slab)
+        dr.rectangle([0, P(FL), P(self.W), P(FL + 8)], fill=(150, 124, 100)) if s["flap"] == 0.0 else None
         if s["flap"] == 0.0 and s["crack"] > 0.05:
-            n = int(3 + 10 * min(1.0, s["crack"]))
-            pts = [(P(540 + ((-1) ** k) * 14 * s["crack"] + (k - n / 2) * 10 * s["crack"]), P(self.FL + 40 * k / n)) for k in range(n + 1)]
-            dr.line(pts, fill=(40, 30, 28), width=int(P(4)))
-        # en bas : le voisin, son canapé, sa lampe qui se balance
+            c = min(1.0, s["crack"])
+            # la fissure : une grande étoile de cassures dans la dalle, qui gagne le plafond du voisin
+            for (dx0, ang, L) in ((0, 1.5, 1.0), (-1, 3.0, 1.3), (1, 0.1, 1.3), (-1, 2.5, 0.9), (1, 0.6, 0.9), (0, 1.9, 0.8)):
+                pts = [(540.0, FL)]
+                x, y = 540.0, FL
+                for k in range(7):
+                    a = ang + 0.45 * math.sin(k * 2.3 + dx0)
+                    step = 42 * L * c
+                    x += math.cos(a) * step; y += abs(math.sin(a)) * step * 0.6 + 4
+                    pts.append((x, min(FL + TH + 10, y)))
+                dr.line([(P(px), P(py)) for (px, py) in pts], fill=(28, 20, 18), width=int(P(12)))
+            for (ox, L) in ((-60, 1.0), (40, 1.2), (110, 0.8), (-140, 0.7)):
+                dr.line([(P(540 + ox * c), P(FL + TH)), (P(540 + ox * c * 1.6), P(FL + TH + 70 * L * c))], fill=(28, 20, 18), width=int(P(8)))
+        elif s["flap"] > 0:
+            # le trou, net : ses bords cassés
+            for xx in (self.H0, self.H1):
+                for k in range(4):
+                    dr.polygon([(P(xx - 10), P(FL + k * 20)), (P(xx + 10), P(FL + k * 20 + 10)), (P(xx - 10), P(FL + k * 20 + 20))], fill=(70, 56, 46))
+        # la lampe du voisin, qui se balance
         lx = 540 + 110 * math.sin(s["lamp"])
-        if s["flap"] > 0:
-            glow(dr, P, lx, self.FL + 200, 330, (255, 220, 150), down, 0.05 + 0.07 * abs(math.sin(s["t"] * 13.0)), rings=6)
-        dr.line([(P(540), P(self.FL + 40)), (P(lx), P(self.FL + 150))], fill=(150, 150, 160), width=int(P(3)))
-        dr.polygon([(P(lx - 40), P(self.FL + 190)), (P(lx + 40), P(self.FL + 190)), (P(lx + 20), P(self.FL + 150)), (P(lx - 20), P(self.FL + 150))], fill=(240, 210, 140))
+        dr.line([(P(540), P(FL + TH)), (P(lx), P(FL + TH + 110))], fill=(150, 150, 160), width=int(P(4)))
+        dr.polygon([(P(lx - 46), P(FL + TH + 156)), (P(lx + 46), P(FL + TH + 156)), (P(lx + 22), P(FL + TH + 110)), (P(lx - 22), P(FL + TH + 110))], fill=(250, 220, 150))
+        # son canapé
         dr.rectangle([P(330), P(self.COUCH), P(750), P(self.COUCH + 60)], fill=(150, 70, 70))
         dr.rectangle([P(330), P(self.COUCH - 90), P(750), P(self.COUCH)], fill=(130, 60, 60))
         dr.rectangle([P(310), P(self.COUCH - 40), P(350), P(FLOOR_Y)], fill=(120, 54, 54))
         dr.rectangle([P(730), P(self.COUCH - 40), P(770), P(FLOOR_Y)], fill=(120, 54, 54))
-        poke = max(0.0, 1.0 - (s["t"] - s["broom"]) / 0.9) if s["broom"] > 0 else 0.0
-        top = self.FL + 40 + (1 - math.sin(poke * math.pi * 3) ** 2) * 60 * (1 if poke > 0 else 3)
-        jump = 0.0
-        if s.get("flap", 0.0) > 0:
-            jump = abs(math.sin(s["t"] * 9.0)) * 50.0
-        self.figure(dr, P, 860, FLOOR_Y - jump, (80, 110, 90), h=280, w=100)
-        dr.line([(P(830), P(1330 - jump)), (P(800), P(top - jump))], fill=(170, 130, 80), width=int(P(10)))
-        dr.rectangle([P(770), P(top - 10 - jump), P(830), P(top + 26 - jump)], fill=(200, 180, 90))
-        for (x, y, vx, t0) in s["dust"]:
+        # le voisin, debout, qui lève les yeux ; il sursaute quand le plafond cède
+        jump = abs(math.sin(s["t"] * 9.0)) * 60.0 if s["flap"] > 0 else 0.0
+        self.figure(dr, P, 830, FLOOR_Y - jump, (80, 120, 96), h=340, w=110)
+        for (x, y, vx, t0, r) in s["dust"]:
             age = s["t"] - t0
-            yy = y + 260 * age + 200 * age * age
-            if yy < FLOOR_Y - 6:
-                circle(dr, P(x + vx * age), P(yy), P(9), (200, 190, 170))
+            yy = y + 200 * age + 400 * age * age
+            if yy < FLOOR_Y - 10:
+                circle(dr, P(x + vx * age), P(yy), P(r), (215, 205, 185))
+        for c in s["chunks"]:
+            body = {"x": c["x"], "y": c["y"], "a": c["a"]}
+            hs = c["s"] / 2
+            dr.polygon([(P(x), P(y)) for (x, y) in body_poly(body, [(-hs, -hs * 0.7), (hs, -hs * 0.7), (hs, hs * 0.7), (-hs, hs * 0.7)])], fill=(200, 188, 168))
         self.bounce(dr, P, s)
 
 
@@ -723,14 +770,18 @@ class Wedding(FirstLove):
             fx, fy = 540 + 240 * math.cos(a), 1120 + 360 * math.sin(a)
             circle(dr, P(fx), P(fy), P(18), [(250, 140, 180), (250, 220, 120), (240, 240, 250)][k % 3])
         dr.rectangle([P(250), P(FLOOR_Y - 10), P(830), P(FLOOR_Y + 30)], fill=(150, 40, 60))
-        for k, (x, col) in enumerate(((80, (90, 100, 140)), (170, (120, 90, 120)), (910, (100, 120, 100)), (1000, (130, 110, 80)))):
-            sway = 10 * math.sin(s["t"] * 2.0 + k)
-            self.figure(dr, P, x + sway, FLOOR_Y, col, h=230, w=80)
-            # les invités prennent des photos : des flashs
-            u = (s["t"] * 1.7 + k * 0.29) % 1.0
-            if u < 0.09:
-                glow(dr, P, x + sway + 30, FLOOR_Y - 300, 260, (255, 255, 250), wall, 0.55 * (1 - u / 0.09), rings=6)
-                circle(dr, P(x + sway + 30), P(FLOOR_Y - 300), P(14), (255, 255, 255))
+        for k, (x, col) in enumerate(((70, (90, 100, 140)), (150, (120, 90, 120)), (790, (100, 120, 100)), (860, (130, 110, 80)))):
+            sway = 8 * math.sin(s["t"] * 2.0 + k)
+            self.figure(dr, P, x + sway, FLOOR_Y, col, h=230, w=64)
+            # de temps en temps, un invité prend une photo : un petit éclat blanc
+            u = (s["t"] * 0.8) % 1.0
+            if int(s["t"] * 0.8) % 4 == k and u < 0.06:
+                fx, fy = x + sway, FLOOR_Y - 260
+                circle(dr, P(fx), P(fy), P(16), (255, 255, 255))
+                for a in range(4):
+                    ang = a * math.pi / 4
+                    dr.line([(P(fx - 44 * math.cos(ang)), P(fy - 44 * math.sin(ang))), (P(fx + 44 * math.cos(ang)), P(fy + 44 * math.sin(ang)))],
+                            fill=(255, 255, 255), width=int(P(5)))
         x, y = s["her"]
         small_ball(dr, P, x, y, self.r2, TEAL)
         # le voile
@@ -754,7 +805,7 @@ class Dad(Chapter):
     stamp = ("LIKE FATHER", AMBER)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 1.2
+    hold_s = 4.4
     CX0, CX1, CBOT, CRIM = 560.0, 840.0, 1300.0, 1120.0
 
     def setup(self):
@@ -769,7 +820,7 @@ class Dad(Chapter):
     def on_land(self, k, evs):
         b = self.baby
         if b["on"] == "sleep":
-            b["w"] += 0.15 * k * self.rng.uniform(0.85, 1.15)
+            b["w"] += 0.42 * k * self.rng.uniform(0.9, 1.1)
             b["stir"] = self.t
             if b["w"] >= 1.0:
                 b["on"] = "wake"
@@ -784,7 +835,13 @@ class Dad(Chapter):
             b["on"] = "air"
             b["vy"] = -self.g * T / 2
         if b["on"] == "rest":
-            pass
+            # après la réplique, le père et le bébé repartent ensemble
+            if getattr(self, "together", None) is not None and self.t >= self.together and self.on == "still":
+                self.on = "ground"
+                self.settle_after = False
+            if getattr(self, "together", None) is not None and self.t >= self.together and self.on == "air" and self.vy < 0:
+                T = self.next_landing() - self.t
+                b["on"] = "air"; b["vy"] = -self.g * T / 2; b["n"] = 2; b["sync"] = True
         elif b["on"] == "air":
             b["vy"] += self.g * dt
             b["y"] += b["vy"] * dt
@@ -795,12 +852,18 @@ class Dad(Chapter):
                 # le bébé aussi dit son nom, et de la même voix (sauf s'il retombe avec son père)
                 if abs(self.t - self.hit_t) > 0.05:
                     evs.append(("hit", "floor"))
-                if b["n"] == 1 and not self.payoff:
+                if b.get("sync"):
+                    T = self.next_landing() - self.t if self.on == "air" else 0.0
+                    if T < 0.3:
+                        T += 2 * math.sqrt(2 * self.h / self.g)
+                    b["vy"] = -self.g * T / 2
+                elif b["n"] == 1 and not self.payoff:
                     # le bébé retombe avec son père : ils se posent ensemble
                     self.finish("LIKE")
                     self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
                     b["on"] = "rest"; b["vy"] = 0.0
                     self.line("Like father.", "like", self.t + 1.05)
+                    self.together = self.t + 2.3
 
     def snapshot(self):
         s = self.base_snap()
@@ -823,7 +886,7 @@ class Dad(Chapter):
         P = lambda v: v * S
         wall = (40, 36, 58)
         self.room(dr, P, wall, (64, 52, 56))
-        night_window(dr, P, 120, 620, 330, 840, wall, moon=(280, 680))
+        night_window(dr, P, 110, 720, 320, 920, wall, moon=(270, 770))
         glow(dr, P, 900, 980, 260, (255, 210, 150), wall, 0.18 + 0.1 * math.sin(s["t"] * 3.0))
         circle(dr, P(900), P(980), P(22), (250, 220, 160))
         # des étoiles peintes au mur
@@ -907,8 +970,10 @@ class Old(Chapter):
                 continue
             kd["vy"] += self.g * dt
             kd["y"] += kd["vy"] * dt
+            kd["x"] += kd.get("vx", 0.0) * dt
             if kd["vy"] > 0 and kd["y"] >= FLOOR_Y - kd["r"]:
                 kd["y"] = FLOOR_Y - kd["r"]
+                kd["vx"] = 0.0
                 kd["vy"] = -math.sqrt(2 * self.g * (150.0 + 40 * i))
         # au bout de trois secondes immobile, le plus petit lui saute dessus
         if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 3.1:
@@ -933,15 +998,17 @@ class Old(Chapter):
                     evs.append(("hit", "floor"))
                 self.hit_t = self.t
                 self.min_h, self.max_h, self.gain, self.h = 240.0, 300.0, (0.95, 1.1), 260.0
-                self.leap(650.0)                 # un bond de joie : sa réaction tient dedans
+                self.leap_at = self.t + 0.15         # le petit rebondit d'abord sur sa tête, vers le jardin
                 if not self.payoff:
                     self.finish("NEVER")
-                kd["vy"] = -900.0; kd["vx"] = 260.0
+                kd["y"] = self.by - self.R - kd["r"] - 1
+                kd["vy"] = -900.0; kd["vx"] = 380.0
                 self.jump = None
             if kd["x"] > 1000 or kd["y"] > FLOOR_Y - kd["r"]:
                 kd["y"] = min(kd["y"], FLOOR_Y - kd["r"])
-        if self.on == "air" and self.back:
-            pass
+        if getattr(self, "leap_at", None) is not None and self.t >= self.leap_at:
+            self.leap_at = None
+            self.leap(650.0)                     # un bond de joie : sa réaction tient dedans
 
     def snapshot(self):
         s = self.base_snap()
@@ -968,7 +1035,7 @@ class Old(Chapter):
         dr.rectangle([0, P(SCENE_TOP), P(self.W), P(FLOOR_Y)], fill=sky)
         for i in range(40):
             circle(dr, P((i * 7919 + 97) % self.W), P(450 + (i * 104729 + 11) % 600), P(2), (150, 155, 190))
-        circle(dr, P(820), P(560), P(46), MOON)
+        circle(dr, P(880), P(790), P(46), MOON)
         dr.rectangle([0, P(FLOOR_Y), P(self.W), P(self.H)], fill=(34, 52, 36))
         # la véranda : le mur de la maison, la fenêtre éclairée
         dr.rectangle([0, P(860), P(240), P(FLOOR_Y)], fill=(70, 56, 50))
