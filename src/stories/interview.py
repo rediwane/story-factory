@@ -297,7 +297,6 @@ class Question(Chapter):
 
     # ------------------------------------------------------------------ récit
     def on_answer(self):
-        self.mood = None
         if self.react:
             self.line(self.react, "react", self.t + 1.3)
 
@@ -561,7 +560,7 @@ DEFAULTS = {
     "ball_r": R_BOUNCE, "gravity": G,
     "chapter_max_s": 12.0,
     "counter_font_size": 72, "counter_y": 0.19, "hook_text_s": 2.4,
-    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.4, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
+    "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 1.9, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
 }
 
 
