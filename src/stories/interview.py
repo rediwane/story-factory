@@ -533,12 +533,24 @@ class Question(Chapter):
         dr.polygon(poly, fill=o["col"])
 
     def bubble(self, dr, X, Y, Q, P, s, t):
-        """Ce qu'il a dit (« BOUNCE. », en gros), puis ce qu'il voulait dire."""
+        """Ce qu'il a dit (« BOUNCE. », en gros), puis ce qu'il voulait dire. La bulle reste
+        à gauche, au-dessus de Bounce, sans cacher le recruteur ; sa hauteur suit le texte."""
         if s["ans"] is None:
             return
         age = s["t"] - s["ans"]
         k = min(1.0, age / 0.15)
-        x0, y0, x1, y1 = 50.0, 452.0, 740.0, 800.0
+        x0, x1, y0 = 30.0, 610.0, 448.0
+        f2 = base.font(P(58))
+        rows, cur = [], ""
+        for w in self.tr.split():
+            cand = (cur + " " + w).strip()
+            if base.text_w(f2, cand) <= P(x1 - x0 - 90) or not cur:
+                cur = cand
+            else:
+                rows.append(cur); cur = w
+        rows.append(cur)
+        row0 = y0 + 236                       # « means: » à y0 + 158, puis une ligne d'air
+        y1 = row0 + (len(rows) - 1) * 70 + 52
         cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
         sc = 0.6 + 0.4 * k
         bx0, bx1 = cx - (cx - x0) * sc, cx + (x1 - cx) * sc
@@ -548,25 +560,13 @@ class Question(Chapter):
         dr.rounded_rectangle([P(bx0), P(by0), P(bx1), P(by1)], radius=int(P(30)), fill=(250, 250, 252), outline=(20, 20, 26), width=max(1, int(P(5))))
         if k < 1.0:
             return
-        f1 = base.font(P(84))
-        dr.text((P(cx), P(y0 + 70)), "“BOUNCE.”", fill=PINK, anchor="mm", font=f1, stroke_width=max(1, int(P(3))), stroke_fill=(120, 0, 80))
+        f1 = base.font(P(80))
+        dr.text((P(cx), P(y0 + 72)), "\u201cBOUNCE.\u201d", fill=PINK, anchor="mm", font=f1, stroke_width=max(1, int(P(3))), stroke_fill=(120, 0, 80))
         if age < 0.45:
             return
-        dr.text((P(cx), P(y0 + 142)), "means:", fill=(110, 110, 130), anchor="mm", font=base.font(P(40)))
-        words = self.tr.split()
-        size = 64
-        f2 = base.font(P(size))
-        rows, cur = [], ""
-        for w in words:
-            cand = (cur + " " + w).strip()
-            if base.text_w(f2, cand) <= P(x1 - x0 - 70) or not cur:
-                cur = cand
-            else:
-                rows.append(cur); cur = w
-        rows.append(cur)
+        dr.text((P(cx), P(y0 + 158)), "means:", fill=(110, 110, 130), anchor="mm", font=base.font(P(38)))
         for i, row in enumerate(rows):
-            yy = y0 + 222 + (i - (len(rows) - 1) / 2) * 72
-            dr.text((P(cx), P(yy)), row, fill=(20, 20, 26), anchor="mm", font=f2)
+            dr.text((P(cx), P(row0 + i * 70)), row, fill=(20, 20, 26), anchor="mm", font=f2)
 
 
 # ---------------------------------------------------------------- les questions
