@@ -90,7 +90,7 @@ class DayOne(Chapter):
         self.R = 46.0
         self.hop_init(560.0, self.BOT, start_h=150.0, gain=(1.0, 1.0), min_h=80.0, max_h=700.0, wobble=30.0,
                       xmin=520, xmax=600, h_ref=250.0)
-        self.hops = [260.0, 104.0, 380.0, 380.0]
+        self.hops = [260.0, 104.0, 430.0, 380.0]
         self.rock = 0.0
         self.rock_w = 0.0
         self.line("Day one.", "title", 0.0)
@@ -510,7 +510,7 @@ class Apartment(Chapter):
     FL, TH = 1040.0, 80.0
     H0, H1 = 420.0, 660.0
     COUCH = 1360.0
-    GO = 2.5
+    GO = 1.45
 
     def setup(self):
         self.R = 62.0
@@ -774,8 +774,8 @@ class Wedding(FirstLove):
             sway = 8 * math.sin(s["t"] * 2.0 + k)
             self.figure(dr, P, x + sway, FLOOR_Y, col, h=230, w=64)
             # de temps en temps, un invité prend une photo : un petit éclat blanc
-            u = (s["t"] * 0.8) % 1.0
-            if int(s["t"] * 0.8) % 4 == k and u < 0.06:
+            u = (s["t"] * 2.0) % 1.0
+            if int(s["t"] * 2.0) % 4 == k and u < 0.08:
                 fx, fy = x + sway, FLOOR_Y - 260
                 circle(dr, P(fx), P(fy), P(16), (255, 255, 255))
                 for a in range(4):
@@ -790,6 +790,11 @@ class Wedding(FirstLove):
             dr.ellipse([P(px_ - 9), P(py_ - 6), P(px_ + 9), P(py_ + 6)], fill=(250, 170, 200))
         for (cx, cy, vx, vy, col) in s["conf"]:
             dr.rectangle([P(cx - 6), P(cy - 4), P(cx + 6), P(cy + 4)], fill=col)
+        if s.get("on") == "still" and s["end"] is None:
+            # à l'autel, il se retient à grand-peine : il trépigne sur place
+            s = dict(s)
+            s["by"] = s["by"] - 14 * abs(math.sin(s["t"] * 13.0))
+            s["bx"] = s["bx"] + 6 * math.sin(s["t"] * 23.0)
         self.bounce(dr, P, s)
         # le nœud papillon
         bx, by = s["bx"], s["by"]
@@ -863,7 +868,7 @@ class Dad(Chapter):
                     self.on = "still"; self.vy = 0.0; self.vx = 0.0; self.by = self.floor_y - self.R
                     b["on"] = "rest"; b["vy"] = 0.0
                     self.line("Like father.", "like", self.t + 1.05)
-                    self.together = self.t + 2.3
+                    self.together = self.t + 1.95
 
     def snapshot(self):
         s = self.base_snap()
@@ -933,7 +938,7 @@ class Old(Chapter):
     stamp = ("NEVER STOPPED", GREEN)
     stamp_y = 0.30
     mood = "win"
-    hold_s = 2.4
+    hold_s = 2.8
     stamp_y = 0.255
     SEAT = 1350.0
 
