@@ -52,6 +52,7 @@ class Matter(Chapter):
         self.t += dt
         evs = []
         self.phys(dt, evs)
+        self.pending()
         return evs
 
     def say(self, evs):
@@ -69,6 +70,17 @@ class Matter(Chapter):
 
     def counter(self, s):
         return None if s.get("end") is not None else self.title
+
+    def later(self, outcome, line, key, delay=0.4, after=0.5):
+        """La chute arrive un instant après le rebond qui la déclenche : le rebond reste dit."""
+        self._pending = (self.t + delay, outcome, line, key, after)
+
+    def pending(self):
+        p = getattr(self, "_pending", None)
+        if p is not None and self.t >= p[0] and not self.payoff:
+            self._pending = None
+            self.finish(p[1])
+            self.line(p[2], p[3], self.t + p[4])
 
     zc = (540.0, 1150.0)                    # où la caméra avance après la chute
     intro = 0.0                             # recul d'ouverture (premier chapitre)
@@ -315,21 +327,23 @@ class Bubbles(Matter):
                 if b["pop"] is None and abs(b["x"] - self.bx) < self.BR + 6:
                     b["pop"] = self.t
             left = [b for b in self.bub if b["pop"] is None]
-            if not left and not self.payoff:
-                self.finish("ALL POPPED")
-                self.line("Nine. Very satisfying.", "score", self.t + 0.9)
+            if not left and not getattr(self, "_done", False):
+                self._done = True
+                self.later("ALL POPPED", "Nine. Very satisfying.", "score")
                 self.hop(240.0)
                 return
-            if self.payoff:
+            if getattr(self, "_done", False):
                 self.hop(240.0)
                 return
             # vers la bulle intacte la plus proche
             tgt = min(left, key=lambda b: abs(b["x"] - self.bx))
-            h = float(self.rng.uniform(250, 300))
+            h = float(self.rng.uniform(345, 380))
             T = 2 * math.sqrt(2 * h / self.g)
             self.hop(h, clamp((tgt["x"] - self.bx) / T, -260, 260))
         if self.landings == 4 and self.once("more"):
             self.line("He's not stopping.", "more", self.t)
+        if self.landings == 7 and self.once("every"):
+            self.line("Every single one.", "every", self.t + 0.8)
 
     def once(self, k):
         if getattr(self, "_said", None) is None:
@@ -406,12 +420,12 @@ class Glass(Matter):
         if self.shards is None and self.vy > 0 and self.by + self.R >= self.Y - 8:
             self.by = self.Y - 8 - self.R
             self.say(evs)
-            if self.landings <= 9:
-                n, L = [(1, 30), (1, 50), (2, 70), (2, 100), (3, 130), (3, 170), (4, 220), (5, 300), (7, 400)][self.landings - 1]
+            if self.landings <= 8:
+                n, L = [(1, 30), (2, 60), (2, 100), (3, 130), (3, 170), (4, 220), (5, 300), (7, 400)][self.landings - 1]
                 self.add_cracks(self.bx, n, L)
                 if self.landings == 3:
                     self.line("That's a crack.", "crack", self.t + 0.75)
-                self.hop(300.0, float(self.rng.uniform(-120, 120)))
+                self.hop(350.0, float(self.rng.uniform(-110, 110)))
             else:
                 # tout part : la vitre se brise en éclats, il passe au travers
                 self.shards = []
@@ -571,7 +585,11 @@ class Honey(Matter):
 class Sand(Matter):
     title = "SAND"
     stamp = ("2/10", RED)
-    zc = (560.0, 1300.0)
+    zc = (560.0, 1420.0)
+
+    def zoom(self, s):
+        # la caméra descend avec lui dans son trou
+        return super().zoom(s) + 0.03 * s["t"]
     mood = "lose"
     hold_s = 1.8
     X0, X1, BASE = 100.0, 980.0, 1300.0
@@ -614,19 +632,20 @@ class Sand(Matter):
             rim = np.exp(-((np.abs(self.hx - self.bx) - self.R * 1.9) / (self.R * 0.9)) ** 2)
             self.hy += dig * g - dig * 0.38 * rim
             self.hy = np.minimum(self.hy, FLOOR_Y - 20)
-            for _ in range(26):
+            for _ in range(44):
                 side = 1 if self.rng.random() < 0.5 else -1
                 self.grains.append([self.bx + side * self.R * 0.8, self.by + self.R * 0.7,
                                     side * float(self.rng.uniform(150, 420)), -float(self.rng.uniform(350, 800))])
             self.by = self.surf(self.bx) - self.R
             if self.landings == 3:
                 self.line("He's digging.", "dig", self.t + 0.8)
-            if self.landings >= 9:
+            if self.landings == 6:
+                self.line("Deeper.", "deeper", self.t + 0.8)
+            if self.landings >= 8:
                 self.buried = True
-                self.finish("BURIED")
-                self.line("Two. He dug that hole himself.", "score", self.t + 0.9)
+                self.later("BURIED", "Two. He dug that hole himself.", "score")
                 return
-            self.hop(300.0)
+            self.hop(350.0)
 
     def snapshot(self):
         s = self.base_snap(); s["hy"] = self.hy.copy(); s["grains"] = [tuple(g) for g in self.grains]; return s
@@ -645,7 +664,7 @@ class Sand(Matter):
         dr.rectangle([P(self.X0), P(FLOOR_Y + 40), P(self.X1), P(self.H)], fill=dim(sand, 0.8))
         dr.line([(P(x), P(y)) for x, y in zip(self.hx, s["hy"])], fill=light, width=int(P(6)))
         for (x, y, vx, vy) in s["grains"]:
-            circle(dr, P(x), P(y), P(5), light)
+            circle(dr, P(x), P(y), P(7), light)
 
 
 # ---------------------------------------------------------------- 6. le trampoline
@@ -653,6 +672,12 @@ class Trampoline(Matter):
     title = "TRAMPOLINE"
     stamp = ("10/10", GREEN)
     zc = (640.0, 1100.0)
+
+    def zoom(self, s):
+        z = super().zoom(s)
+        if s.get("end") is not None:
+            z += 0.06 * max(0.0, s["t"] - s["end"] - 2.2)      # la caméra continue d'avancer sur lui
+        return z
     mood = "win"
     hold_s = 4.4
     MAT = 1330.0
@@ -693,6 +718,9 @@ class Trampoline(Matter):
                         self.line("That was the ceiling.", "ceil", self.t + 0.1)
                     else:
                         self.line("And the roof.", "roof", self.t + 0.1)
+            if self.vy > 0 and "roof" in [k for k, _ in self.holes] and not getattr(self, "_back", False):
+                self._back = True
+                self.line("Here he comes.", "back", self.t + 0.2)
             if self.vy > 0 and self.by + self.R >= self.MAT + self.sag:
                 self.by = self.MAT + self.sag - self.R
                 self.say(evs)
@@ -704,11 +732,12 @@ class Trampoline(Matter):
                     self.t_space = self.t
                     self.vy = -2600.0
                     self.line("He's not coming down.", "space", self.t + 0.8)
+                    self.line("Still going.", "still", self.t + 2.3)
                 else:
                     self.hop(self.h)
         elif self.phase == "space":
             # dans l'espace, il file vers la Lune et se pose dessus en arc
-            k = clamp((self.t - self.t_space) / 4.6, 0.0, 1.0)
+            k = clamp((self.t - self.t_space) / 3.9, 0.0, 1.0)
             sm = lambda v: v * v * (3 - 2 * v)
             y0 = self.MAT - self.R
             top = self.MOON_Y - self.MOON_R
@@ -728,8 +757,7 @@ class Trampoline(Matter):
                 self.phase = "moon"
                 self.by = y1
                 self.say(evs)
-                self.finish("MOON")
-                self.line("The Moon. Ten out of ten.", "score", self.t + 0.9)
+                self.later("MOON", "The Moon. Ten out of ten.", "score")
                 self.vy = -math.sqrt(2 * self.moon_g * 170)
         else:
             self.vy += self.moon_g * dt
