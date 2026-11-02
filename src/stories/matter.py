@@ -64,6 +64,43 @@ class Matter(Chapter):
         self.hit_t = self.t
         self.landings += 1
 
+    # --- la voix : Bounce dit son nom à chaque choc ; une réplique ne se place que dans un
+    # creux entre deux mots, sinon le moteur fait taire Bounce
+    _durs = {}
+
+    def word(self):
+        w = Matter._durs.get("__word__")
+        if w is None:
+            x = base.hero_word(self.cfg["hero_name"], self.cfg)
+            w = Matter._durs["__word__"] = (len(x) / base.ak.SR) if x is not None else 0.85
+        return w
+
+    def ldur(self, text):
+        d = Matter._durs.get(text)
+        if d is None:
+            import voice as nv
+            x = nv.say(text, self.cfg["narrator_voice"], self.cfg["narrator_length"])
+            d = Matter._durs[text] = (len(x) / nv.SR) if x is not None else 0.9
+        return d
+
+    def talk(self, text, key):
+        """Appelée sur un choc : la réplique commence après le mot, et renvoie le temps de vol
+        qu'il faut avant le choc suivant pour qu'elle tienne entière."""
+        start = self.t + self.word() + 0.2
+        self.line(text, key, start)
+        return start + self.ldur(text) + 0.3 - self.t
+
+    def h_for(self, T, g=None):
+        return (g or self.g) * T * T / 8.0
+
+    def fall_in(self, x, land_y, title):
+        """Bounce entre par le haut pendant que la voix dit le titre : sa première retombée
+        tombe juste après."""
+        tf = self.ldur(title) + 0.45
+        self.bx, self.by = x, land_y - self.R - 0.5 * self.g * tf * tf
+        self.vx = self.vy = 0.0
+        self.line(title, "title", 0.0)
+
     def hop(self, h, vx=0.0):
         self.vy = -math.sqrt(2 * self.g * max(h, 1.0))
         self.vx = vx
@@ -80,10 +117,11 @@ class Matter(Chapter):
         if p is not None and self.t >= p[0] and not self.payoff:
             self._pending = None
             self.finish(p[1])
-            self.line(p[2], p[3], self.t + p[4])
+            if p[2]:
+                self.line(p[2], p[3], self.t + p[4])
 
     zc = (540.0, 1150.0)                    # où la caméra avance après la chute
-    intro = 0.0                             # recul d'ouverture (premier chapitre)
+    intro = 0.14                            # chaque pièce s'ouvre en reculant
 
     def zoom(self, s):
         z = 1.0 + 0.04 * min(1.0, s["t"] / 6.0)               # une lente avancée de caméra
@@ -130,6 +168,8 @@ class Matter(Chapter):
     def hero(self, s):
         hx, hy = self.hero_w(s)
         x, y, Z = self.zxy(s, hx, hy)
+        if s["hit_t"] < 0 and y - self.R * Z < SCENE_TOP:
+            return None                    # il entre par le haut : pas encore dans le cadre
         return (x, y, self.R * Z)
 
     def solids_w(self, s):
@@ -167,7 +207,7 @@ class Matter(Chapter):
         return []
 
     def room(self, dr, P, wall=WALL, floor=FLOOR):
-        """Le labo d'essai : mur carrelé, projecteur sur la zone de test, règle de hauteur."""
+        """Le labo d'essai : mur carrelé, projecteur sur la zone de test."""
         dr.rectangle([0, P(SCENE_TOP - 200), P(self.W), P(FLOOR_Y)], fill=wall)
         line = mix(wall, (90, 90, 120), 0.35)
         for y in range(int(SCENE_TOP - 200), int(FLOOR_Y), 120):
@@ -178,14 +218,6 @@ class Matter(Chapter):
         dr.polygon([(P(470), P(SCENE_TOP - 200)), (P(610), P(SCENE_TOP - 200)), (P(960), P(FLOOR_Y)), (P(120), P(FLOOR_Y))], fill=cone)
         dr.rectangle([0, P(FLOOR_Y), P(self.W), P(self.H)], fill=floor)
         dr.rectangle([0, P(FLOOR_Y), P(self.W), P(FLOOR_Y + 8)], fill=dim(floor, 1.35))
-        # la règle : de quoi lire la hauteur de chaque rebond
-        dr.rectangle([P(28), P(SCENE_TOP - 100), P(52), P(FLOOR_Y)], fill=(200, 190, 150))
-        f = self.fnt(int(P(20)))
-        for k, y in enumerate(range(int(FLOOR_Y), int(SCENE_TOP - 100), -50)):
-            w = 22 if k % 2 == 0 else 12
-            dr.line([(P(52), P(y)), (P(52 + w), P(y))], fill=(200, 190, 150), width=max(1, int(P(3))))
-            if k % 4 == 0 and k:
-                dr.text((P(80), P(y)), f"{k // 2}", fill=(200, 190, 150), anchor="lm", font=f)
 
     _fonts = {}
 
@@ -208,20 +240,25 @@ class Jelly(Matter):
     title = "JELLY"
     stamp = ("7/10", AMBER)
     mood = "lose"
-    hold_s = 1.5
+    hold_s = 1.4
     exit_ok = True                          # la gelée le renvoie hors du cadre : c'est la chute
     X0, X1, TOP = 150.0, 930.0, 1130.0
-    intro = 0.18
+    intro = 0.26
     zc = (540.0, 1250.0)
     N = 41
 
     def init(self):
         self.u = np.zeros(self.N)            # creux de la surface (vers le bas positif)
         self.w = np.zeros(self.N)
-        self.h = 230.0
-        self.bx, self.by = 540.0, self.TOP - self.R - 260
+        self.bx, self.by = 540.0, self.TOP - self.R - 200
+        self.state = "fall"                  # fall -> held (la gelée l'avale) -> hop -> flung -> held
         self.flung = False
         self.line("Jelly.", "title", 0.0)
+        # la voix de l'accroche puis « Jelly. » : il ne retombe pour de bon qu'après
+        hv = base.hook_audio(self.cfg)
+        hook_end = 0.15 + (len(hv) / base.ak.SR if hv is not None else 1.8) + 0.3 + self.cfg["narr_gap_s"]
+        self.first_land = hook_end + self.ldur("Jelly.") + 0.3
+        self.release = self.first_land - 1.05
 
     def xs(self):
         return np.linspace(self.X0, self.X1, self.N)
@@ -231,8 +268,11 @@ class Jelly(Matter):
         i = int(clamp(k, 0, self.N - 2)); f = k - i
         return self.TOP + self.u[i] * (1 - f) + self.u[i + 1] * f
 
+    def poke(self, v):
+        xs = self.xs()
+        self.w += np.exp(-((xs - self.bx) / 90.0) ** 2) * v
+
     def phys(self, dt, evs):
-        # la surface : une corde de ressorts (ondes), rappelée vers le repos
         for _ in range(4):
             d = dt / 4
             lap = np.zeros(self.N)
@@ -241,31 +281,41 @@ class Jelly(Matter):
             self.w += acc * d
             self.u += self.w * d
             self.u[0] = self.u[-1] = 0.0
+        if self.state == "held":
+            # avalé à moitié : il tremble avec la gelée, sans rebondir (pas de choc)
+            self.by = self.surf(self.bx) - self.R + self.sink
+            if not self.flung and self.t >= self.release:
+                self.state = "air"
+                T = self.first_land - self.t
+                self.hop(self.h_for(T))
+            return
         self.vy += self.g * dt
         self.bx += self.vx * dt
         self.by += self.vy * dt
-        if not self.flung and self.X0 < self.bx < self.X1 and self.vy > 0 and self.by + self.R >= self.surf(self.bx):
-            # il s'enfonce : la gelée plie sous lui, puis le rend (avec plus qu'il n'a donné)
-            xs = self.xs()
-            push = np.exp(-((xs - self.bx) / 90.0) ** 2)
-            self.w += push * self.vy * 1.1
+        if self.vy > 0 and self.X0 < self.bx < self.X1 and self.by + self.R >= self.surf(self.bx):
+            if self.state == "fall" or self.flung:
+                # la gelée l'attrape en douceur : elle l'avale à moitié
+                self.poke(self.vy * 1.1)
+                self.state = "held"
+                self.sink = self.R * 0.55
+                return
+            self.poke(self.vy * 1.1)
             self.say(evs)
             self.by = self.surf(self.bx) - self.R
-            if self.landings >= 6:
-                self.flung = True
-                self.hop(1900.0, 420.0)
+            if self.landings == 1:
+                self.hop(self.h_for(1.22))
             else:
-                self.h *= 1.2
-                self.hop(self.h, float(self.rng.uniform(-30, 30)))
-        if self.flung and not self.payoff and (self.by + self.R < SCENE_TOP - 10 or self.bx - self.R > self.W):
+                # trop de rebond : elle le renvoie au plafond
+                self.flung = True
+                self.hop(980.0, -180.0)            # il retombera à gauche, loin de la note
+        if self.flung and not self.payoff and self.by + self.R < SCENE_TOP - 10:
             self.finish("FLUNG")
-            self.line("Seven out of ten. Too bouncy.", "score", self.t + 0.8)
 
     def snapshot(self):
         s = self.base_snap(); s["u"] = self.u.copy(); return s
 
     def solids_w(self, s):
-        return [("rect", self.X0 + 20, self.TOP + 40 + max(0.0, float(np.max(s["u"]))), self.X1 - 20, FLOOR_Y)]
+        return [("rect", self.X0 + 20, self.TOP + 60 + max(0.0, float(np.max(s["u"]))), self.X1 - 20, FLOOR_Y)]
 
     def focus_w(self, s):
         return (self.X0 + 120, self.TOP - 60, self.X1 - 160, FLOOR_Y - 60)
@@ -283,30 +333,35 @@ class Jelly(Matter):
         inner = [(x, y + P(14)) for (x, y) in top] + [(P(self.X1 - 14 + bulge), P((self.TOP + FLOOR_Y) / 2)), (P(self.X1 - 14), P(FLOOR_Y - 10)),
                                                       (P(self.X0 + 14), P(FLOOR_Y - 10)), (P(self.X0 + 14 - bulge), P((self.TOP + FLOOR_Y) / 2))]
         dr.polygon(inner, fill=(80, 200, 120))
-        dr.line(top, fill=(180, 250, 190), width=int(P(12)), joint="curve")
         for (bx, by, r) in ((300, 1260, 18), (700, 1380, 14), (520, 1440, 10), (820, 1250, 12), (420, 1400, 15), (620, 1240, 9)):
             k = (bx - self.X0) / (self.X1 - self.X0) * (self.N - 1)
             circle(dr, P(bx), P(by + 0.5 * u[int(k)]), P(r), (120, 220, 150))
-        dr.ellipse([P(self.X0 + 40), P(self.TOP + 30), P(self.X0 + 140), P(self.TOP + 60)], fill=(150, 235, 170))
         self.bounce(dr, P, s)
+        # la gelée par-dessus le bas de Bounce quand elle l'avale : on le voit à travers
+        if s["by"] + self.R > self.TOP + float(np.min(u)) + 2:
+            dr.polygon(top + [(P(self.X1), P(FLOOR_Y)), (P(self.X0), P(FLOOR_Y))], fill=(80, 200, 120))
+            r = self.R
+            bx, by = P(s["bx"]), P(s["by"])
+            dr.ellipse([bx - P(r) * 0.95, by - P(r) * 0.95, bx + P(r) * 0.95, by + P(r) * 0.95], outline=(60, 150, 95), width=int(P(4)))
+        dr.line(top, fill=(180, 250, 190), width=int(P(12)), joint="curve")
+        dr.ellipse([P(self.X0 + 40), P(self.TOP + 30), P(self.X0 + 140), P(self.TOP + 60)], fill=(150, 235, 170))
 
 
 # ---------------------------------------------------------------- 2. le papier bulle
 class Bubbles(Matter):
     title = "BUBBLE WRAP"
     stamp = ("9/10", GREEN)
-    zc = (540.0, 1420.0)
+    zc = (500.0, 1420.0)
     mood = "win"
     hold_s = 1.6
-    X0, X1 = 130.0, 950.0
-    BR = 46.0
+    X0 = 120.0
+    BR = 40.0
+    NB = 9
 
     def init(self):
-        n = int((self.X1 - self.X0) // (2 * self.BR + 6))
-        self.bub = [{"x": self.X0 + self.BR + k * (2 * self.BR + 6), "pop": None} for k in range(n)]
-        self.bx, self.by = self.bub[0]["x"], FLOOR_Y - 600.0
-        self.dirx = 1
-        self.line("Bubble wrap.", "title", 0.0)
+        sp = 2 * self.BR + 4
+        self.bub = [{"x": self.X0 + self.BR + k * sp, "pop": None} for k in range(self.NB)]
+        self.fall_in(self.bub[0]["x"], FLOOR_Y - 2 * self.BR - 6, "Bubble wrap.")
 
     def ground(self, x):
         for b in self.bub:
@@ -322,35 +377,20 @@ class Bubbles(Matter):
         if self.vy > 0 and self.by + self.R >= g:
             self.by = g - self.R
             self.say(evs)
-            # il éclate tout ce qui est sous lui
             for b in self.bub:
                 if b["pop"] is None and abs(b["x"] - self.bx) < self.BR + 6:
                     b["pop"] = self.t
             left = [b for b in self.bub if b["pop"] is None]
-            if not left and not getattr(self, "_done", False):
-                self._done = True
-                self.later("ALL POPPED", "Nine. Very satisfying.", "score")
-                self.hop(240.0)
+            h = float(self.rng.uniform(420, 460))
+            if not left:
+                if not getattr(self, "_done", False):
+                    self._done = True
+                    self.later("ALL POPPED", None, None)
+                self.hop(h, -60.0)
                 return
-            if getattr(self, "_done", False):
-                self.hop(240.0)
-                return
-            # vers la bulle intacte la plus proche
             tgt = min(left, key=lambda b: abs(b["x"] - self.bx))
-            h = float(self.rng.uniform(345, 380))
             T = 2 * math.sqrt(2 * h / self.g)
             self.hop(h, clamp((tgt["x"] - self.bx) / T, -260, 260))
-        if self.landings == 4 and self.once("more"):
-            self.line("He's not stopping.", "more", self.t)
-        if self.landings == 7 and self.once("every"):
-            self.line("Every single one.", "every", self.t + 0.8)
-
-    def once(self, k):
-        if getattr(self, "_said", None) is None:
-            self._said = set()
-        if k in self._said:
-            return False
-        self._said.add(k); return True
 
     def snapshot(self):
         s = self.base_snap(); s["bub"] = [(b["x"], b["pop"]) for b in self.bub]; return s
@@ -359,12 +399,13 @@ class Bubbles(Matter):
         return [("circle", x, FLOOR_Y - self.BR - 6, self.BR - 10) for (x, p) in s["bub"] if p is None]
 
     def focus_w(self, s):
-        return (self.X0 + 60, FLOOR_Y - 2 * self.BR - 30, self.X1 - 200, FLOOR_Y - 20)
+        return (self.X0 + 40, FLOOR_Y - 2 * self.BR - 30, self.X0 + 2 * self.BR * self.NB - 120, FLOOR_Y - 20)
 
     def scene(self, dr, s, t, S):
         P = lambda v: v * S
         self.room(dr, P)
-        dr.rectangle([P(self.X0 - 20), P(FLOOR_Y - 10), P(self.X1 + 20), P(FLOOR_Y)], fill=(150, 170, 190))
+        x1 = self.X0 + (2 * self.BR + 4) * self.NB
+        dr.rectangle([P(self.X0 - 20), P(FLOOR_Y - 10), P(x1 + 10), P(FLOOR_Y)], fill=(150, 170, 190))
         for (x, p) in s["bub"]:
             cy = FLOOR_Y - self.BR - 6
             if p is None:
@@ -390,78 +431,72 @@ class Glass(Matter):
     title = "GLASS"
     stamp = ("0/10", RED)
     mood = "lose"
-    hold_s = 1.5
+    hold_s = 1.4
     exit_ok = True                          # il passe à travers : il tombe hors du cadre
-    X0, X1, Y = 180.0, 900.0, 1330.0
+    X0, X1, Y, TH = 160.0, 920.0, 1290.0, 90.0
     zc = (540.0, 1330.0)
+    STARS = [(5, 60), (6, 110), (8, 170), (10, 240), (12, 330), (15, 460)]
 
     def init(self):
-        self.cracks = []                    # polylignes
+        self.stars = []                     # (x, rayons) : chaque rayon = polyligne sur la face
         self.shards = None
-        self.bx, self.by = 520.0, self.Y - 600
-        self.line("Glass.", "title", 0.0)
+        self.fall_in(540.0, self.Y, "Glass.")
 
-    def add_cracks(self, x, n, L):
-        for _ in range(n):
-            ang = float(self.rng.uniform(0, math.pi * 2))
-            pts = [(x, self.Y)]
-            px, py = x, 0.0
-            for k in range(5):
-                ang += float(self.rng.uniform(-0.5, 0.5))
-                px += math.cos(ang) * L / 5
-                py += math.sin(ang) * L / 5 * 0.12
-                pts.append((clamp(px, self.X0 + 4, self.X1 - 4), self.Y + clamp(py, -8, 8)))
-            self.cracks.append(pts)
+    def add_star(self, x, n, L):
+        rays = []
+        for k in range(n):
+            ang = 2 * math.pi * k / n + float(self.rng.uniform(-0.25, 0.25))
+            pts = [(x, self.Y + self.TH / 2)]
+            px, py = x, self.Y + self.TH / 2
+            for j in range(4):
+                a = ang + float(self.rng.uniform(-0.35, 0.35))
+                px += math.cos(a) * L / 4
+                py += math.sin(a) * L / 4 * 0.35
+                pts.append((clamp(px, self.X0 + 6, self.X1 - 6), clamp(py, self.Y + 4, self.Y + self.TH - 4)))
+            rays.append(pts)
+        self.stars.append(rays)
 
     def phys(self, dt, evs):
         self.vy += self.g * dt
         self.bx += self.vx * dt
         self.by += self.vy * dt
-        if self.shards is None and self.vy > 0 and self.by + self.R >= self.Y - 8:
-            self.by = self.Y - 8 - self.R
+        if self.shards is None and self.vy > 0 and self.by + self.R >= self.Y:
+            self.by = self.Y - self.R
             self.say(evs)
-            if self.landings <= 8:
-                n, L = [(1, 30), (2, 60), (2, 100), (3, 130), (3, 170), (4, 220), (5, 300), (7, 400)][self.landings - 1]
-                self.add_cracks(self.bx, n, L)
-                if self.landings == 3:
-                    self.line("That's a crack.", "crack", self.t + 0.75)
-                self.hop(350.0, float(self.rng.uniform(-110, 110)))
+            if self.landings <= len(self.STARS):
+                n, L = self.STARS[self.landings - 1]
+                self.add_star(self.bx, n, L)
+                self.hop(float(self.rng.uniform(430, 470)), float(self.rng.uniform(-90, 90)))
             else:
-                # tout part : la vitre se brise en éclats, il passe au travers
                 self.shards = []
                 cx = self.bx
                 xs = sorted([self.X0, self.X1] + [float(v) for v in self.rng.uniform(self.X0 + 30, self.X1 - 30, 9)])
                 for a, b in zip(xs, xs[1:]):
                     m = (a + b) / 2
-                    self.shards.append({"x": m, "y": self.Y, "w": (b - a) / 2, "a": 0.0,
+                    self.shards.append({"x": m, "y": self.Y + self.TH / 2, "w": (b - a) / 2, "a": 0.0,
                                         "vx": (m - cx) * 0.6, "vy": -float(self.rng.uniform(150, 450)),
                                         "va": float(self.rng.uniform(-3, 3))})
                 self.vy = 200.0
                 self.vx = 0.0
-                self.broke_t = self.t
-        if self.shards is not None and not self.payoff and self.t - self.broke_t > 0.35:
-            self.finish("BROKE")
-            self.line("Zero.", "score", self.t + 0.6)
+                self.later("BROKE", "Zero.", "score", delay=0.35, after=0.6)
         if self.shards is not None:
             for c in self.shards:
                 c["vy"] += self.g * 0.8 * dt
                 c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["va"] * dt
-            if self.by > self.H + self.R * 2:
-                self.vy = 0.0
 
     def snapshot(self):
         s = self.base_snap()
-        s["cracks"] = [list(p) for p in self.cracks]
+        s["stars"] = [[list(r) for r in rays] for rays in self.stars]
         s["shards"] = [dict(c) for c in self.shards] if self.shards is not None else None
         return s
 
     def solids_w(self, s):
         if s["shards"] is not None:
             return []
-        return [("rect", self.X0, self.Y - 6, self.X1, self.Y + 12)]
+        return [("rect", self.X0, self.Y + 4, self.X1, self.Y + self.TH)]
 
     def focus_w(self, s):
-        return (self.X0 + 60, self.Y - 60, self.X1 - 140, self.Y + 60)
+        return (self.X0 + 60, self.Y - 40, self.X1 - 160, self.Y + self.TH)
 
     def bodies_w(self, s):
         if s["shards"] is None:
@@ -471,23 +506,27 @@ class Glass(Matter):
     def scene(self, dr, s, t, S):
         P = lambda v: v * S
         self.room(dr, P)
-        # le trou noir sous la vitre
         dr.rectangle([P(self.X0), P(self.Y), P(self.X1), P(self.H)], fill=(6, 6, 10))
-        for x in (self.X0 - 30, self.X1):
-            dr.rectangle([P(x), P(self.Y - 10), P(x + 30), P(self.H)], fill=(70, 70, 90))
-        glass = (150, 200, 230)
+        for x in (self.X0 - 34, self.X1):
+            dr.rectangle([P(x), P(self.Y - 10), P(x + 34), P(self.H)], fill=(70, 70, 90))
+        glass = (140, 195, 230)
         if s["shards"] is None:
-            dr.rectangle([P(self.X0), P(self.Y - 8), P(self.X1), P(self.Y + 26)], fill=glass)
-            dr.rectangle([P(self.X0), P(self.Y - 8), P(self.X1), P(self.Y - 1)], fill=(225, 245, 255))
+            # une dalle de verre épaisse : on voit sa face, et les fissures dessus
+            dr.rectangle([P(self.X0), P(self.Y), P(self.X1), P(self.Y + self.TH)], fill=glass)
+            dr.rectangle([P(self.X0), P(self.Y), P(self.X1), P(self.Y + 9)], fill=(225, 245, 255))
             for k in range(4):
-                xx = self.X0 + 80 + k * 190
-                dr.polygon([(P(xx), P(self.Y + 24)), (P(xx + 40), P(self.Y - 6)), (P(xx + 60), P(self.Y - 6)), (P(xx + 20), P(self.Y + 24))], fill=(190, 225, 245))
-            for pts in s["cracks"]:
-                dr.line([(P(x), P(y + 8)) for x, y in pts], fill=(255, 255, 255), width=int(P(6)))
+                xx = self.X0 + 70 + k * 190
+                dr.polygon([(P(xx), P(self.Y + self.TH)), (P(xx + 60), P(self.Y + 10)), (P(xx + 90), P(self.Y + 10)), (P(xx + 30), P(self.Y + self.TH))], fill=(175, 215, 240))
+            for rays in s["stars"]:
+                for pts in rays:
+                    dr.line([(P(x), P(y)) for x, y in pts], fill=(20, 40, 60), width=int(P(9)))
+                    dr.line([(P(x), P(y)) for x, y in pts], fill=(255, 255, 255), width=int(P(5)))
+                x0, y0 = rays[0][0]
+                circle(dr, P(x0), P(y0), P(14), (255, 255, 255))
         else:
             for c in s["shards"]:
                 ca, sa = math.cos(c["a"]), math.sin(c["a"])
-                pts = [(-c["w"], -8), (c["w"], -8), (c["w"] * 0.6, 10), (-c["w"] * 0.8, 10)]
+                pts = [(-c["w"], -self.TH / 2), (c["w"], -self.TH / 2), (c["w"] * 0.6, self.TH / 2), (-c["w"] * 0.8, self.TH / 2)]
                 dr.polygon([(P(c["x"] + dx * ca - dy * sa), P(c["y"] + dx * sa + dy * ca)) for dx, dy in pts], fill=glass)
         self.bounce(dr, P, s)
 
@@ -497,21 +536,20 @@ class Honey(Matter):
     title = "HONEY"
     stamp = ("1/10", RED)
     zc = (540.0, 1230.0)
-
-    def zoom(self, s):
-        # la caméra se rapproche de lui à mesure qu'il s'enfonce
-        return super().zoom(s) + 0.05 * s["t"]
     mood = "lose"
     hold_s = 2.0
     TOP = 1250.0
 
+    def zoom(self, s):
+        # la caméra se rapproche de lui à mesure qu'il s'enfonce
+        return super().zoom(s) + 0.05 * s["t"]
+
     def init(self):
-        self.depth = 0.0                    # combien il est enfoncé (px sous la surface)
-        self.h = 330.0
+        self.depth = 0.0
+        self.h = 470.0
         self.stuck = False
-        self.leave = None                   # le moment où il a quitté le miel (le fil s'étire)
-        self.bx, self.by = 540.0, self.TOP - self.R - 340
-        self.line("Honey.", "title", 0.0)
+        self.leave = None
+        self.fall_in(540.0, self.TOP, "Honey.")
 
     def phys(self, dt, evs):
         if self.stuck:
@@ -529,7 +567,7 @@ class Honey(Matter):
             self.by = low
             self.say(evs)
             self.depth += self.R * 0.15
-            self.h *= 0.85
+            self.h *= 0.82
             if self.depth > self.R * 0.85:
                 self.stuck = True
                 self.stuck_t = self.t
@@ -547,18 +585,15 @@ class Honey(Matter):
         P = lambda v: v * S
         self.room(dr, P)
         amber, light = (220, 150, 40), (250, 200, 90)
-        # le pot de miel, vu en coupe
         dr.rectangle([P(150), P(self.TOP - 40), P(930), P(FLOOR_Y)], fill=(80, 70, 66))
         self.bounce(dr, P, s)
         bx, by = s["bx"], s["by"]
-        # la surface ondule autour de chaque retombée
         age = s["t"] - s["hit_t"]
         A = 16.0 * math.exp(-max(0.0, age) / 0.9) + 3.0
         xs = [170 + k * 10 for k in range(75)]
         ys = [self.TOP + A * math.sin((abs(x - bx) - 260 * age) / 38.0) * math.exp(-abs(x - bx) / 420.0) for x in xs]
         dr.polygon([(P(170), P(FLOOR_Y))] + [(P(x), P(y)) for x, y in zip(xs, ys)] + [(P(910), P(FLOOR_Y))], fill=amber)
         dr.line([(P(x), P(y)) for x, y in zip(xs, ys)], fill=light, width=int(P(10)))
-        # le bourrelet autour de lui, et le fil qui s'étire quand il remonte
         if s["depth"] > 0:
             w = self.R * 1.25
             dr.ellipse([P(bx - w), P(self.TOP - 18), P(bx + w), P(self.TOP + 16)], fill=amber)
@@ -586,14 +621,14 @@ class Sand(Matter):
     title = "SAND"
     stamp = ("2/10", RED)
     zc = (560.0, 1420.0)
-
-    def zoom(self, s):
-        # la caméra descend avec lui dans son trou
-        return super().zoom(s) + 0.03 * s["t"]
     mood = "lose"
     hold_s = 1.8
     X0, X1, BASE = 100.0, 980.0, 1300.0
-    DX = 8.0
+    DX = 6.0
+    LANDS = 8
+
+    def zoom(self, s):
+        return super().zoom(s) + 0.03 * s["t"]
 
     def init(self):
         n = int((self.X1 - self.X0) / self.DX) + 1
@@ -601,11 +636,31 @@ class Sand(Matter):
         self.hy = np.full(n, self.BASE) + 6 * np.sin(self.hx / 90.0)
         self.grains = []
         self.buried = False
-        self.bx, self.by = 560.0, self.BASE - self.R - 360
-        self.line("Sand.", "title", 0.0)
+        self.fall_in(560.0, self.BASE, "Sand.")
 
     def surf(self, x):
         return float(np.interp(x, self.hx, self.hy))
+
+    def dig(self):
+        """Un trou rond, plus large que lui : le fond est un arc de cercle de rayon R + 18 ;
+        le sable chassé retombe en bourrelets de part et d'autre."""
+        rb = self.R + 18.0
+        bottom = min(self.surf(self.bx) + 30.0, FLOOR_Y - 30.0)
+        yc = bottom - rb
+        dx = self.hx - self.bx
+        inside = np.abs(dx) < rb
+        bowl = yc + np.sqrt(np.maximum(0.0, rb * rb - dx * dx))
+        before = self.hy.copy()
+        self.hy = np.where(inside, np.maximum(self.hy, bowl), self.hy)
+        moved = float(np.sum(self.hy - before)) * self.DX
+        rim = np.exp(-((np.abs(dx) - rb * 1.9) / (rb * 0.85)) ** 2) * (np.abs(dx) >= rb)
+        if rim.sum() > 0:
+            self.hy -= rim / (rim.sum() * self.DX) * moved * 0.85
+        # les pentes trop raides s'adoucissent (sans jamais remplir le fond rond)
+        for _ in range(3):
+            sm = self.hy.copy()
+            sm[1:-1] = (self.hy[:-2] + self.hy[1:-1] + self.hy[2:]) / 3
+            self.hy = np.where(inside, self.hy, sm)
 
     def phys(self, dt, evs):
         for gr in self.grains:
@@ -613,39 +668,28 @@ class Sand(Matter):
             gr[0] += gr[2] * dt; gr[1] += gr[3] * dt
         self.grains = [gr for gr in self.grains if gr[1] < self.surf(gr[0]) + 4]
         if self.buried:
-            # les bords s'éboulent dans le trou, par-dessus lui
-            tgt = np.full_like(self.hy, self.BASE)
-            near = np.abs(self.hx - self.bx) < self.R * 2.6
+            # les bourrelets s'éboulent dans le trou : le sable monte à plat jusqu'à ses yeux
             cover = self.by - self.R * 0.05
-            tgt[near] = np.minimum(self.hy[near], np.maximum(cover, self.BASE - 4))
-            self.hy += (np.where(near, np.minimum(self.hy, cover + 0 * self.hy), self.hy) - self.hy) * min(1.0, 3.0 * dt)
+            near = np.abs(self.hx - self.bx) < self.R * 2.4
+            tgt = np.where(near, np.minimum(self.hy, cover), self.hy)
+            self.hy += (tgt - self.hy) * min(1.0, 3.0 * dt)
             return
         self.vy += self.g * dt
         self.by += self.vy * dt
         floor_here = self.surf(self.bx) - self.R
         if self.vy > 0 and self.by >= floor_here:
-            self.by = floor_here
             self.say(evs)
-            # il creuse : le sable sous lui part sur les bords, en gerbe
-            dig = 26.0
-            g = np.exp(-((self.hx - self.bx) / (self.R * 0.9)) ** 2)
-            rim = np.exp(-((np.abs(self.hx - self.bx) - self.R * 1.9) / (self.R * 0.9)) ** 2)
-            self.hy += dig * g - dig * 0.38 * rim
-            self.hy = np.minimum(self.hy, FLOOR_Y - 20)
+            self.dig()
             for _ in range(44):
                 side = 1 if self.rng.random() < 0.5 else -1
-                self.grains.append([self.bx + side * self.R * 0.8, self.by + self.R * 0.7,
+                self.grains.append([self.bx + side * self.R * 0.8, floor_here + self.R * 0.7,
                                     side * float(self.rng.uniform(150, 420)), -float(self.rng.uniform(350, 800))])
             self.by = self.surf(self.bx) - self.R
-            if self.landings == 3:
-                self.line("He's digging.", "dig", self.t + 0.8)
-            if self.landings == 6:
-                self.line("Deeper.", "deeper", self.t + 0.8)
-            if self.landings >= 8:
+            if self.landings >= self.LANDS:
                 self.buried = True
-                self.later("BURIED", "Two. He dug that hole himself.", "score")
+                self.later("BURIED", "Two. He dug that hole himself.", "score", delay=0.4, after=0.4)
                 return
-            self.hop(350.0)
+            self.hop(440.0)
 
     def snapshot(self):
         s = self.base_snap(); s["hy"] = self.hy.copy(); s["grains"] = [tuple(g) for g in self.grains]; return s
@@ -656,7 +700,6 @@ class Sand(Matter):
     def scene(self, dr, s, t, S):
         P = lambda v: v * S
         self.room(dr, P, (30, 30, 50), (60, 50, 40))
-        circle(dr, P(860), P(700), P(46), (230, 230, 236))
         self.bounce(dr, P, s)
         sand, light = (214, 180, 120), (236, 206, 150)
         pts = [(P(self.X0), P(self.H))] + [(P(x), P(y)) for x, y in zip(self.hx, s["hy"])] + [(P(self.X1), P(self.H))]
@@ -679,25 +722,25 @@ class Trampoline(Matter):
             z += 0.06 * max(0.0, s["t"] - s["end"] - 2.2)      # la caméra continue d'avancer sur lui
         return z
     mood = "win"
-    hold_s = 4.4
+    hold_s = 2.6
     MAT = 1330.0
     CEIL = 430.0
     ROOF = -250.0
     MOON_Y = -9000.0
-    MOON_R = 380.0
-    MOON_X = 640.0
+    MOON_R = 330.0
+    MOON_X = 720.0
 
     def init(self):
-        self.h = 260.0
-        self.cam = 0.0                      # décalage vertical de la caméra (monde -> écran)
+        self.h = 440.0
+        self.cam = 0.0
+        self.camv = 0.0                      # décalage vertical de la caméra (monde -> écran)
         self.sag = 0.0
         self.sagv = 0.0
         self.phase = "room"
         self.holes = []
         self.debris = []
         self.moon_g = 420.0
-        self.bx, self.by = 540.0, self.MAT - self.R - 300
-        self.line("Trampoline.", "title", 0.0)
+        self.fall_in(540.0, self.MAT, "Trampoline.")
 
     def phys(self, dt, evs):
         # la toile du trampoline
@@ -714,30 +757,31 @@ class Trampoline(Matter):
                     self.holes.append((key, self.bx))
                     for _ in range(18):
                         self.debris.append([self.bx + float(self.rng.uniform(-80, 80)), yy, float(self.rng.uniform(-300, 300)), float(self.rng.uniform(-200, 200))])
-                    if key == "ceil":
-                        self.line("That was the ceiling.", "ceil", self.t + 0.1)
-                    else:
-                        self.line("And the roof.", "roof", self.t + 0.1)
-            if self.vy > 0 and "roof" in [k for k, _ in self.holes] and not getattr(self, "_back", False):
-                self._back = True
-                self.line("Here he comes.", "back", self.t + 0.2)
             if self.vy > 0 and self.by + self.R >= self.MAT + self.sag:
                 self.by = self.MAT + self.sag - self.R
                 self.say(evs)
                 self.sagv += self.vy * 0.25
-                self.h *= 1.62
-                if self.h > 2600:
+                self.h *= 1.55
+                if self.h > 2400:
                     # le dernier saut : il ne redescend pas
                     self.phase = "space"
                     self.t_space = self.t
                     self.vy = -2600.0
-                    self.line("He's not coming down.", "space", self.t + 0.8)
-                    self.line("Still going.", "still", self.t + 2.3)
+                    self.talk("He's not coming down.", "space")
+                    self.line("Still going.", "still", self.t + 2.6)
                 else:
+                    # les sauts qui crèvent le plafond, puis le toit : la voix le dit pendant le vol
+                    apex = self.MAT - self.R - self.h
+                    if apex - self.R < self.CEIL and not getattr(self, "_c", False):
+                        self._c = True
+                        self.h = max(self.h, self.h_for(self.talk("The ceiling.", "ceil")))
+                    elif apex - self.R < self.ROOF and not getattr(self, "_r", False):
+                        self._r = True
+                        self.h = max(self.h, self.h_for(self.talk("The roof.", "roof")))
                     self.hop(self.h)
         elif self.phase == "space":
             # dans l'espace, il file vers la Lune et se pose dessus en arc
-            k = clamp((self.t - self.t_space) / 3.9, 0.0, 1.0)
+            k = clamp((self.t - self.t_space) / 4.2, 0.0, 1.0)
             sm = lambda v: v * v * (3 - 2 * v)
             y0 = self.MAT - self.R
             top = self.MOON_Y - self.MOON_R
@@ -746,19 +790,20 @@ class Trampoline(Matter):
             if k < 0.72:
                 # il monte en passant à gauche de la Lune
                 ka = k / 0.72
-                self.bx = 540.0 + (120.0 - 540.0) * sm(min(1.0, ka / 0.45))
+                self.bx = 540.0 + (250.0 - 540.0) * sm(min(1.0, ka / 0.45))
                 self.by = y0 + (yt - y0) * sm(ka)
             else:
                 # puis il redescend dessus en arc
                 kb = (k - 0.72) / 0.28
-                self.bx = 120.0 + (self.MOON_X - 120.0) * sm(kb)
+                self.bx = 250.0 + (self.MOON_X - 250.0) * sm(kb)
                 self.by = yt + (y1 - yt) * kb - 420.0 * math.sin(math.pi * kb)
             if k >= 1.0:
                 self.phase = "moon"
                 self.by = y1
                 self.say(evs)
-                self.later("MOON", "The Moon. Ten out of ten.", "score")
-                self.vy = -math.sqrt(2 * self.moon_g * 170)
+                T = self.talk("The Moon. Ten out of ten.", "score")
+                self.later("MOON", None, None, delay=0.4)
+                self.vy = -math.sqrt(2 * self.h_for(T, self.moon_g) * self.moon_g)
         else:
             self.vy += self.moon_g * dt
             self.by += self.vy * dt
@@ -767,17 +812,28 @@ class Trampoline(Matter):
             if self.vy > 0 and self.by >= y1:
                 self.by = y1
                 self.say(evs)
-                self.vy = -math.sqrt(2 * self.moon_g * 170)
+                self.vy = -math.sqrt(2 * self.moon_g * 240)
         # la caméra garde Bounce dans l'image
+        # la caméra : un ressort amorti vers la position qui garde Bounce dans la bande
         sy = self.by + self.cam
-        lo, hi = 700.0, 1240.0
+        lo, hi = 760.0, 1200.0
         if self.phase == "moon":
-            target = 1180.0 - (self.MOON_Y - self.MOON_R)
-            self.cam += (target - self.cam) * min(1.0, 3.0 * dt)
+            target = 1300.0 - (self.MOON_Y - self.MOON_R)
         elif sy < lo:
-            self.cam += lo - sy
-        elif sy > hi and self.cam > 0:
-            self.cam = max(0.0, self.cam - (sy - hi))
+            target = self.cam + (lo - sy)
+        elif sy > hi:
+            target = max(0.0, self.cam - (sy - hi))
+        else:
+            target = self.cam
+        w = 9.0
+        self.camv += (w * w * (target - self.cam) - 2 * w * self.camv) * dt
+        self.cam += self.camv * dt
+        # jamais hors cadre, même quand il file
+        sy = self.by + self.cam
+        if sy < 560:
+            self.cam += 560 - sy
+        elif sy > 1400 and self.phase != "moon":
+            self.cam = max(0.0, self.cam - (sy - 1400))
 
     def snapshot(self):
         s = self.base_snap()
@@ -819,7 +875,7 @@ class Trampoline(Matter):
             for (dx, dy, r) in ((-150, -200, 60), (120, -260, 40), (-40, 80, 70), (170, 120, 50), (-200, 150, 34)):
                 circle(dr, P(self.MOON_X + dx), P(my + dy), P(r), (170, 170, 182))
         # la maison : toit, mur, plafond, sol, trampoline
-        if self.ROOF + c < self.H + 50:
+        if self.ROOF - 160 + c < self.H + 50:
             dr.polygon([(P(-40), Y(self.ROOF + 120)), (P(W / 2), Y(self.ROOF - 160)), (P(W + 40), Y(self.ROOF + 120))], fill=(70, 50, 50))
             dr.rectangle([P(0), Y(self.ROOF + 120), P(W), Y(self.CEIL)], fill=(40, 34, 44))
             dr.rectangle([P(0), Y(self.CEIL), P(W), Y(FLOOR_Y)], fill=WALL)
