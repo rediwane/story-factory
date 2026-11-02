@@ -87,9 +87,9 @@ class Matter(Chapter):
     def talk(self, text, key):
         """Appelée sur un choc : la réplique commence après le mot, et renvoie le temps de vol
         qu'il faut avant le choc suivant pour qu'elle tienne entière."""
-        start = self.t + self.word() + 0.2
+        start = self.t + self.word() * 1.2 + 0.3
         self.line(text, key, start)
-        return start + self.ldur(text) + 0.3 - self.t
+        return start + self.ldur(text) + 0.4 - self.t
 
     def h_for(self, T, g=None):
         return (g or self.g) * T * T / 8.0
@@ -123,6 +123,7 @@ class Matter(Chapter):
 
     zc = (540.0, 1150.0)                    # où la caméra avance après la chute
     intro = 0.14                            # chaque pièce s'ouvre en reculant
+    zend = 0.22                             # gros plan après la chute
 
     def zoom(self, s):
         z = 1.0 + 0.04 * min(1.0, s["t"] / 6.0)               # une lente avancée de caméra
@@ -131,7 +132,7 @@ class Matter(Chapter):
             z += self.intro * (1 - k * k * (3 - 2 * k))       # l'ouverture recule sur toute la scène
         if s.get("end") is not None:
             k = min(1.0, (s["t"] - s["end"]) / 2.2)
-            z += 0.22 * k * k * (3 - 2 * k)                   # gros plan sur l'issue
+            z += self.zend * k * k * (3 - 2 * k)              # gros plan sur l'issue
         return z
 
     def draw(self, dr, s, t, S):
@@ -354,7 +355,8 @@ class Bubbles(Matter):
     stamp = ("9/10", GREEN)
     zc = (500.0, 1420.0)
     mood = "win"
-    hold_s = 1.95
+    hold_s = 2.0
+    zend = 0.06
     X0 = 120.0
     BR = 40.0
     NB = 9
@@ -387,7 +389,7 @@ class Bubbles(Matter):
                 if not getattr(self, "_done", False):
                     self._done = True
                     self.later("ALL POPPED", None, None)
-                self.hop(h, -60.0)
+                self.hop(650.0, -50.0)
                 return
             tgt = min(left, key=lambda b: abs(b["x"] - self.bx))
             T = 2 * math.sqrt(2 * h / self.g)
@@ -629,7 +631,10 @@ class Sand(Matter):
     LANDS = 8
 
     def zoom(self, s):
-        return super().zoom(s) + 0.03 * s["t"]
+        z = super().zoom(s) + 0.03 * s["t"]
+        if s.get("end") is not None:
+            z += 0.12 * min(1.0, (s["t"] - s["end"]) / 2.0)    # gros plan franc sur lui, enseveli
+        return z
 
     def init(self):
         n = int((self.X1 - self.X0) / self.DX) + 1
@@ -669,7 +674,15 @@ class Sand(Matter):
             gr[0] += gr[2] * dt; gr[1] += gr[3] * dt
         self.grains = [gr for gr in self.grains if gr[1] < self.surf(gr[0]) + 4]
         if self.buried:
-            # les bourrelets s'éboulent dans le trou : le sable monte à plat jusqu'à ses yeux
+            # les bourrelets s'éboulent dans le trou : le sable coule des bords et monte à plat
+            # jusqu'à ses yeux ; lui gigote dessous
+            if not hasattr(self, "bx0"):
+                self.bx0 = self.bx
+            self.bx = self.bx0 + 7.0 * math.sin(self.t * 11.0)
+            for side in (-1, 1):
+                for _ in range(3):
+                    self.grains.append([self.bx0 + side * float(self.rng.uniform(90, 170)), self.by - self.R * 0.6 - float(self.rng.uniform(0, 40)),
+                                        -side * float(self.rng.uniform(80, 260)), -float(self.rng.uniform(0, 250))])
             cover = self.by - self.R * 0.05
             near = np.abs(self.hx - self.bx) < self.R * 2.4
             tgt = np.where(near, np.minimum(self.hy, cover), self.hy)
@@ -762,8 +775,9 @@ class Trampoline(Matter):
                 self.by = self.MAT + self.sag - self.R
                 self.say(evs)
                 self.sagv += self.vy * 0.25
-                self.h *= 1.55
-                if self.h > 2400:
+                self.k_jump = getattr(self, "k_jump", 0) + 1
+                seq = [700.0, 1100.0, 1700.0]
+                if self.k_jump > len(seq):
                     # le dernier saut : il ne redescend pas
                     self.phase = "space"
                     self.t_space = self.t
@@ -771,14 +785,7 @@ class Trampoline(Matter):
                     self.talk("He's not coming down.", "space")
                     self.line("Still going.", "still", self.t + 2.6)
                 else:
-                    # les sauts qui crèvent le plafond, puis le toit : la voix le dit pendant le vol
-                    apex = self.MAT - self.R - self.h
-                    if apex - self.R < self.CEIL and not getattr(self, "_c", False):
-                        self._c = True
-                        self.h = max(self.h, self.h_for(self.talk("The ceiling.", "ceil")))
-                    elif apex - self.R < self.ROOF and not getattr(self, "_r", False):
-                        self._r = True
-                        self.h = max(self.h, self.h_for(self.talk("The roof.", "roof")))
+                    self.h = seq[self.k_jump - 1]
                     self.hop(self.h)
         elif self.phase == "space":
             # dans l'espace, il file vers la Lune et se pose dessus en arc
@@ -819,7 +826,7 @@ class Trampoline(Matter):
         sy = self.by + self.cam
         lo, hi = 760.0, 1200.0
         if self.phase == "moon":
-            target = 1300.0 - (self.MOON_Y - self.MOON_R)
+            target = 1390.0 - (self.MOON_Y - self.MOON_R)
         elif sy < lo:
             target = self.cam + (lo - sy)
         elif sy > hi:
@@ -906,7 +913,7 @@ DEFAULTS = {
     "sub_y": 0.80, "watermark_y": 0.93, "end_hold_s": 2.3, "narr_tail_s": 0.3, "narr_gap_s": 0.3,
 }
 
-CHAPTERS = [(Jelly, {}), (Bubbles, {}), (Glass, {}), (Honey, {}), (Sand, {}), (Trampoline, {"chapter_max_s": 30.0})]
+CHAPTERS = [(Jelly, {}), (Bubbles, {"chapter_max_s": 12.45}), (Glass, {}), (Honey, {}), (Sand, {}), (Trampoline, {"chapter_max_s": 30.0})]
 
 
 class Sim(StorySim):
