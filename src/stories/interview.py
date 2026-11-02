@@ -146,7 +146,7 @@ class Question(Chapter):
         else:
             self.by = self.floor_y()
         wait = self.hop is None
-        self.bx = BX + (5.0 * math.sin(self.t * 37.0) if wait else 0.0)       # l'impatience
+        self.bx = BX + (8.0 * math.sin(self.t * 37.0) if wait else 0.0)       # l'impatience
         if self.answer_at is not None and self.t >= self.answer_at and self.end_t is None:
             self.finish("ANSWER")
             self.on_answer()
@@ -352,7 +352,7 @@ class Question(Chapter):
         else:
             k = min(1.0, t / 8.0)
             Z = 1.22 + 0.18 * k                      # une lente poussée pendant chaque question
-            cx, cyf = 480.0 - 40.0 * k, 1255.0 - 25.0 * k
+            cx, cyf = 480.0 - 40.0 * k + 14.0 * math.sin(t * 1.4), 1255.0 - 25.0 * k
         dy = 0.0
         age = t - s["impact"]
         if 0 <= age < 0.5:
@@ -448,7 +448,7 @@ class Question(Chapter):
         if s["ans"] is not None and self.react:
             talking = 0.9 <= t - s["ans"] < 2.2
         talk = 3.0 * math.sin(t * 22) if talking else 0.0
-        lean = 20.0 * math.sin(t * 3.0) if talking else 0.0
+        lean = 28.0 * math.sin(t * 3.4) if talking else 0.0
         rc = (74, 78, 100)
         rx = 640.0
         rr(dr, [X(rx + 70), Y(1000), X(rx + 86), Y(FLOOR_Y)], fill=(50, 50, 64))
