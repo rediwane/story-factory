@@ -24,13 +24,13 @@
    "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702925099485203734",
    "status": "published",
    "stats": {
-    "views_24h": null,
+    "views_24h": 29401,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 29401,
+    "likes": 1450,
+    "comments": 23,
+    "shares": 33,
+    "measured_at": "2026-11-02T01:42+00:00"
    }
   },
   {
@@ -52,16 +52,16 @@
    "scheduled_time": "2026-10-31T22:35:00+01:00",
    "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
    "metricool_post_id": 412482253,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702948850977312022",
+   "status": "published",
    "stats": {
-    "views_24h": null,
+    "views_24h": 3344,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 3344,
+    "likes": 118,
+    "comments": 12,
+    "shares": 10,
+    "measured_at": "2026-11-02T01:42+00:00"
    }
   },
   {
@@ -83,16 +83,16 @@
    "scheduled_time": "2026-11-01T14:30:00+01:00",
    "media_url": "https://n.uguu.se/KtpNKcTg.mp4",
    "metricool_post_id": 412898560,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703195092684705046",
+   "status": "published",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 19859,
+    "likes": 651,
+    "comments": 6,
+    "shares": 13,
+    "measured_at": "2026-11-02T01:42+00:00"
    }
   },
   {
@@ -187,7 +187,18 @@
    "created": "2026-11-01"
   }
  ],
- "daily": [],
+ "daily": [
+  {
+   "date": "2026-10-31",
+   "views": 71044,
+   "followers": 11156
+  },
+  {
+   "date": "2026-11-01",
+   "views": 51200,
+   "followers": 11236
+  }
+ ],
  "veille": {
   "last_check": null,
   "hashtags": [],
@@ -227,6 +238,10 @@
   {
    "date": "2026-11-01T22:30+01:00",
    "note": "Prototype du troisième concept (culture G, idée du propriétaire) : doubling_proto, « How Many Bounces To The Sun? », 64,7 s, script sur la branche proto-doubling (pas sur main : ce n'est pas une liste). Trois versions : v1 jugée trop simpliste par le propriétaire ; v2 recalée par le juge (compteur décalé de la voix, fin contradictoire) ; v3 PASSE (pauses au sommet des jalons, deuxième question après le Soleil). Publiée telle quelle sur décision du propriétaire le 02/11 à 8h00 (post 413295647). Mineurs pour la version suivante : objets qui surgissent au lieu d'entrer, deux passages calmes (36–41 s, 53–58 s), textes petits, « the nearest star » (le Soleil l'est) et « another galaxy » dit après le Grand Nuage de Magellan."
+  },
+  {
+   "date": "2026-11-02T02:50+01:00",
+   "note": "Premier run de la routine (nuit du 01 au 02/11). Nettoyage : halloween_20261031 et six_sports_20261101 rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 29 401 vues (24 h), halloween 3 344 (24 h), six_sports 19 859 (12 h) ; daily 31/10 et 01/11. Le 02/11 est déjà pris (six_hobbies à 18h00, faite en session ; doubling_proto à 8h00) : arrêt à l'étape 2, aucune liste produite. Environnement : python3 (3.11) et pip (3.13) ne pointent pas sur le même interpréteur ; installer avec « python3 -m pip install -r requirements.txt » (et --ignore-installed pillow, le PIL système n'a pas _imaging). Veille non faite : réservée aux nuits où une liste est publiée."
   }
  ]
 }
