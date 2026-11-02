@@ -784,6 +784,7 @@ class Old(Chapter):
             self.by = self.SEAT - self.R
             self.still_t = self.t
             self.line("He finally sat still.", "still", self.t + 0.3)
+            self.line("A new record.", "record", self.t + 2.2)
         if self.back and not self.payoff:
             self.finish("NEVER")
             self.line("Never stopped.", "never", self.t + 0.9)
