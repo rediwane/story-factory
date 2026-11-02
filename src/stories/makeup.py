@@ -60,10 +60,11 @@ class Step(Chapter):
     title = None
     stamp = None
     mood = None
-    hold_s = 3.6
+    hold_s = 9.0               # remplacé à la chute par une tenue calée sur une retombée
+    hold_min = 2.7
     tool = "sponge"
     hop = (110.0, 140.0)
-    first_h = 400.0            # le saut d'ouverture : le titre se dit pendant qu'il est en l'air
+    first_h = 460.0            # le saut d'ouverture : le titre se dit pendant qu'il est en l'air
     title_at = 0.55            # le titre attend que le dernier « Bounce » de l'étape d'avant soit fini
     t_go = 0.35
     approach = 0.6
@@ -87,6 +88,7 @@ class Step(Chapter):
         self.press = False
         self.last_uv = None
         self.last_xy = None
+        self.cut_set = False
         self.line(self.say[0], "title", self.title_at)
 
     def path(self, s):
@@ -130,8 +132,12 @@ class Step(Chapter):
             tgt, press = self.home, False
             if not self.payoff and self.hit_t >= t2:
                 self.finish("DONE")                       # la chute tombe sur une retombée : on l'entend
-                self.line(self.say[1], "verdict", self.hit_t + 0.92)
+                self.line(self.say[1], "verdict", self.hit_t + 1.02)    # la voix de synthèse varie d'un rendu à l'autre : de la marge
                 self.vy = -math.sqrt(2 * G * 330.0)       # un grand saut : le verdict se dit pendant qu'il vole
+        # la coupe tombe juste après une retombée : son dernier « Bounce » finit avant le titre suivant
+        if self.payoff and not self.cut_set and self.hit_t > self.end_t + self.hold_min:
+            self.hold_s = self.hit_t - self.end_t + 0.55
+            self.cut_set = True
         # la main ne se téléporte jamais
         ddx, ddy = tgt[0] - self.tip[0], tgt[1] - self.tip[1]
         dd = math.hypot(ddx, ddy)
@@ -363,7 +369,7 @@ class Foundation(Step):
     title_at = 0.0
     tool = "sponge"
     say = ("Foundation.", "Flawless.")
-    hop = (110.0, 140.0)
+    hop = (185.0, 215.0)
     t_go = 0.15
     approach = 0.6
     stroke_s = 4.1
@@ -394,7 +400,7 @@ class Eyeshadow(Step):
     title = "EYESHADOW"
     tool = "brush"
     say = ("Eyeshadow.", "Just the lids.")
-    hop = (150.0, 190.0)
+    hop = (195.0, 235.0)
     stroke_s = 4.6
 
     def path(self, s):
@@ -583,7 +589,7 @@ class Reveal(Step):
         self.hop_init(self.AX, SEAT_Y, start_h=lo, gain=(0.85, 1.2), min_h=lo, max_h=hi, wobble=10.0,
                       xmin=self.AX - 12, xmax=self.AX + 12, h_ref=hi)
         self.by = SEAT_Y - self.R - 1.0
-        self.vy = -math.sqrt(2 * G * 420.0)
+        self.vy = -math.sqrt(2 * G * 520.0)
         self.vx = 0.0
         self.tip = [300.0, 1380.0]
         self.press = False
@@ -592,7 +598,7 @@ class Reveal(Step):
     def after(self, dt, evs):
         if not self.payoff and self.t >= 2.0 and self.hit_t >= 2.0:
             self.finish("SLAY")
-            self.line(self.say[1], "verdict", self.hit_t + 0.92)
+            self.line(self.say[1], "verdict", self.hit_t + 1.02)
             self.vy = -math.sqrt(2 * G * 330.0)
 
     def bodies(self, s):
