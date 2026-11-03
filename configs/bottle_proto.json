@@ -1,0 +1,20 @@
+{
+ "name": "bottle_proto",
+ "theme": "bottle",
+ "seed": 1,
+ "hook_text": "Can Bounce get out?",
+ "controle_exceptions": [
+  {
+   "motif": "chapitre \\d+ : aucune réplique de clé 'title'",
+   "pourquoi": "vidéo sans narrateur : les seules voix sont l'accroche et Bounce ; les deux chapitres ne sont qu'un découpage pour le contrôle (le premier gag, la révélation finale)"
+  },
+  {
+   "motif": "(\\(estimation\\) image presque figée à|image presque figée pendant 1.5 s à) : (56\\.[5-9]|5[7-9]\\.\\d|6[0-3]\\.\\d) s(, (56\\.[5-9]|5[7-9]\\.\\d|6[0-3]\\.\\d) s)*",
+   "pourquoi": "plan large final : la bouteille géante doit rester entière à l'écran jusqu'à la fin ; Bounce et la petite bouteille y bougent, mais sont trop petits pour une mesure en 54x96"
+  },
+  {
+   "motif": "silence de plus de 1.6 s à : 5[23]\\.\\d s",
+   "pourquoi": "silence écrit par le découpage : Bounce sort par le haut de l'image et retombe à côté de la table, sans rien toucher, jusqu'au sol (environ 2,5 s) ; aucun autre silence ne dépasse 1,6 s"
+  }
+ ]
+}

@@ -487,6 +487,27 @@ def planches(mp4, rapport, out, dur):
             strip(mp4, [round(s + d, 2) for d in (-0.4, -0.1, 0.05, 0.4, 0.9)], os.path.join(out, f"coupe_{k + 1}.png"), w=200)
 
 
+def exceptions(cfg, rapport, out):
+    """Les règles qu'une vidéo écarte, dans sa config : `controle_exceptions` = liste de
+    {"motif": expression régulière, "pourquoi": raison}. Un défaut dont le message entier
+    correspond au motif n'est plus bloquant ; il reste écrit, avec sa raison, dans le rapport
+    et à l'écran. Réservé aux règles qui ne s'appliquent pas au format de la vidéo."""
+    exc = cfg.get("controle_exceptions") or []
+    if not exc:
+        return rapport
+    kept, waived = [], []
+    for k in rapport["ko"]:
+        m = next((e for e in exc if re.fullmatch(e["motif"], k)), None)
+        if m is None:
+            kept.append(k)
+        else:
+            waived.append({"ko": k, "pourquoi": m["pourquoi"]})
+    rapport["ko"] = kept
+    rapport["exceptions"] = waived
+    json.dump(rapport, open(os.path.join(out, "controle.json"), "w"), ensure_ascii=False, indent=1)
+    return rapport
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__); return 2
@@ -496,11 +517,14 @@ def main():
     rapport, cfg = pre(path, out)
     if "--post" in sys.argv:
         rapport = post(path, rapport, cfg, out)
+    rapport = exceptions(cfg, rapport, out)
     print(f"{rapport['name']} : {rapport['duration_s']} s, {len(rapport['chapters'])} chapitres")
     for c in rapport["chapters"]:
         print(f"  {c['start']:>6} s  {c['title']}  -> chute {c['chute']}  {c['stamp'] or ''}")
     for w in rapport["warn"]:
         print("avertissement :", w)
+    for e in rapport.get("exceptions", []):
+        print(f"écarté par la config : {e['ko']}  ({e['pourquoi']})")
     if rapport["ko"]:
         print()
         for k in rapport["ko"]:
