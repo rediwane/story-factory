@@ -33,7 +33,7 @@ _bleep_memo = {}
 STAR = re.compile(r"[A-Za-z]*\*[A-Za-z*]*")
 
 
-def beep(dur, sr=SR, f=1000.0, amp=0.42, fade=0.012):
+def beep(dur, sr=SR, f=1000.0, amp=0.21, fade=0.012):
     n = max(1, int(dur * sr))
     t = np.arange(n) / sr
     x = amp * np.sin(2 * np.pi * f * t)
@@ -123,6 +123,17 @@ def steady_hero_word(text, cfg):
 
 
 base.hero_word = steady_hero_word
+
+# le mix : crête d'échantillon à 0,8 (−1,9 dBFS) au lieu de 0,89, pour que la crête vraie
+# reste sous −1 dBTP après l'encodage AAC (et le réencodage de TikTok)
+_orig_write_wav = ak.write_wav
+
+
+def write_wav_headroom(buf, path, sr=SR, peak=0.8, headroom_pct=99.5):
+    return _orig_write_wav(buf, path, sr=sr, peak=peak, headroom_pct=headroom_pct)
+
+
+ak.write_wav = write_wav_headroom
 
 
 # ------------------------------------------------------------------ le décor
