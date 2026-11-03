@@ -502,6 +502,35 @@
      "fin": 5
     }
    }
+  },
+  {
+   "name": "floatbath_proto",
+   "date": "2026-11-03",
+   "theme": "floatbath",
+   "config": "configs/floatbath_proto.json",
+   "role": "owner",
+   "hook_text": "Can Float finish her bath?",
+   "duration_s": 63.3,
+   "hashtags": [],
+   "caption": null,
+   "slot": null,
+   "scheduled_time": null,
+   "media_url": null,
+   "metricool_post_id": null,
+   "post_url": null,
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "publiée à la main par le propriétaire, en réponse au commentaire d'un fan dont le personnage (Float) est l'invitée ; 6e vidéo du jour par décision du propriétaire ; objectif : communauté, pas les vues",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/floatbath.py (branche proto-floatbath)"
   }
  ],
  "themes": [
@@ -606,6 +635,10 @@
   {
    "date": "2026-11-03T19:50+01:00",
    "note": "Session owner : test du « juge de la rétention » (consigne dans le scratchpad de session, non versionnée). bottle_proto (04/11 08h00, post 415587524) et surprise_proto (04/11 11h30, post 415586227) portent dans retention_predite les courbes prédites par le juge : à comparer aux courbes réelles de TikTok Studio. Calibrage à l'aveugle sur 4 vidéos passées : le juge ne sépare pas un carton (118 k) des flops (3 k) ; ses pourcentages varient autant d'un juge à l'autre que d'une version à l'autre ; utile comme relecteur de défauts, pas comme prédicteur."
+  },
+  {
+   "date": "2026-11-03T20:15+01:00",
+   "note": "Session owner : floatbath_proto publiée à la main par le propriétaire le 03/11 au soir, en réponse vidéo au commentaire du fan qui a créé Float (personnage invité, non récurrent). 6e vidéo du jour, au-delà de la limite de 5, par décision du propriétaire. Voix de Float : Parler-TTS (Talia), banque hors dépôt."
   }
  ]
 }
