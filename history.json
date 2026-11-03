@@ -227,6 +227,108 @@
     "measured_at": null
    },
    "script": "src/stories/cats.py (branche proto-cats)"
+  },
+  {
+   "name": "makeup_proto",
+   "date": "2026-11-03",
+   "theme": "makeup",
+   "config": "configs/makeup_proto.json",
+   "role": "owner",
+   "hook_text": "Can Anyone Do Bounce's Makeup?",
+   "duration_s": 64.22,
+   "hashtags": [
+    "#makeuptutorial",
+    "#makeup",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/makeup_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-03T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-7348777032151364722.mp4",
+   "metricool_post_id": 414552817,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (idée du propriétaire (tuto maquillage de Bounce)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/makeup.py (branche proto-makeup)"
+  },
+  {
+   "name": "interview_proto",
+   "date": "2026-11-03",
+   "theme": "interview",
+   "config": "configs/interview_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Get Hired?",
+   "duration_s": 64.88,
+   "hashtags": [
+    "#jobinterview",
+    "#corporatehumor",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/interview_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-03T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2627749308248800353.mp4",
+   "metricool_post_id": 414653885,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (entretien d'embauche)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/interview.py (branche proto-interview)"
+  },
+  {
+   "name": "matter_proto",
+   "date": "2026-11-04",
+   "theme": "matter",
+   "config": "configs/matter_proto.json",
+   "role": "owner",
+   "hook_text": "Best Floor For Bouncing?",
+   "duration_s": 64.37,
+   "hashtags": [
+    "#satisfying",
+    "#physics",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/matter_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-04T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-14710310873688873017.mp4",
+   "metricool_post_id": 414909751,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (Bounce teste les matières)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/matter.py (branche proto-matter)"
   }
  ],
  "themes": [
