@@ -25,12 +25,12 @@
    "status": "published",
    "stats": {
     "views_24h": 29401,
-    "views_48h": null,
-    "views": 29401,
-    "likes": 1450,
-    "comments": 23,
+    "views_48h": 31578,
+    "views": 31578,
+    "likes": 1603,
+    "comments": 24,
     "shares": 33,
-    "measured_at": "2026-11-02T01:42+00:00"
+    "measured_at": "2026-11-03T01:50+00:00"
    }
   },
   {
@@ -56,12 +56,12 @@
    "status": "published",
    "stats": {
     "views_24h": 3344,
-    "views_48h": null,
-    "views": 3344,
-    "likes": 118,
+    "views_48h": 3710,
+    "views": 3710,
+    "likes": 133,
     "comments": 12,
     "shares": 10,
-    "measured_at": "2026-11-02T01:42+00:00"
+    "measured_at": "2026-11-03T01:50+00:00"
    }
   },
   {
@@ -86,13 +86,13 @@
    "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703195092684705046",
    "status": "published",
    "stats": {
-    "views_24h": null,
+    "views_24h": 23960,
     "views_48h": null,
-    "views": 19859,
-    "likes": 651,
-    "comments": 6,
-    "shares": 13,
-    "measured_at": "2026-11-02T01:42+00:00"
+    "views": 23960,
+    "likes": 810,
+    "comments": 7,
+    "shares": 31,
+    "measured_at": "2026-11-03T01:50+00:00"
    }
   },
   {
@@ -114,16 +114,16 @@
    "scheduled_time": "2026-11-02T18:00:00+01:00",
    "media_url": "https://h.uguu.se/kHqxazac.mp4",
    "metricool_post_id": 413003770,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703621734066326806",
+   "status": "published",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 13238,
+    "likes": 594,
+    "comments": 11,
+    "shares": 21,
+    "measured_at": "2026-11-03T01:50+00:00"
    }
   },
   {
@@ -145,18 +145,18 @@
    "scheduled_time": "2026-11-02T08:00:00+01:00",
    "media_url": "https://n.uguu.se/BQqPuFVn.mp4",
    "metricool_post_id": 413295647,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703466334486531350",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "prototype du troisième concept (culture G), pas une liste : hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 9417,
+    "likes": 186,
+    "comments": 13,
+    "shares": 9,
+    "measured_at": "2026-11-03T01:50+00:00"
    },
    "script": "src/stories/doubling.py (branche proto-doubling)"
   },
@@ -179,18 +179,18 @@
    "scheduled_time": "2026-11-02T11:30:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-15602535638271660673.mp4",
    "metricool_post_id": 413582183,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703519863934946582",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "prototype d'un nouveau concept (la machine de Bounce), cherché et fait seul par Claude la nuit du 01/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 5300,
+    "likes": 214,
+    "comments": 9,
+    "shares": 6,
+    "measured_at": "2026-11-03T01:50+00:00"
    },
    "script": "src/stories/machine.py (branche proto-machine)"
   },
@@ -265,6 +265,11 @@
    "date": "2026-11-01",
    "views": 51200,
    "followers": 11236
+  },
+  {
+   "date": "2026-11-02",
+   "views": 39869,
+   "followers": 11308
   }
  ],
  "veille": {
@@ -310,6 +315,10 @@
   {
    "date": "2026-11-02T02:50+01:00",
    "note": "Premier run de la routine (nuit du 01 au 02/11). Nettoyage : halloween_20261031 et six_sports_20261101 rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 29 401 vues (24 h), halloween 3 344 (24 h), six_sports 19 859 (12 h) ; daily 31/10 et 01/11. Le 02/11 est déjà pris (six_hobbies à 18h00, faite en session ; doubling_proto à 8h00) : arrêt à l'étape 2, aucune liste produite. Environnement : python3 (3.11) et pip (3.13) ne pointent pas sur le même interpréteur ; installer avec « python3 -m pip install -r requirements.txt » (et --ignore-installed pillow, le PIL système n'a pas _imaging). Veille non faite : réservée aux nuits où une liste est publiée."
+  },
+  {
+   "date": "2026-11-03T02:55+01:00",
+   "note": "Run de la routine (nuit du 02 au 03/11). Nettoyage : six_hobbies_20261102, doubling_proto et machine_proto rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 31 578 vues (48 h), halloween 3 710 (48 h), six_sports 23 960 (24 h, mesurée à 36 h), six_hobbies 13 238 (9 h), doubling_proto 9 417 (19 h), machine_proto 5 300 (15 h) ; daily 02/11. Le 03/11 est déjà pris : outre cats_proto (18h00), Metricool porte deux vidéos narrées de Bounce au format liste, faites en session et absentes de history.json : « Can Anyone Do Bounce's Makeup? » (post 414552817, 21h00, 64,2 s, créé le 02/11 à 22h33) et « Will Bounce Get Hired? » (post 414653885, 14h30, 64,9 s, créé le 03/11 à 00h33). Arrêt à l'étape 2, aucune liste produite ; les deux posts ne sont pas inventés dans videos[] : à consigner par la session qui les a faits (config, script, caption). Créneaux libres restants (8h00, 11h30) laissés au run de bouncefactory. Environnement : rediwane/bouncefactory n'est pas accessible à cette session (clone refusé, dépôt hors périmètre GitHub de la routine) ; controle.py ne pourrait donc pas faire le test de nouveauté contre ses thèmes et accroches : à ajouter aux dépôts de la routine avant le prochain run qui écrit une liste."
   }
  ]
 }
