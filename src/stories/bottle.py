@@ -26,7 +26,7 @@ FPS = 60
 G = 1000.0                                # wu/s², une seule gravité pour tout
 A0 = math.radians(25.0)                   # pente des deux bouteilles
 SA, CA = math.sin(A0), math.cos(A0)
-END = 63.6
+END = 61.45
 
 # ------------------------------------------------------------------ le mot de Bounce
 # piper ne rend pas « Bounce » deux fois à la même longueur : on garde, une fois par
@@ -152,7 +152,7 @@ def keyed(keys, T):
 
 
 # ------------------------------------------------------------------ le décor
-TABLE_X1 = 1100.0
+TABLE_X1 = 1500.0
 TABLE_T = 40.0
 LEG_W = 16.0
 LEGS = (40.0, TABLE_X1 - 40.0 - LEG_W)
@@ -192,15 +192,29 @@ def giant_floor(x, r):
     return best[1], best[2]
 
 
+
+
 def pose_on_table(x_lip, a, y_table=0.0):
     lx, ly = to_world((0, 0, a), UL, LIPO)
     return (x_lip - lx, y_table - ly, a)
 
 
-POSE0 = pose_on_table(930.0, A0)
+# ------------------------------------------------------------------ l'horloge
+T_DROP, DROP_DUR = 12.05, 0.50          # la bouteille tombe de sa cale
+T_TRY = 17.20                           # il tente le goulot, y entre à moitié, ressort
+T_ENTRY, T_POP = 22.00, 23.80           # l'entrée qui réussit, montrée ; la tête sort
+ENTRY_SURGES = (22.45, 22.95, 23.40)
+STUCK_HOPS = [(24.60, 0.50, 50.0, 40.0), (25.60, 0.40, 36.0, 30.0), (26.60, 0.40, 36.0, 30.0),
+              (27.60, 0.40, 36.0, 30.0), (28.60, 0.45, 44.0, 26.0)]   # (t, durée, levée, avance)
+T_CALL, T_PLANT = 30.60, 31.60          # le saut fait exprès, la bouteille plantée sur sa tête
+T_CALE = 46.10                          # il pousse la cale hors de la table
+T_LAUNCH, T_FLOOR = 52.80, 55.50        # le rebond immense, le sol
+FLAT_JOLT = (7.0, 5.0, 0.20)            # (levée, avance, durée) d'un à-coup, bouteille couchée
+CALE_JOLT = (8.0, 3.0, 0.18)
+
+POSE0 = pose_on_table(1000.0, A0)
+CALE = (0.0, 0.0, 1.0)                  # fixée par World, là où le fond quitte la cale
 _fc = to_world(POSE0, -GL, HB + GL)
-CALE = (_fc[0] - 110.0, _fc[1] + 2, _fc[0] + 90.0)
-# la géante, elle aussi sur sa cale, sur une grande table
 GLIP = to_world(GIANT, UL * KG, LIPO * KG)
 GFOND = to_world(GIANT, -GL * KG, (HB + GL) * KG)
 GTABLE_Y = GLIP[1]
@@ -221,7 +235,7 @@ class Plan:
     def __init__(self):
         self.pieces = []          # (t0, t1, fn) -> état de Bounce
         self.hits = []
-        self.hops = []            # sauts de la bouteille sur sa cale (t, haut, avance, durée)
+        self.hops = []            # à-coups de la bouteille (t, levée, avance, durée)
 
     def add(self, t0, t1, fn):
         self.pieces.append((t0, t1, fn))
@@ -242,7 +256,6 @@ class Mover:
     def __init__(self, plan, T, C, r, gx, gy, mode):
         self.p, self.T, self.C, self.r = plan, T, C, r
         self.gx, self.gy, self.mode = gx, gy, mode
-        self.vel = (0.0, 0.0)
 
     def state(self, x, y, r, depth=0.0, n=(0.0, -1.0), spin=None):
         return {"mode": self.mode, "u": x, "v": y, "r": r, "depth": depth, "n": n, "spin": spin}
@@ -262,10 +275,9 @@ class Mover:
         self.p.add(T0, t1, f)
         self.T, self.C = t1, C1
         self.vel = (vx + gx * Tt, vy + gy * Tt)
-        self.v0 = (vx, vy)
 
-    def touch(self, wpt, n, r_new, amp=0.22, dc=0.07, hop=None, voiced=True, keep=None):
-        """Le contact : il s'écrase sur la paroi, gonfle d'un cran (à la sortie du choc), repart."""
+    def touch(self, wpt, n, r_new, amp=0.22, dc=0.07, hop=None, voiced=True):
+        """Le contact : il s'écrase sur la paroi, gonfle d'un cran, repart."""
         (wx, wy), (nx, ny) = wpt, n
         T0, r0 = self.T, self.r
         if voiced:
@@ -277,10 +289,7 @@ class Mover:
             tau = (T - T0) / dc
             rho = r0 + (r_new - r0) * ease(tau * 1.25)
             depth = amp * rho * math.sin(math.pi * lin(tau))
-            st = self.state(wx + nx * (rho - depth), wy + ny * (rho - depth), rho, depth, (nx, ny))
-            if keep:
-                st.update(keep)
-            return st
+            return self.state(wx + nx * (rho - depth), wy + ny * (rho - depth), rho, depth, (nx, ny))
         self.p.add(T0, T0 + dc, f)
         self.T = T0 + dc
         self.r = r_new
@@ -288,10 +297,13 @@ class Mover:
 
 
 class Local(Mover):
-    """Dans la bouteille : repère local (u, v), gravité inclinée de A0."""
+    """Dans la bouteille : repère local (u, v) ; la gravité suit la pente de la bouteille."""
 
-    def __init__(self, plan, T, C, r):
-        super().__init__(plan, T, C, r, G * SA, G * CA, "local")
+    def __init__(self, plan, T, C, r, tilt):
+        super().__init__(plan, T, C, r, G * math.sin(tilt), G * math.cos(tilt), "local")
+
+    def set_tilt(self, tilt):
+        self.gx, self.gy = G * math.sin(tilt), G * math.cos(tilt)
 
     def wall(self, side, s):
         if side == "fond":
@@ -306,18 +318,16 @@ class Local(Mover):
         (wx, wy), (nx, ny) = self.wall(side, s)
         return (wx + nx * r, wy + ny * r)
 
-    def roll(self, t1, s0, v0, acc):
-        r, T0 = self.r, self.T
+    def roll(self, t1, v0, acc):
+        r, T0, s0 = self.r, self.T, self.s
 
         def f(T):
             tau = T - T0
-            s = s0 + v0 * tau + 0.5 * acc * tau * tau
-            u, v = self.center("floor", s, r)
+            u, v = self.center("floor", s0 + v0 * tau + 0.5 * acc * tau * tau, r)
             return self.state(u, v, r)
         self.p.add(T0, t1, f)
         tau = t1 - T0
         self.s = s0 + v0 * tau + 0.5 * acc * tau * tau
-        self.side = "floor"
         self.C = self.center("floor", self.s, r)
         self.T = t1
 
@@ -330,148 +340,121 @@ class Local(Mover):
         self.touch(w, n, r_new, amp, dc, hop)
 
 
-# ------------------------------------------------------------------ phase A : dans la bouteille
-def phase_a(p):
-    L = Local(p, 0.0, None, 28.0)
-    # 0 s : il roule déjà vers l'embouchure, à un corps du goulot
-    L.roll(1.40, 548.0, 34.0, 22.0)
-    # il regarde la caméra, puis le saut fait exprès, sur place
-    L.to(2.04, "floor", L.s + 6.0)
-    L.hit(39.0, amp=0.26, dc=0.08)                      # « Bounce » : il gonfle d'un coup
-    # l'épaule le renvoie vers le fond ; il remonte la pente en zigzag
-    L.to(2.58, "ceil", 505.0)
-    L.hit(41.0)
-    L.to(3.16, "floor", 420.0)
-    L.hit(43.0)
-    L.to(4.30, "floor", 285.0)
-    L.hit(45.0)
-    L.to(4.80, "ceil", 215.0)
-    L.hit(47.0)
-    L.to(5.36, "floor", 140.0)
-    L.hit(49.0)
-    # le fond de plein fouet : galette, il repart comme une flèche
-    L.arc(6.15, (49.0, 6.0))
-    L.side, L.s = "fond", 6.0
-    L.hit(51.0, amp=0.45, dc=0.16)
-    L.arc(6.92, (UN + 6.0, 1.5))
+# ------------------------------------------------------------------ dans la bouteille
+def squeeze_state(u_r, r_r, front, rh=0.0, face="front", spin=None):
+    """Bounce qui force le passage : une boule à l'arrière, la chair qui s'étire dans
+    l'épaule et le goulot jusqu'au front (toujours le long de l'axe), et la tête dehors."""
+    return {"mode": "squeeze", "u_r": u_r, "r_r": r_r, "front": front, "rh": rh, "face": face, "spin": spin}
+
+
+def build_inside(p):
+    L = Local(p, 0.0, (500.0, 22.0), 31.0, A0)
+    # 0 s : il est déjà en l'air, retombe, roule vers l'embouchure
+    L.to(0.28, "floor", 520.0)
+    L.hit(34.0, hop=CALE_JOLT)
+    L.roll(1.25, 60.0, 40.0)
+    # il regarde la caméra, puis le saut fait exprès
+    L.to(1.92, "floor", L.s + 34.0)
+    L.hit(42.0, amp=0.26, dc=0.08, hop=CALE_JOLT)
+    # l'épaule le renvoie vers le fond : il remonte la pente ; chaque choc pousse la bouteille sur sa cale
+    for (t, s, r) in [(2.75, 490.0, 44.0), (3.58, 380.0, 46.0), (4.41, 270.0, 48.0), (5.24, 160.0, 50.0)]:
+        L.to(t, "floor", s)
+        L.hit(r, hop=CALE_JOLT)
+    L.arc(6.05, (50.0, 26.0))
+    L.side, L.s = "fond", 26.0
+    L.hit(53.0, amp=0.45, dc=0.16, hop=CALE_JOLT)
+    for (t, s, r) in [(7.0, 230.0, 54.5), (7.8, 320.0, 56.0), (8.6, 400.0, 57.5), (9.4, 470.0, 59.0),
+                      (10.2, 535.0, 60.5), (11.0, 470.0, 62.0)]:
+        L.to(t, "floor", s)
+        L.hit(r, hop=CALE_JOLT)
+    # le choc qui fait tomber la bouteille de sa cale : il reste écrasé pendant la chute
+    L.to(T_DROP, "floor", 420.0)
+    L.hit(63.5, amp=0.30, dc=DROP_DUR)
+    L.set_tilt(0.0)
+    for (t, s, r) in [(13.25, 470.0, 65.0), (14.05, 390.0, 66.5), (14.85, 320.0, 68.0), (15.65, 410.0, 69.5),
+                      (16.45, 500.0, 71.0)]:
+        L.to(t, "floor", s)
+        L.hit(r, hop=FLAT_JOLT)
+    # il tente le goulot : il roule, remonte l'épaule, y entre à moitié, et ressort
+    r = 72.5
+    L.r = r
+    L.roll(T_TRY, 230.0, -150.0)
+    p.hits.append(T_TRY)
+    t1, t2 = T_TRY + 0.42, T_TRY + 0.62
+
+    def f_try(T):
+        if T < t1:
+            k = ease((T - T_TRY) / (t1 - T_TRY))
+            u_r = lerp(600.0, 604.0, k)
+            front = lerp(600.0 + r, 760.0, 1 - (1 - k) ** 2)
+        else:
+            k = ease((T - t1) / (t2 - t1))
+            u_r = lerp(604.0, 590.0, k)
+            front = lerp(760.0, 590.0 + r, k)
+        return squeeze_state(u_r, min(r, h_in(u_r) - 2.0), front)
+    p.add(T_TRY, t2, f_try)
+    L.T, L.C, L.r = t2, (590.0, 0.0), r
+    for (t, s, rr) in [(18.25, 470.0, 74.0), (19.05, 380.0, 75.0), (19.85, 270.0, 76.0)]:
+        L.to(t, "floor", s)
+        L.hit(rr, hop=FLAT_JOLT)
+    # le fond de plein fouet, et il file vers le goulot
+    L.arc(20.65, (77.0, 34.0))
+    L.side, L.s = "fond", 34.0
+    L.hit(78.0, amp=0.5, dc=0.18, hop=FLAT_JOLT)
+    L.to(21.25, "floor", 300.0)
+    L.hit(79.0, hop=FLAT_JOLT)
+    L.roll(T_ENTRY, 420.0, -60.0)
+    p.hits.append(T_ENTRY)
+    p.hops.extend((t, 9.0, 2.0, 0.22) for t in ENTRY_SURGES)   # chaque poussée secoue la bouteille
     return L
 
 
-def phase_neck(p, L):
-    """Dans le goulot : il tient tout juste, rebondit haut-bas de plus en plus vite en
-    gonflant (il s'aplatit en ovale), avance d'un demi-corps, bute contre la lèvre et jaillit."""
-    T0, u0 = L.T, L.C[0]
-    hits = [7.16, 7.94, 8.72, 9.14, 9.50]
-    radii = [52.5, 54.5, 56.5, 58.5, 60.5]
-    t_lip = 10.28
-    u_lip = UL + 8.0 - 60.5 * 60.5 / HN * 1.08       # le front dépasse d'un doigt
-    r_start = L.r
-
-    def u_of(T):
-        k = lin((T - T0) / (t_lip - T0))
-        return u0 + (u_lip - u0) * (1 - (1 - k) ** 1.7)
-
-    def r_of(T):
-        rr = r_start
-        for th, rn in zip(hits, radii):
-            if T >= th:
-                rr = rn if T >= th + 0.08 else rr + (rn - rr) * ease((T - th) / 0.08)
-        if T >= t_lip:
-            rr = 60.5 + 2.5 * ease((T - t_lip) / 0.08)
-        return rr
-
-    def f(T):
-        u = u_of(T)
-        rr = r_of(T)
-        depth, side = 0.0, 1.0
-        for k, th in enumerate(hits + [t_lip]):
-            if th - 0.02 <= T < th + 0.1:
-                depth = (0.18 if th != t_lip else 0.1) * math.sin(math.pi * lin((T - th + 0.02) / 0.12))
-                side = 1.0 if k % 2 == 0 else -1.0
-        hcap = h_in(u) - 0.5
-        b = min(rr, hcap)
-        a = rr * rr / b
-        v = 0.0
-        if rr < hcap:
-            ph = sum(1 for th in hits if T >= th)
-            v = (hcap - rr) * (1.0 if ph % 2 == 0 else -1.0) * 0.85
-        b2 = b * (1 - depth)
-        v += side * (b - b2)
-        if T >= t_lip:
-            a *= 1 - 0.1 * math.sin(math.pi * lin((T - t_lip) / 0.12))
-        return {"mode": "neck", "u": u, "v": v, "a": a * (1 + 0.4 * depth), "b": b2, "r": rr, "spin": None}
-    p.add(T0, t_lip + 0.1, f)
-    p.hits.extend(hits + [t_lip])
-    # il jaillit en arrière, en tournant, comme un noyau qu'on presse
-    t_out, u_a, rr = t_lip + 0.1, u_lip, 63.0
-    t_b, u_b = t_out + 0.26, 560.0
-
-    def g(T):
-        k = (T - t_out) / (t_b - t_out)
-        u = u_a + (u_b - u_a) * (1 - (1 - k) ** 1.5)
-        hc = h_in(u) - 0.5
-        b = min(rr, hc)
-        return {"mode": "neck", "u": u, "v": 0.0, "a": rr * rr / b, "b": b, "r": rr, "spin": -10.0 * (T - t_out)}
-    p.add(t_out, t_b, g)
-    L.T, L.C, L.r = t_b, (u_b, 0.0), rr
-    L.to(11.22, "floor", 300.0, spin=(-10.0 * (t_b - t_out), -7.0))
-    L.hit(64.5)
-    return L
+def entry_state(T, r):
+    """L'entrée qui réussit, en trois poussées : le front avance dans le goulot, le visage
+    pressé contre le verre, jusqu'à ce que la tête sorte par l'embouchure."""
+    k = lin((T - T_ENTRY) / (T_POP - 0.12 - T_ENTRY))
+    surges = (k + 0.08 * math.sin(3 * 2 * math.pi * k)) if k < 1 else 1.0
+    # trois poussées : à chacune, la boule arrière se tasse puis pousse
+    puff = 0.0
+    for th in ENTRY_SURGES:
+        u = T - th
+        if 0 <= u < 0.35:
+            puff = max(puff, math.sin(math.pi * u / 0.35))
+    u_r = 585.0 - 14.0 * puff
+    r = r * (1.0 + 0.08 * puff)
+    front = lerp(585.0 + 0.6 * r, UL, lin(surges))
+    rh = 60.0 * ease((T - (T_POP - 0.12)) / 0.14) if T > T_POP - 0.12 else 0.0
+    return squeeze_state(u_r, min(r, h_in(u_r) - 2.0), front, rh, "front" if rh < 30 else "head")
 
 
-def phase_b2(p, L):
-    """La place diminue : rebonds courts entre le bas et le haut ; chaque choc fait
-    sauter la bouteille sur sa cale et la pousse vers le bord de la table."""
-    seq = []
-    t, r, k = 12.02, 64.5, 0
-    s_pos = [330.0, 350.0, 368.0, 390.0, 400.0, 405.0, 380.0, 360.0, 340.0, 360.0, 380.0, 395.0, 375.0, 355.0, 340.0,
-             362.0, 380.0, 392.0, 372.0, 352.0, 332.0, 320.0]
-    while t < 22.0:
-        for (dt, side) in ((0.0, "floor"), (0.40, "ceil"), (0.40, "floor")):
-            t += dt
-            r += 1.2
-            seq.append((t, side, s_pos[k % len(s_pos)], r))
-            k += 1
-        t += 0.80
-    for (t, side, s, r) in seq:
-        L.to(t, side, s)
-        hop = (42.0, 6.0, 0.34) if side == "ceil" else (14.0, 2.0, 0.22)
-        L.hit(r, hop=hop)
-    # il remonte vers le fond en deux bonds, en regardant le goulot puis la caméra
-    L.to(seq[-1][0] + 0.62, "floor", 215.0)
-    L.hit(r + 1.0)
-    L.arc(seq[-1][0] + 1.32, (r + 1.0, 24.0))
-    L.side, L.s = "fond", 24.0
-    L.hit(r + 2.0, amp=0.5, dc=0.16)
-    return L
-
-
-# ------------------------------------------------------------------ coincé dans le goulot
-T_RAM, T_JUMP, T_CALL = 24.56, 25.36, 30.62
-FACE_HITS = (32.50, 33.30, 34.66, 35.48)
-RH = [(24.40, 0.0), (T_RAM, 60.0), (T_JUMP, 63.0), (26.86, 66.0), (27.68, 69.0), (28.66, 72.0), (29.74, 75.0),
-      (T_CALL, 79.0), (FACE_HITS[0], 91.0), (FACE_HITS[1], 104.0), (FACE_HITS[2], 120.0), (FACE_HITS[3], 138.0)]
+# ------------------------------------------------------------------ coincé
+RH = [(T_POP, 60.0)] + [(t, 60.0 + 3.5 * (k + 1)) for k, (t, _d, _l, _a) in enumerate(STUCK_HOPS)] + [(T_CALL, 79.0)]
 
 
 def rh_at(T):
-    v = RH[0][1]
+    v = 0.0
     for (t, r) in RH:
         if T >= t:
             v = r if T >= t + 0.1 else v + (r - v) * ease((T - t) / 0.1)
     return v
 
 
+def head_center(pose, rh, c=0.72):
+    a = pose[2]
+    mx, my = to_world(pose, UL, 0.0)
+    return mx + c * rh * math.cos(a), my + c * rh * math.sin(a)
+
+
 def flat_pose(xc, rh):
-    """Couchée sur la table, sans cale : elle repose sur le bas de son épaule (u = LB) et
-    sur la tête de Bounce, qui dépasse de l'embouchure."""
+    """Couchée sur la table, sans cale, la tête dehors : elle repose sur le bas de son
+    épaule (u = LB) et sur la tête de Bounce, plus lourde que le goulot."""
     def make(a):
         px, py = to_world((0, 0, a), LB, h_out(LB))
         return (xc - px, -py, a)
 
     def head_bottom(a):
-        pose = make(a)
-        mx, my = to_world(pose, UL, 0.0)
-        return my + 0.72 * rh * math.sin(a) + rh
+        hx, hy = head_center(make(a), rh)
+        return hy + rh
     lo, hi = -0.2, 0.7
     for _ in range(40):
         m = 0.5 * (lo + hi)
@@ -482,189 +465,153 @@ def flat_pose(xc, rh):
     return make(0.5 * (lo + hi))
 
 
-def edge_pose(xc):
-    """La bouteille couchée, embouchure au ras du bord : elle repose sur son épaule et
-    sur l'arête de la table (sous le goulot), la tête au-dessus du vide."""
-    def make(a):
-        px, py = to_world((0, 0, a), LB, h_out(LB))
-        return (xc - px, -py, a)
-    best = None
-    for k in range(0, 400):
-        a = k * 0.002
-        pose = make(a)
-        ok = True
-        for u in np.linspace(LB, UL, 60):
-            x, y = to_world(pose, u, h_out(u))
-            if x <= TABLE_X1 and y > 0.5:
-                ok = False
-                break
-        if not ok:
-            break
-        best = pose
-    return best
+# ------------------------------------------------------------------ la table
+def sag_at(T):
+    """Le plateau plie sous les rebonds lourds, puis vibre."""
+    v = 0.0
+    for (th, amp) in ((49.90, 24.0), (51.15, 28.0), (T_LAUNCH, 32.0)):
+        u = T - th
+        if u >= 0:
+            v += amp * math.exp(-u / 0.45) * math.cos(2 * math.pi * 3.2 * u) if u > 0.2 else amp * math.sin(math.pi * u / 0.4)
+    return v
 
 
-CORNER = (TABLE_X1, 0.0)
-U_PIVOT = 742.0
-
-
-def hang_pose(a):
-    """En équilibre sur l'arête, goulot vers le bas : l'arête touche la paroi basse en U_PIVOT."""
-    px, py = to_world((0, 0, a), U_PIVOT, h_out(U_PIVOT))
-    return (CORNER[0] - px, CORNER[1] - py, a)
-
-
-def head_center(pose, rh, hang=0.0, swing=0.0, c=0.72):
-    a = pose[2]
-    mx, my = to_world(pose, UL, 0.0)
-    dx, dy = math.cos(a), math.sin(a) + hang
-    L = math.hypot(dx, dy)
-    dx, dy = dx / L, dy / L
-    cs, sn = math.cos(swing), math.sin(swing)
-    dx, dy = dx * cs - dy * sn, dx * sn + dy * cs
-    return mx + c * rh * dx, my + c * rh * dy
-
-
-def hang_angle(rh):
-    """Plus la tête grossit, plus elle repousse la face de la table : la bouteille se redresse."""
-    lo, hi = 0.35, 1.25
-    f = lambda a: head_center(hang_pose(a), rh, 1.0)[0] - rh - TABLE_X1
-    if f(hi) > 0:
-        return hi
-    for _ in range(40):
-        m = 0.5 * (lo + hi)
-        if f(m) > 0:
-            lo = m
-        else:
-            hi = m
-    return 0.5 * (lo + hi)
+def table_lift(T):
+    """La table entière tressaute sur ses pieds (double rebond)."""
+    v = 0.0
+    for th in (43.50, 44.30):
+        u = T - th - 0.06
+        if 0 <= u < 0.26:
+            v += 14.0 * math.sin(math.pi * u / 0.26)
+    return v
 
 
 class World:
     def __init__(self, cfg):
         self.cfg = cfg
         p = Plan()
-        L = phase_a(p)
-        L = phase_neck(p, L)
-        L = phase_b2(p, L)
-        self.p, self.L = p, L
-        self.t_ram0 = L.T
-        self.ram_from = L.C
-        self.r_ram = L.r
-        self.stuck_hits = [T_RAM, T_JUMP, 26.86, 27.68, 28.66, 29.74, T_CALL] + list(FACE_HITS) + [37.20]
-        p.hits.extend(self.stuck_hits)
+        self.L = build_inside(p)
+        self.p = p
+        self.r_entry = self.L.r
+        # la cale : son bord droit est là où le fond la quitte
+        x_fc = to_world(self.cale_pose(T_DROP - 1e-3), -GL, HB + GL)[0]
+        global CALE
+        CALE = (x_fc - 200.0, _fc[1] + 2, x_fc - 4.0)
+        self.flat0 = self.flat_rest()
+        self.stuck_x0 = to_world(self.flat_pose_at(T_POP), LB, h_out(LB))[0]
+        p.hits.extend([T_POP] + [t for (t, _d, _l, _a) in STUCK_HOPS] + [T_CALL])
         self.build_table()
         p.hits.sort()
 
-    # ---- la bouteille, de 0 à 38 s
-    def cale_pose(self, T):
-        x, y, a = POSE0
+    # ---- la bouteille, de 0 à 30,6 s
+    def jolts(self, T, t0, t1):
         dx = dy = 0.0
-        for (th, ddy, ddx, dur) in self.p.hops:
-            if T >= th:
+        for (th, lift, adv, dur) in self.p.hops:
+            if t0 <= th < t1 and T >= th:
                 k = lin((T - th) / dur)
-                dx += ddx * ease(k)
-                dy -= ddy * 4 * k * (1 - k)
+                dx += adv * ease(k)
+                dy -= lift * 4 * k * (1 - k)
+        return dx, dy
+
+    def cale_pose(self, T):
+        dx, dy = self.jolts(T, 0.0, T_DROP)
+        return (POSE0[0] + dx, POSE0[1] + dy, A0)
+
+    def flat_rest(self):
+        """Tombée de la cale : couchée sur son flanc, l'embouchure là où elle était."""
+        p0 = self.cale_pose(T_DROP)
+        lip_x = to_world(p0, UL, 0.0)[0]
+        return (lip_x - UL, -(HB + GL), 0.0)
+
+    def flat_pose_at(self, T):
+        dx, dy = self.jolts(T, T_DROP + 0.1, T_POP)
+        x, y, a = self.flat0
         return (x + dx, y + dy, a)
 
     def bottle_pose(self, T):
-        if T < T_JUMP:
+        if T < T_DROP:
             return self.cale_pose(T)
-        p_cale = self.cale_pose(T_JUMP)
-        xc0 = to_world(p_cale, LB, h_out(LB))[0]
-        hops = [(T_JUMP, 0.55, 60.0, 64.0), (26.86, 0.38, 40.0, 22.0), (27.68, 0.38, 40.0, 22.0),
-                (28.66, 0.42, 46.0, 24.0), (29.74, 0.6, 70.0, 60.0)]
-        xc = xc0
-        prev = p_cale
-        for k, (th, dur, lift, adv) in enumerate(hops):
+        if T < T_DROP + DROP_DUR:
+            # le fond glisse de la cale : elle bascule sur sa lèvre et tombe à plat, avec un rebond
+            k = (T - T_DROP) / DROP_DUR
+            p0, p1 = self.cale_pose(T_DROP), self.flat0
+            kk = lin(k / 0.7) ** 2
+            a = lerp(p0[2], p1[2], kk)
+            if k > 0.7:
+                a = 0.05 * math.sin(math.pi * (k - 0.7) / 0.3)
+            lip0 = to_world(p0, UL, LIPO)
+            lip1 = to_world(p1, UL, LIPO)
+            lx, ly = lerp(lip0[0], lip1[0], kk), lerp(lip0[1], lip1[1], kk)
+            ox, oy = to_world((0, 0, a), UL, LIPO)
+            pose = (lx - ox, ly - oy, a)
+            # le point le plus bas reste sur la table
+            low = max(to_world(pose, u, h_out(u))[1] for u in (-GL, 0.0, LB, UN, UL))
+            return (pose[0], pose[1] - max(0.0, low), a)
+        if T < T_POP:
+            return self.flat_pose_at(T)
+        # la tête sort : plus lourde que le goulot, elle fait pencher la bouteille vers l'avant
+        xc = self.stuck_x0
+        prev = self.flat_pose_at(T_POP)
+        if T < T_POP + 0.5:
+            tgt = flat_pose(xc, rh_at(T))
+            return self.blend(prev, tgt, (T - T_POP) / 0.5, 0.0)
+        prev = flat_pose(xc, rh_at(T_POP + 0.5))
+        for (th, dur, lift, adv) in STUCK_HOPS:
             if T < th:
                 break
-            if adv is None:
-                pass
-            if k < 4:
-                tgt = flat_pose(xc + adv, rh_at(th + dur))
-                if T < th + dur:
-                    return self.blend(prev, tgt, (T - th) / dur, lift)
-                xc += adv
-                prev = tgt
-            else:
-                tgt = edge_pose(xc + adv)
-                self._edge = tgt
-                if T < th + dur:
-                    return self.blend(prev, tgt, (T - th) / dur, lift)
-                prev = tgt
-        if T < 29.74:
-            return flat_pose(xc, rh_at(T))
-        if T < 30.62:
-            return prev
-        # le saut fait exprès : la bouteille passe l'arête et bascule
-        a_h = hang_angle(rh_at(31.6))
-        if T < 31.6:
-            k = (T - 30.62) / 0.98
-            e = prev
-            h = hang_pose(a_h)
-            kk = ease(k)
-            x = lerp(e[0], h[0], kk)
-            y = lerp(e[1], h[1], kk) - 18 * math.sin(math.pi * min(1, k * 1.6))
-            a = lerp(e[2], h[2], kk ** 1.4)
-            return (x, y, a)
-        if T < 37.2:
-            # en équilibre sur l'arête, elle oscille à chaque choc de la tête contre la table,
-            # puis s'immobilise : le temps du suspens avant la catapulte
-            a = hang_angle(rh_at(T))
-            teeter = 0.0
-            for th in FACE_HITS:
-                u = T - th
-                if u >= 0:
-                    teeter += 0.07 * math.exp(-u / 0.45) * math.sin(2 * math.pi * 1.6 * u)
-            if T < FACE_HITS[-1]:
-                teeter += 0.025 * math.sin(2 * math.pi * 0.9 * (T - 31.6)) * lin((T - 31.6) / 0.4)
-            return hang_pose(a - teeter)
-        return None
+            tgt = flat_pose(xc + adv, rh_at(th + dur))
+            if T < th + dur:
+                return self.blend(prev, tgt, (T - th) / dur, lift)
+            xc += adv
+            prev = tgt
+        return flat_pose(xc, rh_at(T))
 
     def blend(self, p0, p1, k, lift):
         kk = ease(k)
         return (lerp(p0[0], p1[0], kk), lerp(p0[1], p1[1], kk) - lift * 4 * lin(k) * (1 - lin(k)), lerp(p0[2], p1[2], kk))
 
-    # ---- de 38 s à la fin : sur la table, la bouteille sur la tête, puis le sol
+    # ---- de 31,6 s à la fin : la bouteille plantée sur sa tête, la table, le sol
     def build_table(self):
         p = self.p
         M = Mover(p, 0.0, (0, 0), 0.0, 0.0, G, "world")
         self.M = M
-        # la catapulte : la tête remonte le long de la face de la table, puis vole
-        a_end = hang_angle(rh_at(37.0))
-        pose_end = hang_pose(a_end)
-        hx, hy = head_center(pose_end, rh_at(37.0), 1.0)
-        self.cat0 = (hx, hy, a_end)
-        R = 146.0
-        self.R_land = R
-        t_up, t_land = 37.52, 38.30
-        top = (TABLE_X1 + R + 4, -R - 30)
-        self.cat_up = (37.2, t_up, (hx, hy), top)
-        land = (720.0, -R)
-        M.T, M.C, M.r = t_up, top, R
-        M.arc(t_land, land)
-        self.hat_from = t_up
-        M.touch((land[0], 0.0), (0.0, -1.0), 150.0, amp=0.3, dc=0.14)
+        pose_c = self.bottle_pose(T_CALL)
+        hx, hy = head_center(pose_c, rh_at(T_CALL))
+        self.call = (hx, hy, pose_c[2])
+        R = 120.0
+        land = (hx - 170.0, -R)
+        self.flip_land = land
+        # le saut fait exprès : la tête bondit, la bouteille passe par-dessus et se plante
+        M.T, M.C, M.r = T_CALL, (hx, hy), R
+        M.arc(T_PLANT, land)
+        M.touch((land[0], 0.0), (0.0, -1.0), 126.0, amp=0.34, dc=0.16)
         seq = [  # (t, x, r, amp)
-            (40.00, 660.0, 156.0, 0.22), (41.72, 560.0, 300.0, 0.3), (43.50, 520.0, 318.0, 0.22),
-            (44.70, 540.0, 336.0, 0.25), (46.20, 600.0, 352.0, 0.2), (47.02, 640.0, 368.0, 0.2),
-            (47.84, 1080.0, 390.0, 0.22), (48.64, 1090.0, 410.0, 0.26), (49.66, 640.0, 440.0, 0.3),
-            (51.00, 720.0, 464.0, 0.3), (52.36, 820.0, 486.0, 0.3)]
+            (32.45, 1020.0, 131.0, 0.22), (33.30, 960.0, 137.0, 0.22),
+            (34.30, 920.0, 143.0, 0.26),                      # le rebond pour s'en débarrasser
+            (35.60, 1000.0, 150.0, 0.28),                     # ... la bouteille se replante
+            (36.45, 1180.0, 156.0, 0.22), (37.30, 1350.0, 162.0, 0.22),
+            (38.15, 1490.0, 168.0, 0.22),                     # au bord : à moitié dans le vide
+            (39.50, 1200.0, 175.0, 0.24),                     # il se rattrape
+            (40.40, 980.0, 182.0, 0.22),
+            (41.40, 860.0, 380.0, 0.32),                      # il double d'un coup
+            (42.60, 820.0, 400.0, 0.22), (43.50, 800.0, 420.0, 0.24), (44.30, 780.0, 440.0, 0.24),
+            (45.20, 740.0, 458.0, 0.22), (46.10, 700.0, 476.0, 0.26),   # il pousse la cale hors de la table
+            (47.00, 760.0, 494.0, 0.22), (47.90, 820.0, 512.0, 0.26),   # la bouteille glisse sur sa tête
+            (48.80, 860.0, 530.0, 0.24), (49.90, 1000.0, 548.0, 0.30), (51.15, 1240.0, 566.0, 0.30),
+            (T_LAUNCH, 1470.0, 584.0, 0.30)]
         for (t, x, r, amp) in seq:
             M.arc(t, (x, -M.r))
             M.touch((x, 0.0), (0.0, -1.0), r, amp=amp, dc=0.12 if amp < 0.3 else 0.2)
-        # le rebond immense : il sort par le haut, retombe à côté de la table, jusqu'au sol
-        self.t_floor = 55.50
-        seq = [(55.50, 2300.0, 510.0, 0.5, 0.22), (56.86, 3000.0, 528.0, 0.22, 0.12), (58.04, 3600.0, 546.0, 0.22, 0.12),
-               (60.25, 4300.0, 580.0, 0.2, 0.12), (61.70, 4800.0, 598.0, 0.34, 0.16), (62.50, 5150.0, 614.0, 0.2, 0.12)]
-        # le sol penche : il rebondit vers le bas de la pente, vers le goulot de la géante
+        # le rebond immense, à côté de la table, jusqu'au sol ; puis vers le bas de la pente
+        self.t_floor = T_FLOOR
+        seq = [(T_FLOOR, 3400.0, 600.0, 0.5, 0.22), (56.86, 3720.0, 616.0, 0.22, 0.12),
+               (58.04, 3980.0, 632.0, 0.22, 0.12), (60.30, 4200.0, 650.0, 0.34, 0.16)]
         for (t, x, r, amp, dc) in seq:
             wpt, n = giant_floor(x, M.r)
             M.arc(t, (wpt[0] + n[0] * M.r, wpt[1] + n[1] * M.r))
             M.touch(wpt, n, r, amp=amp, dc=dc)
-        wpt, n = giant_floor(5700.0, M.r)
-        M.arc(64.4, (wpt[0] + n[0] * M.r, wpt[1] + n[1] * M.r))
+        wpt, n = giant_floor(4420.0, M.r)
+        M.arc(62.3, (wpt[0] + n[0] * M.r, wpt[1] + n[1] * M.r))
 
     def ball(self, T):
         return self.p.at(T)
@@ -702,26 +649,28 @@ def ellipse_pts(cx, cy, a, b, ang, n=48):
     return out
 
 
-def draw_glass_front(dr, dra, cam, pose, polys, hil=1.0, line_col=GLASS_LINE, fill=GLASS_FILL, k=1.0, hpts=None):
+def draw_glass_front(dr, dra, cam, pose, polys, hil=1.0, line_col=GLASS_LINE, fill=GLASS_FILL, k=1.0, hpts=None, min_px=0.0):
+    """Le verre : deux contours clairs (l'embouchure reste ouverte), la bande entre les deux,
+    la lèvre plus épaisse, le long reflet blanc."""
     outer, inner, top, bot = polys
-    w = max(2, int(cam.L(GL * k) * 0.42))
-    if k == 1.0:
-        w = max(w, int(3.0 * cam.S))      # la petite bouteille reste lisible dans le plan large
+    w = max(2, int(cam.L(GL * k) * 0.42), int(min_px * cam.S))
     for band in (top, bot):
         dra.polygon(cam.pts(poly_world(pose, band)), fill=fill)
-    dr.line(cam.pts(poly_world(pose, outer + outer[:1])), fill=line_col, width=w, joint="curve")
+    n2 = len(outer) // 2
+    # le contour extérieur, de la lèvre haute à la lèvre basse en passant par le fond : jamais à travers l'embouchure
+    dr.line(cam.pts(poly_world(pose, outer[:n2][::-1] + outer[n2:][::-1])), fill=line_col, width=w, joint="curve")
     ins = [q for q in inner if q[0] <= UL * k + 0.1]
-    n2 = len(ins) // 2
+    m2 = len(ins) // 2
     lc = dim(line_col, 0.8)
-    dr.line(cam.pts(poly_world(pose, ins[:n2])), fill=lc, width=max(2, w - 1), joint="curve")
-    dr.line(cam.pts(poly_world(pose, ins[n2:])), fill=lc, width=max(2, w - 1), joint="curve")
-    # la lèvre de l'embouchure : un anneau de verre plus épais
+    dr.line(cam.pts(poly_world(pose, ins[:m2])), fill=lc, width=max(2, w - 1), joint="curve")
+    dr.line(cam.pts(poly_world(pose, ins[m2:])), fill=lc, width=max(2, w - 1), joint="curve")
     for sg in (-1, 1):
         ring = [(UL0 - 2, sg * HL), (UL, sg * HL), (UL, sg * LIPO), (UL0 - 2, sg * LIPO)]
         dr.polygon(cam.pts(poly_world(pose, [(u * k, v * k) for u, v in ring])), fill=dim(line_col, 0.75))
     if hil > 0:
         col = mix(BG, HILITE_COL, hil)
-        dr.line(cam.pts(poly_world(pose, hpts or HILITE)), fill=col, width=max(2, int(cam.L(HB * k * 0.085)), int(2.0 * cam.S) if k == 1.0 else 0), joint="curve")
+        dr.line(cam.pts(poly_world(pose, hpts or HILITE)), fill=col,
+                width=max(2, int(cam.L(HB * k * 0.085)), int(min_px * 0.8 * cam.S)), joint="curve")
 
 
 def face_at(dr, X, Y, r, gaze=(0.0, 0.0), spin=None):
@@ -734,15 +683,16 @@ def face_at(dr, X, Y, r, gaze=(0.0, 0.0), spin=None):
 
 
 GAZE = [  # (t, gx, gy) : 0,0 = la caméra
-    (0.0, 0.8, 0.25), (0.75, 0.8, 0.25), (1.0, 0.0, 0.0), (2.2, 0.0, 0.0), (2.4, -0.6, 0.0),
-    (6.1, -0.6, 0.0), (6.4, 0.7, 0.1), (11.0, 0.5, 0.2), (12.0, 0.0, 0.0),
-    (21.9, 0.0, 0.0), (22.3, 0.85, 0.3), (22.95, 0.85, 0.3), (23.2, 0.0, 0.0), (23.7, 0.0, 0.0), (23.9, 0.8, 0.0),
-    (25.0, 0.0, 0.0), (28.6, 0.0, 0.0), (28.9, 0.6, 0.6), (29.5, 0.6, 0.6), (29.85, 0.0, 0.0),
-    (30.9, 0.0, 0.0), (31.2, -0.5, 0.0), (35.5, -0.5, 0.0), (35.8, 0.0, 0.0),
-    (40.2, 0.0, 0.0), (40.4, 0.0, -0.8), (41.4, 0.0, -0.8), (41.6, 0.0, 0.0),
-    (47.95, 0.0, 0.0), (48.12, 0.5, 0.85), (48.55, 0.5, 0.85), (48.8, 0.0, 0.0),
-    (53.8, 0.0, 0.0), (54.05, 0.2, 0.85), (55.4, 0.2, 0.85), (55.7, 0.0, 0.0),
-    (59.4, 0.0, 0.0), (59.75, 0.0, -0.8), (61.45, 0.0, -0.8), (61.65, 0.0, 0.0),
+    (0.0, 0.8, 0.25), (0.7, 0.8, 0.25), (0.9, 0.0, 0.0), (2.05, 0.0, 0.0), (2.25, -0.6, 0.0),
+    (5.9, -0.6, 0.0), (6.25, 0.6, 0.15), (11.9, 0.6, 0.15), (12.1, 0.0, 0.7), (12.5, 0.0, 0.7), (12.7, 0.0, 0.0),
+    (16.4, 0.0, 0.0), (16.6, 0.85, 0.0), (17.8, 0.85, 0.0), (18.0, 0.0, 0.0), (19.8, 0.0, 0.0), (20.0, -0.6, 0.0),
+    (21.2, -0.6, 0.0), (21.45, 0.85, 0.0), (23.75, 0.85, 0.0), (23.95, 0.0, 0.0),
+    (28.75, 0.0, 0.0), (28.95, 0.6, 0.6), (29.3, 0.6, 0.6), (29.5, 0.0, 0.0),
+    (33.4, 0.0, 0.0), (33.6, 0.0, -0.85), (35.5, 0.0, -0.85), (35.75, 0.0, 0.0),
+    (38.2, 0.0, 0.0), (38.35, 0.5, 0.85), (39.3, 0.5, 0.85), (39.5, 0.0, 0.0),
+    (47.95, 0.0, 0.0), (48.1, 0.4, -0.8), (48.6, 0.4, -0.8), (48.8, 0.0, 0.0),
+    (53.5, 0.0, 0.0), (53.75, 0.2, 0.85), (55.35, 0.2, 0.85), (55.6, 0.0, 0.0),
+    (59.2, 0.0, 0.0), (59.45, 0.0, -0.8), (60.15, 0.0, -0.8), (60.3, 0.0, 0.0),
 ]
 
 
@@ -750,29 +700,6 @@ def gaze_at(T):
     gx = keyed([(t, a) for t, a, b in GAZE], T)
     gy = keyed([(t, b) for t, a, b in GAZE], T)
     return gx, gy
-
-
-def sag_at(T):
-    """Le plateau plie sous les rebonds lourds, puis vibre."""
-    v = 0.0
-    for (th, amp) in ((49.66, 26.0), (51.00, 30.0), (52.36, 34.0)):
-        u = T - th
-        if u >= 0:
-            v += amp * math.exp(-u / 0.45) * math.cos(2 * math.pi * 3.2 * u) if u > 0.2 else amp * math.sin(math.pi * u / 0.4)
-    return v
-
-
-def table_lift(T):
-    """La table entière tressaute sur ses pieds (double rebond)."""
-    v = 0.0
-    for th in (46.20, 47.02):
-        u = T - th - 0.06
-        if 0 <= u < 0.26:
-            v += 14.0 * math.sin(math.pi * u / 0.26)
-    return v
-
-
-T_CALE = 49.70
 
 
 def cale_state(T):
@@ -785,18 +712,16 @@ def cale_state(T):
         return cx, cy, 0.0
     u = T - T_CALE
     vx = -560.0
-    t_off = (cx + 0.15 * w) / -vx            # son centre passe le bord : elle bascule
+    t_off = (cx + 0.15 * w) / -vx
     if u < t_off:
         return cx + vx * u, cy, 0.0
     tau = u - t_off
     x = cx + vx * u
     y = cy + 0.5 * G * tau * tau
     a = -2.6 * tau
-    # elle touche le sol : posée à plat sur la pente (une face contre le sol)
     a_rest = A0 - math.pi / 2
     gy = floor_y(x) - 0.5 * w / CA
     if y >= gy:
-        # instant du contact, puis elle se couche en 0,35 s
         lo, hi = 0.0, tau
         for _ in range(30):
             m = 0.5 * (lo + hi)
@@ -831,8 +756,8 @@ class Scene:
         m0 = (b0["u"], b0["v"] - self.c_pop * R0)
         self.f_c0 = (m0[0], m0[1] - (UL - 430.0))
         best = None
-        for k in range(0, 50):
-            tl = 59.25 + 0.01 * k
+        for k in range(0, 60):
+            tl = 59.10 + 0.01 * k
             b1 = w.ball(tl)
             c1 = (b1["u"], b1["v"] - 1.0 * b1["r"] - (UL - 430.0))
             T = tl - self.t_pop
@@ -842,13 +767,13 @@ class Scene:
             xa, ya = self.f_c0[0] + vx * ta, self.f_c0[1] + vy * ta + 0.5 * G * ta * ta
             gap = (ya - 430.0) - ceil_y(xa)
             if best is None or abs(gap - 12.0) < abs(best[0] - 12.0):
-                best = (gap, tl, vx, vy, c1)
-        gap, tl, vx, vy, c1 = best
+                best = (gap, tl, vx, vy)
+        gap, tl, vx, vy = best
         self.t_bl, self.f_v = tl, (vx, vy)
         self.f_spin = 2 * math.pi * 3 / (tl - self.t_pop)
         self.w.p.hits.append(tl)
         self.w.p.hits.sort()
-        self.t_chase = 61.72
+        self.t_chase = 60.32
         self.graze_gap = gap
 
     def flight_pose(self, T):
@@ -861,8 +786,8 @@ class Scene:
         tau = T - self.t_chase
         p0 = self.hat_pose_at(self.t_chase)
         c0 = to_world(p0, 430.0, 0.0)
-        cx = c0[0] - 520.0 * tau
-        cy = c0[1] - 1450.0 * tau + 0.5 * G * tau * tau
+        cx = c0[0] - 900.0 * tau
+        cy = c0[1] - 1900.0 * tau + 0.5 * G * tau * tau
         a = math.pi / 2 - 6.0 * tau
         return (cx - 430.0 * math.cos(a), cy - 430.0 * math.sin(a), a)
 
@@ -870,9 +795,11 @@ class Scene:
     def state(self, T):
         w = self.w
         b = dict(w.ball(T))
-        if T < w.t_ram0:
+        if T < T_ENTRY:
             return {"phase": "in", "pose": w.bottle_pose(T), "ball": b}
-        if T < 37.2:
+        if T < T_POP:
+            return {"phase": "in", "pose": w.bottle_pose(T), "ball": entry_state(T, w.r_entry)}
+        if T < T_CALL:
             pose = w.bottle_pose(T)
             return {"phase": "stuck", "pose": pose, "ball": self.stuck_ball(T, pose)}
         st = self.hat_state(T, b)
@@ -882,68 +809,61 @@ class Scene:
         return st
 
     def stuck_ball(self, T, pose):
-        w = self.w
         rh = rh_at(T)
-        if T < T_JUMP:
-            hang = -0.35
-        elif T < T_CALL:
-            hang = 0.0
-        else:
-            hang = keyed([(T_CALL, 0.0), (31.4, 1.0)], T)
-        swing = 0.12 * math.sin(2 * math.pi * 2.3 * T) + 0.08 * math.sin(2 * math.pi * 3.7 * T + 1.0)
-        if 31.4 <= T < 37.2:
-            for th in FACE_HITS:
-                u = T - (th - 0.25)
-                if 0 <= u < 0.6:
-                    swing += 0.22 * math.sin(math.pi * u / 0.6) * (1 if rh < 100 else 0.3)
-        hx, hy = head_center(pose, rh, hang, swing)
-        if 31.4 <= T < 37.2:
-            hx = max(hx, TABLE_X1 + rh * 0.985)
+        wig = 0.10 * math.sin(2 * math.pi * 2.3 * T) + 0.07 * math.sin(2 * math.pi * 3.7 * T + 1.0)
+        hx, hy = head_center(pose, rh)
+        # il gigote : la tête bouge sans cesse, sans jamais quitter l'embouchure
+        mx, my = to_world(pose, UL, 0.0)
+        ang = math.atan2(hy - my, hx - mx) + wig
+        d = math.hypot(hx - mx, hy - my)
+        hx, hy = mx + d * math.cos(ang), my + d * math.sin(ang)
         if hx - 0.3 * rh < TABLE_X1:
-            hy = min(hy, -rh)              # elle repose sur la table
+            hy = min(hy, -rh)
         # ce qui reste dedans : une boule à l'entrée de l'épaule, tirée vers le goulot à
         # mesure que la tête grossit dehors
-        k_in = lin((rh - 60.0) / (138.0 - 60.0))
-        u_r = lerp(560.0, 712.0, ease(k_in))
-        r_r = min(lerp(min(w.r_ram, h_in(560.0) - 2), 30.0, ease(k_in)), h_in(u_r) - 2)
-        m = lin((T - w.t_ram0) / (T_RAM - w.t_ram0))
-        if m < 1.0:
-            u0, v0 = w.ram_from
-            uc = lerp(u0, 560.0, ease(m * 2))
-            front = lerp(uc, UL + 0.72 * 60.0 * 2, ease((m - 0.25) / 0.75))
-            return {"mode": "stuck", "u_rear": uc, "v_rear": lerp(v0, 0.0, ease(m * 2)),
-                    "r_rear": lerp(w.r_ram, r_r, ease(m * 2)), "u_in": uc, "u_front": front, "rh": rh,
-                    "head": head_center(pose, rh, hang, swing)}
-        return {"mode": "stuck", "u_rear": u_r, "v_rear": 0.0, "r_rear": r_r, "u_in": u_r, "u_front": UL,
-                "rh": rh, "head": (hx, hy)}
+        k_in = lin((rh - 60.0) / (79.0 - 60.0))
+        u_r = lerp(585.0, 712.0, ease(k_in))
+        r_r = min(lerp(self.w.r_entry, HN - 2.0, ease(k_in)), h_in(u_r) - 2.0)
+        st = squeeze_state(u_r, r_r, UL, rh, "head")
+        st["head"] = (hx, hy)
+        return st
 
     def hat_state(self, T, b):
         w = self.w
-        t0, t1, (hx, hy), (tx, ty) = w.cat_up
-        if T < t1:
-            k = ease((T - t0) / (t1 - t0))
-            R = lerp(rh_at(T), w.R_land, lin((T - t0) / (t1 - t0)))
-            b = {"mode": "world", "u": lerp(hx, tx, k ** 2), "v": lerp(hy, ty, k), "r": R, "depth": 0.0, "n": (0.0, -1.0)}
-        if 49.6 <= T < 52.4 and b.get("depth", 0) > 0:
-            b["v"] += sag_at(T)
-        a_c = w.cat0[2]
-        wob = 0.0
-        if T < 38.3:
-            a = lerp(a_c, math.pi / 2, ease((T - 37.2) / 1.1))
-            c = lerp(0.72, 0.15, ease((T - 38.1) / 0.25)) if T > 38.1 else 0.72
+        if T < T_PLANT:
+            # le saut fait exprès : il s'arrache du goulot, la bouteille passe par-dessus sa tête
+            k = lin((T - T_CALL) / (T_PLANT - T_CALL))
+            R = lerp(79.0, 120.0, ease(k * 2.0))
+            b = dict(b)
+            b["r"] = R
+            a = lerp(w.call[2], math.pi / 2, ease(k / 0.85))
+            st = {"phase": "hat", "ball": b, "c": 0.72, "a": a, "lift": 0.0,
+                  "u_in": lerp(712.0, UL - 0.28 * R - 24, ease(k))}
+            return st
+        if T_CALL <= T < T_PLANT + 0.3:
+            c = keyed([(T_PLANT, 0.72), (T_PLANT + 0.2, 0.15)], T)
+        elif T < 59.0:
+            c = keyed([(T_PLANT + 0.2, 0.15), (41.40, 0.15), (41.65, 0.56)], T)
         else:
-            for (th, amp) in [(38.3, 0.16), (40.0, 0.22), (41.72, 0.2), (43.5, 0.18), (45.42, 0.3),
-                              (46.2, 0.14), (47.02, 0.16), (47.84, 0.2), (48.64, 0.2), (49.66, 0.12), (51.0, 0.12),
-                              (52.36, 0.1), (55.0, 0.0), (59.5, 0.25), (60.25, 0.15), (61.0, 0.0)]:
-                u = T - th
-                if u >= 0:
-                    wob += amp * math.exp(-u / 0.7) * math.sin(2 * math.pi * 1.3 * u)
-            a = math.pi / 2 + wob
-            c = keyed([(38.3, 0.15), (41.72, 0.15), (41.98, 0.56)], T) if T < 59.0 else keyed([(self.t_bl, 1.0), (self.t_bl + 0.16, 0.40)], T)
+            c = keyed([(self.t_bl, 1.0), (self.t_bl + 0.16, 0.40)], T)
+        wob = 0.0
+        for (th, amp) in [(T_PLANT, 0.14), (32.45, 0.14), (33.30, 0.16), (35.60, 0.3), (36.45, 0.14), (37.30, 0.14),
+                          (38.15, 0.24), (39.50, 0.2), (41.40, 0.2), (43.50, 0.16), (44.30, 0.16), (46.10, 0.14),
+                          (47.90, 0.0), (49.90, 0.12), (51.15, 0.12), (T_LAUNCH, 0.1), (self.t_bl, 0.25), (60.30, 0.0)]:
+            u = T - th
+            if u >= 0:
+                wob += amp * math.exp(-u / 0.7) * math.sin(2 * math.pi * 1.3 * u)
+        # 47,9 s : la bouteille glisse sur le côté de sa tête, penche... et se remet en place
+        u = T - 47.90
+        if 0 <= u < 1.2:
+            wob += 0.42 * math.sin(math.pi * u / 1.2) * (1 - 0.3 * math.sin(2 * math.pi * 2.0 * u))
+        a = math.pi / 2 + wob
         st = {"phase": "hat", "ball": b, "c": c, "a": a, "lift": 0.0}
-        if 44.82 <= T < 45.42:
-            u = (T - 44.82) / 0.60
-            st["lift"] = 300.0 * 4 * u * (1 - u)
+        # 34,3 s : le rebond pour s'en débarrasser. La bouteille décolle franchement... et se replante
+        if 34.42 <= T < 35.60:
+            u = (T - 34.42) / 1.18
+            st["lift"] = 430.0 * 4 * u * (1 - u)
+            st["a"] += 0.5 * math.sin(math.pi * u)
         return st
 
     def hat_pose(self, x, y, R, c, a, lift=0.0):
@@ -965,78 +885,73 @@ class Scene:
         return self.hat_pose(b["u"], b["v"], b["r"], st["c"], st["a"], st["lift"])
 
     def ball_world(self, T, st=None):
-        """(x, y, r) de Bounce dans le monde : la tête quand il est coincé."""
+        """(x, y, r, r plein) de Bounce dans le monde : la tête quand il est coincé."""
         st = st or self.state(T)
         b = st["ball"]
+        if st["phase"] in ("in", "stuck") and b["mode"] == "squeeze":
+            if b["rh"] > 20 and "head" in b:
+                return b["head"][0], b["head"][1], b["rh"], b["rh"]
+            if b["rh"] > 20:
+                hx, hy = head_center(st["pose"], b["rh"])
+                return hx, hy, b["rh"], b["rh"]
+            X, Y = to_world(st["pose"], b["u_r"], 0.0)
+            return X, Y, b["r_r"], max(b["r_r"], 60.0)
         if st["phase"] == "in":
             X, Y = to_world(st["pose"], b["u"], b["v"])
-            r = b["r"] - b.get("depth", 0.0) if b["mode"] == "local" else b["b"]
-            return X, Y, r, b["r"]
-        if st["phase"] == "stuck":
-            if b["u_front"] >= UL - 1:
-                return b["head"][0], b["head"][1], b["rh"], b["rh"]
-            X, Y = to_world(st["pose"], min(b["u_front"], UL) - 40, 0.0)
-            return X, Y, HN, HN
+            return X, Y, b["r"] - b.get("depth", 0.0), b["r"]
         return b["u"], b["v"], b["r"] - b.get("depth", 0.0), b["r"]
 
     # ---- la caméra
-    def giant_view(self):
-        pts = [to_world(GIANT, u * KG, v * KG) for u, v in POLYS[0]]
-        xs, ys = [p[0] for p in pts], [p[1] for p in pts]
-        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
-        bx0, by0, bx1, by1 = 34.0, 470.0, 930.0, 1500.0
-        s = min((bx1 - bx0) / (x1 - x0), (by1 - by0) / (y1 - y0))
-        cx = (x0 + x1) / 2 - ((bx0 + bx1) / 2 - W / 2) / s
-        cy = (y0 + y1) / 2 - ((by0 + by1) / 2 - H / 2) / s
+    def final_view(self):
+        """Le dernier cadre : la géante du fond jusqu'au début du goulot, assez serrée pour
+        que Bounce, la petite bouteille et l'ancienne table se lisent."""
+        x0, x1 = GFOND[0] - 250.0, 7400.0
+        s = (W - 60.0) / (x1 - x0)
+        top = to_world(GIANT, 0.0, -(HB + GL) * KG)[1]
+        cx = (x0 + x1) / 2 + 20.0 / s
+        cy = 0.5 * (top + GTABLE_Y) + 120.0 - 140.0 / s
         return cx, cy, s
 
     def cam_target(self, T):
         st = self.state(T)
         X, Y, r, rfull = self.ball_world(T, st)
-        tau = 0.3
-        if st["phase"] == "in":
-            s = (100 + 1.75 * rfull) / (2 * rfull)
-            s0 = 2.45
-            # l'ouverture : la balle à gauche, le goulot et l'embouchure à droite
-            k = ease((T - 1.7) / 0.9)
-            sx = lerp(185.0, 430.0, k)
-            sy = lerp(1000.0, 1010.0, k)
-            s = lerp(s0, s, k)
-            if 11.3 <= T < 18.8:
-                # la place diminue : on cadre la bouteille sur sa table, pour voir chaque saut
-                cp = self.w.cale_pose(T)
-                bx, by = to_world((cp[0], POSE0[1], cp[2]), 520.0, 70.0)
-                s2 = 1.05
-                kk = ease((T - 11.3) / 0.8)
-                return lerp(X + (W / 2 - sx) / s, bx - 130, kk), lerp(Y + (H / 2 - sy) / s, by, kk), lerp(s, s2, kk), 0.35
-            if 18.8 <= T:
-                # la caméra recule : à droite de l'embouchure, la table s'arrête
-                kk = ease((T - 18.8) / 1.4)
-                s = lerp(1.05, 0.88, kk)
-                cp = self.w.cale_pose(T)
-                bx, by = to_world((cp[0], POSE0[1], cp[2]), 520.0, 70.0)
-                cx = lerp(bx - 130, 600.0, kk)
-                cy = lerp(by, by - 40, kk)
-                return cx, cy, s, 0.35
-            if 6.2 <= T < 7.1:
-                tau = 0.12
-            return X + (W / 2 - sx) / s, Y + (H / 2 - sy) / s, s, tau
-        if st["phase"] == "stuck":
-            pose = st["pose"]
-            bx, by = to_world(pose, 430.0, 0.0)
-            if T < 30.9:
-                hx, hy = st["ball"]["head"]
-                return hx - 230, hy - 60, 1.2, 0.4
-            return 980.0, 60.0, lerp(0.9, 1.08, ease((T - 31.2) / 6.0)), 0.45
-        # sur la table, la bouteille sur la tête
-        if T < 41.72:
-            return X + 40, Y - 330, 0.84, 0.35
-        if T < 52.30:
-            return 740.0, -330.0, 0.56, 0.6
-        if T < 53.50:
-            # il part par le haut : la caméra se rapproche du plateau, seul, qui vibre encore
-            return 720.0, 430.0, 1.5, 0.12
-        return X, Y - 100, 0.55, 0.25
+        if T < 2.25:
+            # l'ouverture : un cadre fixe, la balle à gauche, le goulot et l'embouchure à droite
+            pose = self.w.bottle_pose(0.0)
+            ax, ay = to_world(pose, 700.0, 30.0)
+            return ax, ay - 30.0, 2.2, 0.05
+        if T < T_DROP:
+            pose = self.w.bottle_pose(T)
+            ax, ay = to_world(pose, 330.0, 0.0)
+            bx, by = to_world(pose, 610.0, 0.0)
+            k = lin((X - ax) / (bx - ax + 1e-6))
+            cx, cy = to_world(pose, lerp(360.0, 560.0, k), 20.0)
+            return cx, cy, 1.6, 0.6
+        if T < 19.0:
+            pose = self.w.bottle_pose(T)
+            cx, cy = to_world(pose, lerp(420.0, 560.0, lin((X - pose[0] - 300.0) / 300.0)), 30.0)
+            return cx, cy, 1.45, 0.6
+        if T < T_ENTRY - 0.4:
+            # la caméra recule : à droite de l'embouchure, la table s'arrête
+            pose = self.w.bottle_pose(T)
+            cx, cy = to_world(pose, 520.0, 0.0)
+            return lerp(cx, 1060.0, 0.6), cy - 60.0, 0.85, 0.45
+        if T < T_POP + 0.3:
+            # l'entrée, montrée : on se rapproche du goulot
+            pose = self.w.bottle_pose(T)
+            cx, cy = to_world(pose, 680.0, 0.0)
+            return cx, cy - 20.0, lerp(1.25, 1.7, lin((T - T_ENTRY) / 1.8)), 0.35
+        if T < T_CALL:
+            hx, hy = st["ball"]["head"]
+            return hx - 260.0, hy - 80.0, 1.15, 0.45
+        if T < 41.40:
+            return min(X, 1280.0) - 60.0, -480.0, 0.82, 0.45
+        if T < T_LAUNCH:
+            return 900.0, -380.0, 0.5, 0.6
+        if T < self.w.t_floor:
+            # le rebond immense : il reste entier dans l'image
+            return X + 260.0, Y - 300.0, 0.36, 0.25
+        return X + 200.0, Y - 100.0, 0.45, 0.25
 
     def make_camera(self):
         N = self.N
@@ -1053,27 +968,35 @@ class Scene:
                 y[i] = y[i - 1] + (y[i] - y[i - 1]) * (1 - math.exp(-dt / taus[i]))
             for i in range(N - 2, -1, -1):
                 y[i] = y[i + 1] + (y[i] - y[i + 1]) * (1 - math.exp(-dt / taus[i]))
-        # le début reste cadré comme voulu (pas de lissage à l'image 0)
-        # la révélation : suivre la bouteille qui monte, puis reculer jusqu'à la géante
-        self.t_rev0, self.t_rev1 = self.t_pop + 0.40, self.t_pop + 1.12
-        gx, gy, gs = self.giant_view()
+        # l'ouverture reste fixe : aucun lissage avant 2,2 s
+        i_open = int(2.2 * FPS)
+        y[:i_open] = tg[0]
+        for i in range(i_open, i_open + 30):
+            k = ease((i - i_open) / 30.0)
+            y[i] = tg[0] + (y[i] - tg[0]) * k
+        # la révélation : suivre la bouteille qui monte, puis reculer, en 1,8 s, jusqu'au cadre final
+        self.t_rev0, self.t_rev1 = self.t_pop + 0.45, self.t_pop + 2.25
+        gx, gy, gs = self.final_view()
         self.gview = (gx, gy, gs)
         i0 = int(self.t_pop * FPS)
         c_start = y[i0].copy()
+        c_rev = c_start
         for i in range(i0, N):
             T = i * dt
             if T < self.t_rev0:
                 fp = self.flight_pose(T)
                 bx, by = to_world(fp, 430.0, 0.0)
                 k = ease((T - self.t_pop) / (self.t_rev0 - self.t_pop))
-                y[i] = (lerp(c_start[0], bx, 0.5 * k), lerp(c_start[1], by, 0.6 * k), c_start[2])
+                y[i] = (lerp(c_start[0], bx, 0.4 * k), lerp(c_start[1], by, 0.5 * k), c_start[2])
                 c_rev = y[i].copy()
             else:
                 k = ease((T - self.t_rev0) / (self.t_rev1 - self.t_rev0))
                 ls = lerp(c_rev[2], math.log(gs), k)
-                # le point fixe se déplace comme l'échelle, pour un recul régulier
                 kk = (math.exp(-c_rev[2]) - math.exp(-ls)) / (math.exp(-c_rev[2]) - math.exp(-math.log(gs)) + 1e-9)
                 y[i] = (lerp(c_rev[0], gx, kk), lerp(c_rev[1], gy, kk), ls)
+                if T > self.t_rev1:
+                    # puis la caméra s'approche, très lentement, jusqu'à la coupe
+                    y[i][2] += 0.07 * ease((T - self.t_rev1) / (END - self.t_rev1))
         self.cam = y
 
     def cam_at(self, T):
@@ -1097,13 +1020,14 @@ class Scene:
         drift_y = max(-90.0, min(90.0, -(cam.cy - self.cam[0][1]) * 0.03))
         ym = sum(p[1] for p in rot) / len(rot)
         sty = [(-80.0 + (x - x0) * k + drift_x, 330.0 + (y - ym) * k + drift_y) for x, y in rot]
+        wt = cam.L(HB * KG * 0.085) / cam.S
         if T < self.t_rev0:
             return sty, 0.2, 26.0
         if T >= self.t_rev1:
-            return true, 0.88, cam.L(HB * KG * 0.085) / cam.S
+            return true, 0.88, wt
         kk = ease((T - self.t_rev0) / (self.t_rev1 - self.t_rev0))
         pts = [(lerp(a[0], b[0], kk), lerp(a[1], b[1], kk)) for a, b in zip(sty, true)]
-        return pts, lerp(0.2, 0.88, kk), lerp(26.0, cam.L(HB * KG * 0.085) / cam.S, kk)
+        return pts, lerp(0.2, 0.88, kk), lerp(26.0, wt, kk)
 
     def pop(self, T):
         """Le cran de gonflement se voit : juste après chaque choc, une petite bouffée."""
@@ -1111,7 +1035,7 @@ class Scene:
         for th in self.w.p.hits:
             u = T - th
             if 0.06 <= u < 0.30:
-                k = max(k, 1.0 + 0.07 * math.sin(math.pi * (u - 0.06) / 0.24))
+                k = max(k, 1.0 + 0.08 * math.sin(math.pi * (u - 0.06) / 0.24))
         return k
 
     # ---- dessin
@@ -1123,31 +1047,38 @@ class Scene:
         hc = base.HERO["color"]
         gz = gaze_at(T)
         pk = self.pop(T)
-        # la grande table et la cale de la géante (on ne les voit qu'à la fin)
+        if T >= 60.30:
+            base.HERO["expr"] = "calm"          # le dernier « Bounce » tombe sur le visage blasé
+        wide = cam.s < 0.3
+        mp = 3.5 if wide else 0.0               # dans le plan large : des formes pleines, pas du fil
+        # la grande table et la cale de la géante
         gt = GTABLE_Y
         dr.rectangle([*cam.X(GFOND[0] - 9000, gt), *cam.X(GLIP[0] + 9000, gt + TABLE_T * KG)], fill=TABLE_COL)
         dr.rectangle([*cam.X(GFOND[0] - 110 * KG, GFOND[1] + 2 * KG), *cam.X(GFOND[0] + 90 * KG, gt)], fill=CALE_COL)
         # la géante : sa paroi basse est le sol
-        draw_glass_front(dr, dra, cam, GIANT, GPOLYS, hil=0.0, k=KG, fill=(120, 150, 190, 40))
+        draw_glass_front(dr, dra, cam, GIANT, GPOLYS, hil=0.0, k=KG, fill=(120, 150, 190, 60 if wide else 40), min_px=4.0 if wide else 0.0)
         pts, inten, wd = self.reflection(T, cam)
         sp = [(x * S, y * S) for x, y in pts]
         dr.line(sp, fill=mix(BG, HILITE_COL, inten * 0.55), width=max(2, int(wd * 1.8 * S)), joint="curve")
         dr.line(sp, fill=mix(BG, HILITE_COL, inten), width=max(2, int(wd * S)), joint="curve")
         # la table
         lift = table_lift(T)
-        sg = sag_at(T) if 49.6 <= T < 54 else 0.0
+        sg = sag_at(T) if 49.8 <= T < 54.5 else 0.0
         top = [(x, -lift + sg * math.sin(math.pi * x / TABLE_X1)) for x in np.linspace(0, TABLE_X1, 24)]
-        plank = top + [(x, y + TABLE_T) for x, y in top[::-1]]
+        tt = max(TABLE_T, 12.0 / cam.s) if wide else TABLE_T
+        plank = top + [(x, y + tt) for x, y in top[::-1]]
         dr.polygon(cam.pts(plank), fill=TABLE_COL)
         dr.line(cam.pts(top), fill=TABLE_EDGE, width=max(2, int(cam.L(5))))
+        lw = max(LEG_W, 6.0 / cam.s) if wide else LEG_W
         for lx in LEGS:
             fy = floor_y(lx + LEG_W / 2)
-            dr.rectangle([*cam.X(lx, TABLE_T - lift), *cam.X(lx + LEG_W, fy - max(0.0, lift - 0.0) * 0)], fill=LEG_COL)
+            dr.rectangle([*cam.X(lx + LEG_W / 2 - lw / 2, TABLE_T - lift), *cam.X(lx + LEG_W / 2 + lw / 2, fy)], fill=LEG_COL)
         ccx, ccy, ca_ = cale_state(T)
         cw, ch = (CALE[2] - CALE[0]) / 2, -CALE[1] / 2
         cpts = [(ccx + dx * math.cos(ca_) - dy * math.sin(ca_), ccy + dx * math.sin(ca_) + dy * math.cos(ca_))
                 for dx, dy in ((-cw, -ch), (cw, -ch), (cw, ch), (-cw, ch))]
         dr.polygon(cam.pts(cpts), fill=CALE_COL)
+        sfill = (150, 178, 215, 150) if wide else GLASS_FILL
         if st["phase"] in ("in", "stuck"):
             pose = st["pose"]
             dr.polygon(cam.pts(poly_world(pose, POLYS[1])), fill=INTERIOR)
@@ -1159,53 +1090,57 @@ class Scene:
                 ang = math.atan2(ny, nx)
                 dr.polygon(cam.pts(ellipse_pts(X, Y, (r - dpt) * pk, (r + 0.6 * dpt) * pk, ang)), fill=hc)
                 face_at(dr, *cam.X(X, Y), cam.L(r - dpt), gz, b.get("spin"))
-            elif b["mode"] == "neck":
-                X, Y = to_world(pose, b["u"], b["v"])
-                dr.polygon(cam.pts(ellipse_pts(X, Y, b["a"], b["b"], pose[2])), fill=hc)
-                face_at(dr, *cam.X(X, Y), cam.L(b["b"]), gz, b.get("spin"))
             else:
-                self.draw_stuck(dr, cam, pose, b, gz)
+                self.draw_squeeze(dr, cam, pose, b, gz)
             draw_glass_front(dr, dra, cam, pose, POLYS)
             return
         b = st["ball"]
         x, y, R = b["u"], b["v"], b["r"]
         dpt, n = b.get("depth", 0.0), b.get("n", (0.0, -1.0))
+        ang = math.atan2(n[1], n[0])
         if st["phase"] == "free":
             fpose = st["fpose"]
             dr.polygon(cam.pts(poly_world(fpose, POLYS[1])), fill=INTERIOR)
-            draw_glass_front(dr, dra, cam, fpose, POLYS)
-            ang = math.atan2(n[1], n[0])
+            draw_glass_front(dr, dra, cam, fpose, POLYS, fill=sfill, min_px=mp)
             dr.polygon(cam.pts(ellipse_pts(x, y, (R - dpt) * pk, (R + 0.6 * dpt) * pk, ang)), fill=hc)
             face_at(dr, *cam.X(x, y), cam.L(R - dpt), gz)
             return
         pose = self.hat_pose(x, y, R, st["c"], st["a"], st["lift"])
         dr.polygon(cam.pts(poly_world(pose, POLYS[1])), fill=INTERIOR)
-        u_in = max(UN - 20, UL - (1 - st["c"]) * R - 24)
+        u_in = st.get("u_in", max(UN - 20, UL - (1 - st["c"]) * R - 24))
         if st["lift"] < 4:
             plug = [(u, -h_in(u) + 1.5) for u in np.linspace(u_in, UL, 30)] + [(u, h_in(u) - 1.5) for u in np.linspace(UL, u_in, 30)]
             dr.polygon(cam.pts(poly_world(pose, plug)), fill=hc)
-        ang = math.atan2(n[1], n[0])
         dr.polygon(cam.pts(ellipse_pts(x, y, (R - dpt) * pk, (R + 0.6 * dpt) * pk, ang)), fill=hc)
         face_at(dr, *cam.X(x, y), cam.L(R - dpt), gz)
-        draw_glass_front(dr, dra, cam, pose, POLYS)
+        draw_glass_front(dr, dra, cam, pose, POLYS, fill=sfill, min_px=mp)
 
-    def draw_stuck(self, dr, cam, pose, b, gz):
+    def draw_squeeze(self, dr, cam, pose, b, gz):
+        """La boule arrière, la chair étirée le long de l'axe (jamais plus large que la
+        boule), le front arrondi, et la tête dehors."""
         hc = base.HERO["color"]
-        if b["r_rear"] > 1:
-            X, Y = to_world(pose, b["u_rear"], b["v_rear"])
-            dr.ellipse([*cam.X(X - b["r_rear"], Y - b["r_rear"]), *cam.X(X + b["r_rear"], Y + b["r_rear"])], fill=hc)
-        u0, u1 = b["u_in"], min(b["u_front"], UL)
-        if u1 > u0:
-            sau = [(u, -h_in(u) + 1.5) for u in np.linspace(u0, u1, 30)] + [(u, h_in(u) - 1.5) for u in np.linspace(u1, u0, 30)]
+        u_r, r_r, front = b["u_r"], b["r_r"], min(b["front"], UL)
+        X, Y = to_world(pose, u_r, 0.0)
+        dr.ellipse([*cam.X(X - r_r, Y - r_r), *cam.X(X + r_r, Y + r_r)], fill=hc)
+        if front > u_r + 2:
+            us = np.linspace(u_r, front, 40)
+            hw = [min(h_in(u) - 1.5, r_r) for u in us]
+            sau = [(u, -h) for u, h in zip(us, hw)] + [(u, h) for u, h in zip(us[::-1], hw[::-1])]
             dr.polygon(cam.pts(poly_world(pose, sau)), fill=hc)
-        if b["u_front"] >= UL - 1 and b["rh"] > 2:
-            hx, hy = b["head"]
+            hf = hw[-1]
+            if b["front"] < UL - 1:
+                FX, FY = to_world(pose, front, 0.0)
+                dr.ellipse([*cam.X(FX - hf, FY - hf), *cam.X(FX + hf, FY + hf)], fill=hc)
+        if b["rh"] > 2:
+            hx, hy = b.get("head") or head_center(pose, b["rh"])
             r = b["rh"]
             dr.ellipse([*cam.X(hx - r, hy - r), *cam.X(hx + r, hy + r)], fill=hc)
-            face_at(dr, *cam.X(hx, hy), cam.L(r), gz)
-        else:
-            X, Y = to_world(pose, min(b["u_front"], UL) - 40, 0.0)
-            face_at(dr, *cam.X(X, Y), cam.L(HN * 0.95), (0.8, 0.0))
+            if b["face"] == "head":
+                face_at(dr, *cam.X(hx, hy), cam.L(r), gz)
+        if b["face"] == "front":
+            fu = max(u_r, front - 0.6 * min(h_in(front) - 1.5, r_r))
+            FX, FY = to_world(pose, fu, 0.0)
+            face_at(dr, *cam.X(FX, FY), cam.L(min(h_in(fu) - 2, r_r) * 0.95), gz)
 
 
 # ================================================================== branchement moteur
@@ -1222,7 +1157,7 @@ class Part(Chapter):
     idx = 0
     exit_ok = True
     bodies_exit_ok = True
-    WIN = [(0.0, 6.0, 2.04), (6.0, END, 56.86)]
+    WIN = [(0.0, 6.0, 2.02), (6.0, END, 57.75)]
 
     def setup(self):
         self.sc = scene_for(self.cfg)
@@ -1232,7 +1167,7 @@ class Part(Chapter):
         self.abs0 = a
         self.prevT = None
         self.title = None
-        self.R = 26.0
+        self.R = 28.0
         self.bx, self.by, self.on = 500.0, 900.0, "air"
 
     def step(self, dt):
@@ -1274,14 +1209,15 @@ class Part(Chapter):
         for band in (GPOLYS[2], GPOLYS[3]):
             out.append(P(poly_world(GIANT, band)))
         lift = table_lift(T)
-        sg = sag_at(T) if 49.6 <= T < 54 else 0.0
+        sg = sag_at(T) if 49.8 <= T < 54.5 else 0.0
         top = [(x, -lift + sg * math.sin(math.pi * x / TABLE_X1)) for x in np.linspace(0, TABLE_X1, 24)]
         out.append(P(top + [(x, y + TABLE_T) for x, y in top[::-1]]))
         ccx, ccy, ca_ = cale_state(T)
         cw, ch = (CALE[2] - CALE[0]) / 2, -CALE[1] / 2
         out.append(P([(ccx + dx * math.cos(ca_) - dy * math.sin(ca_), ccy + dx * math.sin(ca_) + dy * math.cos(ca_))
                       for dx, dy in ((-cw, -ch), (cw, -ch), (cw, ch), (-cw, ch))]))
-        attached = st["phase"] in ("hat", "stuck") or (st["phase"] == "free" and (T < sc.t_pop + 0.3 or sc.t_chase <= T < sc.t_chase + 0.3))
+        squeezing = st["phase"] in ("in", "stuck") and st["ball"]["mode"] == "squeeze"
+        attached = squeezing or st["phase"] in ("hat", "stuck") or (st["phase"] == "free" and (T < sc.t_pop + 0.3 or sc.t_chase <= T < sc.t_chase + 0.3))
         if not attached:
             pose = sc.small_pose(T, st)
             for band in (POLYS[2], POLYS[3]):
@@ -1291,7 +1227,7 @@ class Part(Chapter):
     def bodies(self, s):
         T = s["T"]
         if self.sc.t_rev0 - 0.05 <= T < self.sc.t_rev1 + 0.05:
-            return []                      # la caméra recule de dix fois en 0,7 s : rien ne bouge que l'image
+            return []                      # la caméra recule de plusieurs fois en 1,8 s : rien ne bouge que l'image
         s0, s1 = self.sc.cam_at(T - 0.05)[2], self.sc.cam_at(T + 0.05)[2]
         if abs(math.log(s1 / s0)) / 0.1 > 0.9:
             return []                      # zoom rapide de la caméra : l'image bouge, pas les objets
@@ -1334,7 +1270,7 @@ def make(i):
 CHAPTERS = [(make(i), {"chapter_max_s": 80.0}) for i in range(2)]
 
 DEFAULTS = {
-    "ball_r": 28.0, "gravity": G,
+    "ball_r": 31.0, "gravity": G,
     "hook_text_s": 3.0, "hook_top": 0.075, "hook_font_size": 96, "hook_width": 0.72,
     "end_hold_s": 0.02, "min_duration_s": 30.0, "scene_top": 0.2,
 }
