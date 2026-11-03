@@ -1,0 +1,12 @@
+{
+ "name": "surprise_proto",
+ "theme": "surprise",
+ "seed": 1,
+ "hook_text": "WILL HE RUIN THE SURPRISE?",
+ "controle_seuils": {
+  "silence_max_s": [
+   2.5,
+   "silences voulus du découpage validé, mesurés sur le mp4 : sous le coussin, un seul rebond étouffé entre 4,4 et 9,6 (5,0-7,0 et 7,6-9,6 : 2,0 s), les deux secondes sans aucun son sous le rectangle vert (10,2-12,5 : 2,3 s), le vol très haut après la détente (13,1-14,9 : 1,7 s) ; plus aucun silence long après 15 s"
+  ]
+ }
+}

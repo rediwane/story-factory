@@ -397,6 +397,111 @@
     "measured_at": null
    },
    "script": "src/stories/roast.py (branche proto-roast)"
+  },
+  {
+   "name": "bottle_proto",
+   "date": "2026-11-04",
+   "theme": "bottle",
+   "config": "configs/bottle_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Get Out?",
+   "duration_s": 61.48,
+   "hashtags": [
+    "#bounce",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/bottle_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-04T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13416341064506873411.mp4",
+   "metricool_post_id": 415587524,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "concept écrit avec la méthode (juge de la rétention), fait en session ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/bottle.py (branche proto-bottle)",
+   "retention_predite": {
+    "decoupage_v2": "36 % à la fin",
+    "mp4_v1": {
+     "1s": 72,
+     "3s": 48,
+     "10s": 27,
+     "30s": 13,
+     "45s": 9,
+     "fin": 6
+    }
+   }
+  },
+  {
+   "name": "surprise_proto",
+   "date": "2026-11-04",
+   "theme": "surprise",
+   "config": "configs/surprise_proto.json",
+   "role": "owner",
+   "hook_text": "Will He Ruin The Surprise?",
+   "duration_s": 61.5,
+   "hashtags": [
+    "#surprise",
+    "#birthday",
+    "#bounce",
+    "#animation"
+   ],
+   "caption": "captions/surprise_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-04T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13718526359723359711.mp4",
+   "metricool_post_id": 415586227,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "test du juge de la rétention : découpage validé par lui (PASSE, 38 % prédits à la fin), vidéo finie recalée ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/surprise.py (branche proto-surprise)",
+   "retention_predite": {
+    "decoupage_v5": {
+     "1s": 90,
+     "3s": 75,
+     "10s": 62,
+     "30s": 48,
+     "45s": 43,
+     "fin": 38
+    },
+    "mp4_v1": {
+     "1s": 74,
+     "3s": 50,
+     "10s": 32,
+     "30s": 17,
+     "45s": 10,
+     "fin": 7
+    },
+    "mp4_v2": {
+     "1s": 72,
+     "3s": 45,
+     "10s": 24,
+     "30s": 12,
+     "45s": 9,
+     "fin": 5
+    }
+   }
   }
  ],
  "themes": [
@@ -497,6 +602,10 @@
   {
    "date": "2026-11-03T16:30+01:00",
    "note": "Session owner : roast_proto remplacée dans le post du 04/11 14h30 (nouvel id 415394414). Voix du narrateur passée sur Chatterbox (voix plus énervée, validée à l'écoute par le propriétaire), bip qui laisse passer le début du mot, quelques répliques allongées ; 64,0 s. Juges : muet PASSE ; son RECALÉ (fins de mots audibles sur 3 répliques) → bips allongés → corrigé. Le propriétaire garde le faux mort de la fin."
+  },
+  {
+   "date": "2026-11-03T19:50+01:00",
+   "note": "Session owner : test du « juge de la rétention » (consigne dans le scratchpad de session, non versionnée). bottle_proto (04/11 08h00, post 415587524) et surprise_proto (04/11 11h30, post 415586227) portent dans retention_predite les courbes prédites par le juge : à comparer aux courbes réelles de TikTok Studio. Calibrage à l'aveugle sur 4 vidéos passées : le juge ne sépare pas un carton (118 k) des flops (3 k) ; ses pourcentages varient autant d'un juge à l'autre que d'une version à l'autre ; utile comme relecteur de défauts, pas comme prédicteur."
   }
  ]
 }
