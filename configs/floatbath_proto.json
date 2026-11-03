@@ -3,7 +3,7 @@
  "theme": "floatbath",
  "seed": 1,
  "hook_text": "Can Float finish her bath?",
- "float_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_provisoire",
+ "float_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_H",
  "controle": {
   "seuils": {
    "silence_max_s": 3.9

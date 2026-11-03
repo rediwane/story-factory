@@ -164,14 +164,14 @@ FRAMEC = (64, 44, 34)
 CORRIDOR = (10, 9, 14)
 SINKC = (200, 206, 216)
 SHELFC = (96, 72, 54)
-FLASKC = (120, 150, 170)
+FLASKC = (228, 222, 208)
 DUCKC = (246, 204, 40)
 BEAK = (240, 130, 40)
 INK = (12, 12, 14)
 F_IN = (0x00, 0xCB, 0x80)        # Float : disque intérieur
 F_RING = (0x00, 0x79, 0x49)      # Float : anneau extérieur
 EYE_W = (246, 248, 244)
-CHAIN = (150, 156, 168)
+CHAIN = (196, 202, 214)
 
 
 def lin(u):
@@ -274,7 +274,7 @@ class Plan:
         self.waves.append((c7b, 7.0, IX0))
         e2 = self.line(1, self.after_word(c7b))                       # « Float. » agacée
         self.mark["F2"] = e2 - self.durs[FLOAT_FILES[1][1]]
-        c8 = self.arc(max(1.45, e2 + MG + 0.08 - self.t), RIM_LX, ry, "rim")   # plus haut
+        c8 = self.arc(min(1.8, max(1.45, e2 + 0.12 - self.t)), RIM_LX, ry, "rim")   # plus haut
         self.waves.append((c8, 14.0, IX0))
         self.lv.append((c8 + 0.05, 0.5, 8.0))
         self.spills.append((c8 + 0.05, "L", 0.5, 0.6))
@@ -337,13 +337,19 @@ class Plan:
         self.lv.append((t_bot + 0.1, 0.9, 99.0))
         self.spills.append((t_bot + 0.12, "L", 4.0, 1.2))
         self.spills.append((t_bot + 0.12, "R", 3.0, 1.2))
-        self.splashes.append((t_bot + 0.12, 490.0, None, 60, 400, 1000, -math.pi / 2, 1.3, 14, 58, True))
+        self.splashes.append((t_bot + 0.12, 490.0, None, 90, 400, 1100, -math.pi / 2, 1.3, 15, 58, True))
+        self.splashes.append((t_bot + 0.2, LIP_L[0], RIM_Y - 10, 40, 250, 700, -2.3, 0.5, 13, 67, True))
+        self.splashes.append((t_bot + 0.2, LIP_R[2], RIM_Y - 10, 34, 250, 650, -0.85, 0.5, 13, 68, True))
+        self.splashes.append((t_bot + 0.6, TUB_X0 - 30, FLOOR, 24, 150, 380, -math.pi / 2, 1.0, 9, 69, False))
+        self.splashes.append((t_bot + 0.6, TUB_X1 + 30, FLOOR, 18, 150, 360, -math.pi / 2, 1.0, 9, 71, False))
         cf = self.arc(1.7, 214.0, fy, "floor", voice="n")              # dans la flaque
         self.splashes.append((cf, 214.0, FLOOR, 16, 200, 420, -math.pi / 2, 1.2, 8, 59, False))
         # dans la flaque, de plus en plus haut
         p0 = self.arc(1.12, 190.0, fy, "floor")
         self.mark["p0"] = p0
         self.splashes.append((p0, 190.0, FLOOR, 12, 200, 380, -math.pi / 2, 1.2, 7, 60, False))
+        p0b = self.arc(1.0, 214.0, fy, "floor")
+        self.splashes.append((p0b, 214.0, FLOOR, 14, 220, 420, -math.pi / 2, 1.2, 7, 66, False))
         p1 = self.arc(0.8, TUB_X0 - RB, 1290.0, "wall", nx=-1.0, ny=0.0)   # contre la baignoire
         p2 = self.arc(0.78, 176.0, fy, "floor")
         self.mark["p2"] = p2
@@ -367,9 +373,9 @@ class Plan:
         self.mark["F4"] = e4 - self.durs[FLOAT_FILES[3][1]]
         self.mark["F4e"] = e4
         self.mark["door_look"] = e4 + 0.15
-        p9 = self.arc(min(1.75, max(1.4, e4 + MG + 0.05 - self.t)), RIM_RX, ry, "rim")
+        p9 = self.arc(min(1.87, max(1.4, e4 + 0.12 - self.t)), 922.0, LID_DOWN[1] - RB, "lid")   # sur l'abattant, pendant sa réplique
         self.look(e4 + 0.45, -0.6, 0.0, dur=0.4)                       # il suit son regard vers la porte
-        p10 = self.arc(1.4, RIM_LX, ry, "rim")
+        p10 = self.arc(1.5, RIM_LX, ry, "rim")
         p11 = self.arc(1.35, 256.0, fy, "floor")                       # le carrelage, vers la porte
         self.mark["p11"] = p11
         self.splashes.append((p11, 268.0, FLOOR, 10, 180, 360, -math.pi / 2, 1.2, 7, 62, False))
@@ -379,14 +385,13 @@ class Plan:
         # sur le seuil : il se retourne vers la baignoire, tout petits rebonds sur place
         self.look(self.t + 0.1, 0.55, 0.0, dur=0.3)
         self.mark["seuil"] = self.t
-        for T in [0.62, 0.56, 0.52, 0.5, 0.48, 0.44]:
-            self.arc(T, DOOR_CX, fy, "floor", voice="s", amp=0.16)
+        for T in [0.84, 0.82]:
+            self.arc(T, DOOR_CX, fy, "floor", voice="s", amp=0.18)
         self.mark["tasse"] = self.t
-        for T in [0.4, 0.36, 0.32]:                                    # il se tasse, de plus en plus bas
-            self.arc(T, DOOR_CX, fy, "floor", voice="s", amp=0.34)
-        self.arc(0.45, DOOR_CX, fy, "floor", voice="s", amp=0.36)
-        self.mark["eye_open"] = self.t - 0.6
-        last = self.arc(1.0, DOOR_CX, fy, "floor", amp=0.3)          # un dernier rebond, plus haut, sur place
+        for T, a in [(0.82, 0.32), (0.84, 0.42)]:                      # il se tasse, comme pour replonger
+            self.arc(T, DOOR_CX, fy, "floor", voice="s", amp=a)
+        self.mark["eye_open"] = self.t - 0.3
+        last = self.arc(0.9, DOOR_CX, fy, "floor", amp=0.3)          # un dernier rebond, plus haut, sur place
         self.mark["last"] = last
         # il se détend, se tourne vers la porte, sort
         self.look(last + 0.35, -0.5, -0.1, dur=0.35)
@@ -397,8 +402,10 @@ class Plan:
         self.t_exit0, self.t_exit1 = t_out0, t_out1
         self.t_ohno = last + 1.3
         self.t_payoff = self.t_ohno - 0.15
-        self.t_close0 = self.t_ohno + 0.55
-        self.t_close1 = self.t_close0 + 0.6
+        self.t_bump = self.t_ohno + 0.5                                # il heurte la porte ouverte en reculant
+        self.contacts.append({"t": self.t_bump, "x": DOOR_CX, "y": fy, "surf": "door", "voice": "-", "nx": 0, "ny": -1, "amp": 0})
+        self.t_close0 = self.t_bump + 0.02
+        self.t_close1 = self.t_close0 + 0.55
         # derrière la porte : deux « Bounce » étouffés, la porte vibre
         self.t_smile = self.t_close1 + 2.0
         k1 = self.t_close1 + 3.6
@@ -407,8 +414,8 @@ class Plan:
             self.contacts.append({"t": k, "x": DOOR_CX, "y": fy, "surf": "door", "voice": "m", "nx": 0, "ny": -1, "amp": 0})
         self.t_knock = (k1, k2)
         self.t_eye_last = k1 + 1.0
-        self.t_cut = k2 + 1.0
-        self.end = self.t_cut + 0.7
+        self.t_cut = k2 + 1.3
+        self.end = self.t_cut + 0.7                                    # le gros plan reste bref : le haut de l'image reste de nuit
         self.segs.append((t_out1, self.end + 5, "gone", ()))
         self.segs.sort(key=lambda s: s[0])
         self.contacts.sort(key=lambda c: c["t"])
@@ -510,7 +517,8 @@ class Plan:
                 hop = abs(math.sin(u * math.pi * 2.0)) * 26.0 * (1 - u)
                 st["scale"] = sc
                 st["behind"] = u > 0.0
-                st["x"] = xc
+                bump = math.exp(-((T - self.t_bump) / 0.16) ** 2)
+                st["x"] = xc - 22.0 * bump
                 st["y"] = FLOOR - 26.0 * ease(u) - RB * sc - hop
         else:
             st["hidden"] = True
@@ -525,12 +533,13 @@ class Plan:
                 continue
             kk = lin(1 - (c["t"] - T) / 0.05 if T < c["t"] else 1 - (T - c["t"]) / 0.11)
             a = c["amp"] * kk
+            # l'écrasement s'ajoute à la trajectoire (jamais de saut à la fin de l'écrasement)
             if c["nx"]:
                 st["sx"], st["sy"] = 1 - a, 1 + 0.6 * a
-                st["x"] = c["x"] + RB * a * (1 if c["nx"] < 0 else -1)
+                st["x"] = st["x"] + RB * a * (1 if c["nx"] < 0 else -1)
             else:
                 st["sy"], st["sx"] = 1 - a, 1 + 0.7 * a
-                st["y"] = c["y"] + RB * a
+                st["y"] = st["y"] + RB * a
         if st["y"] > FLOOR - RB * st["sy"] * st["scale"] and not st["behind"]:
             st["y"] = FLOOR - RB * st["sy"] * st["scale"]
         return st
@@ -561,8 +570,8 @@ class Actors:
         # Float : au milieu, puis ballottée ; contre la paroi au boulet ; aspirée au tourbillon
         self.fx_keys = [(0.0, 584.0), (m["shelf"] + 0.7, 584.0), (m["shelf"] + 1.6, 572.0),
                         (m["gerbe"] - 0.6, 560.0), (m["gerbe"] + 1.0, 548.0),
-                        (m["near"] - 1.2, 494.0), (m["near"] + 0.15, 494.0), (m["near"] + 1.4, 640.0),
-                        (p.t_bot + 0.12, 642.0), (p.t_bot + 0.9, 458.0), (p.t_whirl, 458.0)]
+                        (m["near"] - 1.2, 494.0), (m["near"] + 0.15, 494.0), (m["near"] + 1.4, 650.0),
+                        (p.t_bot + 0.12, 652.0), (p.t_bot + 0.9, 458.0), (p.t_whirl, 458.0)]
         # le canard : à côté d'elle, chavire, se range contre la paroi de droite, bouche le trou
         self.dx_keys = [(0.0, 732.0), (m["shelf"] + 1.5, 736.0), (p.t_capsize + 1.0, 744.0),
                         (m["near"] - 0.5, 752.0), (m["near"] + 1.4, 772.0), (p.t_whirl, 772.0)]
@@ -683,7 +692,7 @@ class Actors:
         # dans l'eau : il ralentit, coule, se couche au fond
         rest_y = IB - FLASK_W / 2
         k = 1 - math.exp(-ti / 0.35)
-        y = self.flask_yin + (self.flask_vin * 0.35) * k + 160 * ti
+        y = self.flask_yin + (self.flask_vin * 0.18) * k + 110 * ti
         x = x_in + (400.0 - x_in) * ease(ti / 1.6)
         a = a_in + (-math.pi / 2 - a_in) * ease(ti / 1.4)
         if y >= rest_y:
@@ -691,16 +700,51 @@ class Actors:
         return x, y, a
 
     # la bonde
+    CHAIN_REST = (812.0, RIM_Y - 3.0)
+
+    def chain_anchor(self, T):
+        """Le bout de la chaînette, posé sur le rebord ; au rebond de la bonde, il reste
+        coincé sous Bounce qui l'emporte vers le haut, puis glisse et retombe."""
+        p = self.p
+        t5 = p.mark["p5"]
+        ax, ay = self.CHAIN_REST
+        if t5 <= T < t5 + 0.32:
+            b = p.bounce(T)
+            return b["x"] - 4.0, b["y"] + RB * 0.85
+        if t5 + 0.32 <= T < t5 + 0.62:
+            b = p.bounce(t5 + 0.32)
+            u = ease((T - t5 - 0.32) / 0.3)
+            return b["x"] - 4.0 + (ax - b["x"] + 4.0) * u, b["y"] + RB * 0.85 + (ay - b["y"] - RB * 0.85) * u
+        return ax, ay
+
     def plug(self, T):
         p = self.p
-        if T < p.t_plug:
-            return DRAIN_X, IB - 5, 0.0
-        t = T - p.t_plug
-        # elle saute au bout de sa chaînette et retombe contre la paroi
-        xr, yr = DRAIN_X + 40.0, IB - 70.0
-        u = ease(t / 0.5)
-        hop = 90.0 * math.sin(math.pi * lin(t / 0.5))
-        return DRAIN_X + (xr - DRAIN_X) * u, IB - 5 + (yr - IB + 5) * u - hop, 1.2 * u
+        rest = (DRAIN_X, IB - 5)
+        L0 = math.hypot(self.CHAIN_REST[0] - rest[0], self.CHAIN_REST[1] - rest[1])
+        t5 = p.mark["p5"]
+        if T < t5:
+            return rest[0], rest[1], 0.0
+
+        def pulled(TT):
+            ax, ay = self.chain_anchor(TT)
+            dx, dy = rest[0] - ax, rest[1] - ay
+            d = math.hypot(dx, dy)
+            if d <= L0:
+                return rest[0], rest[1]
+            return ax + dx / d * L0, ay + dy / d * L0
+        tr = t5 + 0.32                                                # la chaînette glisse : la bonde retombe
+        if T < tr:
+            x, y = pulled(T)
+            return x, y, 1.4 * lin((T - t5) / 0.2)
+        x0, y0 = pulled(tr)
+        t = T - tr
+        xe, ye = DRAIN_X + 34.0, IB - 8.0
+        y = min(ye, y0 + 0.5 * G * t * t)
+        u = lin(t / max(0.05, math.sqrt(2 * max(1.0, ye - y0) / G)))
+        return x0 + (xe - x0) * ease(u), y, 1.4 + 0.2 * u
+
+    def L0_chain(self):
+        return math.hypot(self.CHAIN_REST[0] - DRAIN_X, self.CHAIN_REST[1] - IB + 5) + 40.0
 
     def lid(self, T):
         """0 = relevé, 1 = rabattu."""
@@ -714,7 +758,10 @@ class Actors:
             u = (T - p.t_door) / 0.12
             a = lin(u) if u < 1 else 1.0 - 0.12 * math.exp(-(T - p.t_door - 0.12) / 0.15) * abs(math.sin((T - p.t_door - 0.12) * 18))
         if T >= p.t_close0:
-            a = 1.0 - ease((T - p.t_close0) / (p.t_close1 - p.t_close0))
+            u = lin((T - p.t_close0) / (p.t_close1 - p.t_close0))
+            a = 1.0 - (0.35 * u + 0.65 * u * u)                       # poussée, elle accélère et claque
+            if T > p.t_close1:
+                a = 0.0
         sh = 0.0
         for (k, amp) in zip(p.t_knock, (4.0, 7.0)):
             tt = T - k
@@ -736,11 +783,11 @@ class Actors:
                          (m["p0"], (1.0, 540.0, 960.0)), (m["p2"], (1.08, 500.0, 1100.0)), (m["p5"], (1.12, 640.0, 1210.0)),
                          (p.t_duck - 1.2, (1.0, 540.0, 960.0)), (p.t_duck + 0.6, (1.22, 640.0, 1240.0)),
                          (e4 + 0.9, (1.24, 640.0, 1240.0)), (e4 + 1.6, (1.0, 540.0, 960.0)),
-                         (m["p11"], (1.0, 540.0, 960.0)), (m["seuil"], (1.5, 400.0, 1330.0)),
-                         (m["last"] + 0.2, (1.58, 400.0, 1330.0)), (p.t_ohno + 0.4, (1.9, 330.0, 1370.0)),
-                         (p.t_close1 + 0.4, (1.52, 410.0, 1330.0)),
-                         (p.t_knock[0] - 0.05, (2.0, 600.0, 1345.0)), (p.t_knock[0] + 0.55, (1.55, 420.0, 1330.0)),
-                         (p.t_knock[1] + 0.3, (1.68, 455.0, 1330.0)), (p.t_cut, (1.8, 480.0, 1325.0))]
+                         (m["p11"], (1.0, 540.0, 960.0)), (m["seuil"], (1.3, 415.0, 1330.0)),
+                         (m["last"] + 0.2, (1.33, 418.0, 1330.0)), (p.t_ohno + 0.4, (1.4, 430.0, 1350.0)),
+                         (p.t_close1 + 0.4, (1.35, 420.0, 1330.0)),
+                         (p.t_knock[0] - 0.05, (2.0, 600.0, 1345.0)), (p.t_knock[0] + 0.55, (1.35, 420.0, 1330.0)),
+                         (p.t_knock[1] + 0.3, (1.4, 435.0, 1330.0)), (p.t_cut, (1.55, 470.0, 1325.0))]
         if T < p.t_cut:
             z, cx, cy = keyed(self._cam, T)
         else:
@@ -979,13 +1026,13 @@ class Scene:
         full = View(S, (W / 2, H / 2, 1.0, 0.0, 0.0))
         dr.rectangle(full.box(0, 0, W, H), fill=BG)
         # le mur carrelé
-        dr.rectangle(V.box(-600, 300, W + 600, FLOOR), fill=WALL)
+        dr.rectangle(V.box(-600, -1500, W + 600, FLOOR), fill=WALL)
         step = 90.0
         lw = max(1, int(V.L(3)))
         for k in range(-8, 20):
             xx = k * step
-            dr.line([(V.X(xx), V.Y(300)), (V.X(xx), V.Y(FLOOR))], fill=WALL_LINE, width=lw)
-        for k in range(0, 15):
+            dr.line([(V.X(xx), V.Y(-1500)), (V.X(xx), V.Y(FLOOR))], fill=WALL_LINE, width=lw)
+        for k in range(0, 34):
             yy = FLOOR - k * step
             dr.line([(V.X(-600), V.Y(yy)), (V.X(W + 600), V.Y(yy))], fill=WALL_LINE, width=lw)
         # le sol
@@ -1091,14 +1138,14 @@ class Scene:
                 flows.append((t0, side, v, d))
         # les flaques
         if vol["L"] > 0:
-            w = min(260.0, 60 + 34 * vol["L"])
-            th = min(14.0, 3 + 1.4 * vol["L"])
+            w = min(300.0, 50 + 26 * vol["L"])
+            th = min(20.0, 3 + 1.6 * vol["L"])
             cx = TUB_X0 - w * 0.42
             dr.ellipse(V.box(cx - w / 2 - 20, FLOOR - th * 0.5, TUB_X0 + 10, FLOOR + th * 1.6), fill=mix(FLOORC, WATER, 0.8))
             dr.ellipse(V.box(cx - w * 0.3, FLOOR, cx + w * 0.1, FLOOR + 4), fill=mix(WATER, (200, 230, 240), 0.5))
         if vol["R"] > 0:
-            w = min(130.0, 40 + 26 * vol["R"])
-            th = min(12.0, 3 + 1.4 * vol["R"])
+            w = min(130.0, 30 + 24 * vol["R"])
+            th = min(18.0, 3 + 1.6 * vol["R"])
             dr.ellipse(V.box(TUB_X1 - 10, FLOOR - th * 0.5, TUB_X1 + w, FLOOR + th * 1.6), fill=mix(FLOORC, WATER, 0.8))
         self._flows = flows
 
@@ -1113,9 +1160,10 @@ class Scene:
         # la bonde, sa chaînette
         dr.ellipse(V.box(DRAIN_X - 18, IB - 6, DRAIN_X + 18, IB + 4), fill=(40, 44, 54))
         px, py, pa = A.plug(T)
-        ax, ay = IX1 - 6, RIM_Y + 20
-        n = 14
-        mx_, my_ = (ax + px) / 2 + 10, max(ay, py) - 10 + 30
+        ax, ay = A.chain_anchor(T)
+        n = 18
+        sag = max(0.0, A.L0_chain() - math.hypot(ax - px, ay - py))
+        mx_, my_ = (ax + px) / 2 - 0.3 * sag, (ay + py) / 2 + 0.6 * sag
         pts = []
         for k in range(n + 1):
             u = k / n
@@ -1123,7 +1171,8 @@ class Scene:
             yy = (1 - u) ** 2 * ay + 2 * (1 - u) * u * my_ + u * u * (py - 6)
             pts.append((xx, yy))
         for (xx, yy) in pts:
-            dr.ellipse(V.box(xx - 3, yy - 3, xx + 3, yy + 3), fill=CHAIN)
+            dr.ellipse(V.box(xx - 4.5, yy - 4.5, xx + 4.5, yy + 4.5), fill=CHAIN)
+        dr.ellipse(V.box(ax - 8, ay - 8, ax + 8, ay + 8), outline=CHAIN, width=max(1, int(V.L(4))))
         dr.polygon(V.pts(rot([(-20, -6), (20, -6), (16, 6), (-16, 6)], px, py, pa)), fill=(46, 48, 58))
         # le flacon coulé
         fx, fy, fa = A.flask(T)
@@ -1367,7 +1416,8 @@ class Bath(Chapter):
         lo = self.prevT if self.prevT is not None else T - dt
         for c in self.P.contacts:
             if lo < c["t"] <= T:
-                evs.append(("hit", "floor"))
+                # le battant qu'il heurte en reculant, sous son « Oh no. » : un repère, pas un mot
+                evs.append(("event", "door") if c["voice"] == "-" else ("hit", "floor"))
         self.prevT = T
         if T >= self.chute - 1e-9:
             self.finish("LID")
@@ -1443,6 +1493,20 @@ def lowpass(x, fc):
     return y
 
 
+def loudnorm(path, I, TP):
+    """Le niveau du compte : loudnorm en deux passes, linéaire (le mix n'est pas compressé)."""
+    import json as _json
+    import subprocess
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", path, "-af", f"loudnorm=I={I}:TP={TP}:LRA=20:print_format=json",
+                        "-f", "null", "-"], capture_output=True, text=True)
+    m = _json.loads(r.stderr[r.stderr.rindex("{"):])
+    tmp = path + ".ln.wav"
+    af = (f"loudnorm=I={I}:TP={TP}:LRA=20:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+          f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true,aresample={SR}")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", path, "-af", af, "-ac", "1", "-ar", str(SR), "-c:a", "pcm_s16le", tmp], check=True)
+    os.replace(tmp, path)
+
+
 def float_render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, narr=(), replies=()):
     """Le mixage : le placement des mots est celui du moteur (place_words, que le contrôle
     relit) ; chaque « Bounce » prend le traitement de son contact (sous l'eau et derrière la
@@ -1465,7 +1529,7 @@ def float_render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, n
             if kind == "react":
                 ak.add(buf, react, t0, gain=1.0)
                 continue
-            c = min(p.contacts, key=lambda c: abs(c["t"] - t0))
+            c = min((c for c in p.contacts if c["voice"] != "-"), key=lambda c: abs(c["t"] - t0))
             v = c["voice"]
             if v == "m":
                 ak.add(buf, muff, t0, gain=cfg["muffled_gain"] * 1.2)
@@ -1490,6 +1554,7 @@ def float_render_audio(events, total_dur, cfg, path, payoff_t=None, mood=None, n
         buf *= duck
         ak.add(buf, v, 0.15, gain=1.0)
     ak.write_wav(buf, path, peak=0.7)
+    loudnorm(path, cfg.get("lufs", -15.5), cfg.get("true_peak", -1.5))
     print(f"[{cfg['name']}] voix : {stats}", file=sys.stderr)
     return stats
 
