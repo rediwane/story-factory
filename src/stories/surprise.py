@@ -87,11 +87,11 @@ W, H = 1080, 1920
 G = 700.0                      # gravité du salon (px/s²) ; même rapport g/rayon dans l'escalier
 R = 46.0                       # Bounce dans le salon
 CEIL, FLOOR, WALL_R, PANEL_Y = 300.0, 1090.0, 935.0, 1150.0
-SOFA_X0, SOFA_X1, ARM_W, ARM_TOP, BACK_TOP, SEAT_TOP = 300.0, 700.0, 38.0, 1005.0, 990.0, 1030.0
+SOFA_X0, SOFA_X1, ARM_W, ARM_TOP, BACK_TOP, SEAT_TOP = 300.0, 700.0, 38.0, 1008.0, 1004.0, 1030.0
 TABLE_X0, TABLE_X1, TABLE_TOP = 20.0, 270.0, 975.0
 CAKE_X0, CAKE_X1, CAKE_TOP = 35.0, 165.0, 893.0
 CANDLE_X = [47.0 + k * 15.1 for k in range(8)]
-SWITCH = (740.0, 876.0, 794.0, 960.0)
+SWITCH = (722.0, 0.0, 798.0, 0.0)
 DOOR = (805.0, 825.0, 915.0, 1090.0)
 HANDLE = (828.0, 968.0)
 SEAT_Y = SEAT_TOP - R          # centre de Bounce posé sur le coussin
@@ -100,7 +100,11 @@ TABLE_YB = TABLE_TOP - R
 HALO = (100.0, 860.0)
 BOXX = 560.0                   # où la boîte vivante se forme
 TUMBLE_G = 492.0
-TAPX = 785.0                   # sous l'interrupteur
+TAPX = 760.0                   # sous l'interrupteur
+T_FINAL = 59.4                 # le « Bounce » qui rallume l'image finale
+TINY_RING = 400.0
+SW_HALF = 0.86                 # demi-cycle sol -> interrupteur : chaque contact a le temps de dire son nom
+SWITCH_Y = 1090.0 - 46.0 - 0.5 * 700.0 * SW_HALF ** 2
 
 # l'escalier (coordonnées du monde de l'escalier)
 RB = 30.0                      # Bounce dans l'escalier
@@ -119,9 +123,9 @@ TRI_END_X = FX1 + 66.0
 
 # couleurs
 BG = (8, 8, 12)
-WALL_D, WALL_L = (17, 14, 24), (92, 84, 100)
-FLOOR_D, FLOOR_L = (24, 18, 22), (86, 66, 58)
-SOFA_D, SOFA_L = (40, 18, 30), (170, 56, 72)
+WALL_D, WALL_L = (30, 24, 38), (92, 84, 100)
+FLOOR_D, FLOOR_L = (40, 30, 34), (86, 66, 58)
+SOFA_D, SOFA_L = (72, 30, 44), (170, 56, 72)
 WOOD_D, WOOD_L = (34, 22, 18), (128, 86, 54)
 WARM = (255, 176, 72)
 GOLD = (255, 206, 96)
@@ -129,9 +133,9 @@ TRI = (150, 72, 232)
 COLS = {"yellow": (240, 200, 52), "blue": (58, 120, 236), "green": (64, 190, 100), "orange": (248, 128, 40)}
 HATS = {"yellow": ((70, 200, 240), (255, 255, 255)), "blue": ((255, 90, 150), (255, 230, 90)),
         "green": ((255, 210, 60), (220, 60, 200)), "orange": ((120, 220, 120), (60, 120, 240))}
-STAIR_WALL = (20, 21, 32)
-STAIR_BACK, STAIR_FRONT = (34, 34, 50), (54, 54, 74)
-RAIL = (96, 92, 118)
+STAIR_WALL = (34, 34, 52)
+STAIR_BACK, STAIR_FRONT = (56, 56, 78), (84, 84, 112)
+RAIL = (128, 124, 152)
 
 
 def clamp01(u):
@@ -300,7 +304,7 @@ class Plan:
         self.build_end()
         self.hits.sort()
         self.rings.sort()
-        self.END = 61.55
+        self.END = T_FINAL + 0.9 + 1.15
 
     # ================================================================ le salon
     def build_salon(self):
@@ -331,7 +335,7 @@ class Plan:
         b.hold(9.6)
         # 9,6 : le coup qui fait voler le coussin ; un petit saut, et le vert s'assoit dessus
         self.bsq.to(9.66, (0.9, 1.12)).to(9.72, (1.0, 1.0))
-        self.hit(9.6, "n", ring=1150, squash=0)
+        self.hit(9.6, "m", ring=1150, squash=0)
         b.arc(10.5, (500.0, SEAT_Y))
         self.bsq.hold(10.47).to(10.62, (1.45, 0.5))
         trem = lambda t: (1.45 + 0.025 * math.sin(t * 47.0), 0.5 + 0.03 * math.sin(t * 61.0 + 1.0))
@@ -377,49 +381,41 @@ class Plan:
         self.hit(21.78 + T_out, "n", ring=820)
         b.arc(23.65, (212.0, TABLE_YB))
         self.hit(23.65, "n", ring=820)
-        b.arc(25.3, (470.0, FLOOR_YB))
-        self.hit(25.3, "n", ring=1000)
-        b.arc(26.4, (560.0, FLOOR_YB))
-        self.hit(26.4, "p", ring=250, clip=FLOOR - 4)
-        b.arc(28.5, (690.0, FLOOR_YB))
-        self.hit(28.5, "n", ring=950)
-        b.arc(30.2, (815.0, FLOOR_YB))
-        self.hit(30.2, "n", ring=950)
-        b.arc(31.1, (WALL_R - R, 962.0))
-        self.hit(31.1, "n", ring=950, axis="x")
-        # vers l'interrupteur : il le touche en redescendant (contre le mur du fond)
-        b.arc(33.3, (TAPX, FLOOR_YB))
-        vx, vy = b.last_vel
-        t_on = None
-        for k in range(1, 2000):
-            tt = 31.1 + k * 0.002
-            x0, y0 = WALL_R - R, 962.0
-            y = y0 + vy * (tt - 31.1) + 0.5 * G * (tt - 31.1) ** 2
-            if tt > 32.0 and y >= 918.0:
-                t_on = tt
-                break
-        self.t_on = round(t_on, 3)
-        self.hit(self.t_on, "n", ring=950, squash=0)
-        self.hit(33.3, "n", ring=600, voiced=True)
-        b.arc(33.8, (TAPX + 3.0, FLOOR_YB))
-        self.hit(33.8, "n", ring=500)
-        taps = []
-        tcur = 33.8
-        for k in range(3):
-            tap = tcur + 0.6
-            b.arc(tcur + 1.2, (TAPX - 2 * k, FLOOR_YB))
-            taps.append(tap)
-            tcur += 1.2
-            self.hit(tcur, "n", ring=500)
-        self.taps = taps
-        for tp in taps:
+        # au milieu du salon : un rebond franc, une rafale de petits, un grand silence, puis vers la porte
+        b.arc(25.0, (430.0, FLOOR_YB))
+        self.hit(25.0, "n", ring=1000)
+        for (tt, x) in ((25.85, 500.0), (26.7, 565.0), (27.55, 625.0)):
+            b.arc(tt, (x, FLOOR_YB))
+            self.hit(tt, "p", ring=330, clip=FLOOR - 4)
+        b.arc(29.35, (700.0, FLOOR_YB))
+        self.hit(29.35, "n", ring=1000)
+        c = SW_HALF
+        t_off = 37.95
+        taps = [t_off - 2 * c * k for k in (3, 2, 1, 0)]          # ON, OFF, ON, OFF
+        t_wall = taps[0] - 2 * c
+        b.arc(t_wall - c, (815.0, FLOOR_YB))
+        self.hit(t_wall - c, "n", ring=950)
+        b.arc(t_wall, (WALL_R - R, 962.0))
+        self.hit(t_wall, "n", ring=950, axis="x")
+        # le sol, puis l'interrupteur au sommet du rebond (contre le mur du fond), et ainsi de suite
+        b.arc(t_wall + c, (820.0, FLOOR_YB))
+        self.hit(t_wall + c, "n", ring=600)
+        for k, tp in enumerate(taps):
+            b.arc(tp, (TAPX, SWITCH_Y), g=G)
             self.hit(tp, "n", ring=950, squash=0)
+            if k < 3:
+                b.arc(tp + c, (TAPX + (6.0 if k % 2 else -6.0), FLOOR_YB))
+                self.hit(tp + c, "n", ring=600)
+        self.t_on = taps[0]
+        taps = taps[1:]
+        self.taps = taps
+        self.sw_taps = [self.t_on] + taps
         # 38,6 : la poignée
         b.arc(38.6, HANDLE)
         self.hit(38.6, "n", ring=950, squash=0)
-        b.to(38.95, (872.0, 1000.0), ease=linear)
-        self.bscale.hold(38.6).to(38.95, 0.55, ease=linear)
-        self.bvis.set(38.95, False)
+        b.to(38.85, (872.0, 1000.0), ease=linear)
+        self.bscale.hold(38.6).to(38.85, 0.55, ease=linear)
+        self.bvis.set(38.85, False)
         self.door.hold(38.62).to(38.85, 1.0, ease=out_q)
         # lumière
         sw = [(self.t_on, 1)] + [(taps[0], 0), (taps[1], 1), (taps[2], 0)]
@@ -432,12 +428,13 @@ class Plan:
 
         # ---- les amis
         F = {}
-        F["yellow"] = Friend("yellow", 105, 105, -1, 365.0, FLOOR, 100 / 105)
-        F["blue"] = Friend("blue", 105, 105, -1, 475.0, FLOOR, 100 / 105)
-        F["green"] = Friend("green", 80, 210, -1, 662.0, FLOOR, 100 / 210)
-        F["orange"] = Friend("orange", 90, 90, -1, 572.0, FLOOR, 1.0)
+        F["yellow"] = Friend("yellow", 105, 105, -1, 365.0, FLOOR, 1.0)
+        F["blue"] = Friend("blue", 105, 105, -1, 475.0, FLOOR, 1.0)
+        F["green"] = Friend("green", 80, 210, -1, 662.0, FLOOR, 0.5)
+        F["orange"] = Friend("orange", 90, 90, -1, 572.0, FLOOR, 1.12)
         self.F = F
-        crouch = {"yellow": 100 / 105, "blue": 100 / 105, "green": 100 / 210, "orange": 1.0}
+        # cachés derrière le dossier : le haut du corps et les grands chapeaux dépassent
+        crouch = {"yellow": 1.0, "blue": 1.0, "green": 0.5, "orange": 1.12}
         self.crouch = crouch
         home = {"yellow": 365.0, "blue": 475.0, "green": 662.0, "orange": 572.0}
         self.home = home
@@ -458,7 +455,7 @@ class Plan:
             return tl + 0.12
 
         for nm, lean, dl in (("yellow", 0.18, 0.0), ("blue", 0.05, 0.02), ("green", -0.1, 0.0), ("orange", -0.2, 0.03)):
-            jump_up(F[nm], 0.25, 125.0, lean, dl)
+            jump_up(F[nm], 0.25, 145.0, lean, dl)
         # 1,6–2,4 : les chapeaux fixent la balle
         for nm, lean in (("yellow", 0.22), ("blue", 0.06), ("green", -0.12), ("orange", -0.22)):
             f = F[nm]
@@ -498,7 +495,7 @@ class Plan:
         T_land = None
         y_top = CEIL + 23.0
         v_after = -0.3 * (v_up + G * t_ceil)
-        hat_top = FLOOR - 100.0 - 40.0
+        hat_top = FLOOR - 105.0 - 66.0
         for k in range(1, 4000):
             tt = k * 0.0005
             if y_top + v_after * tt + 0.5 * G * tt * tt + 23.0 >= hat_top + 18.0:
@@ -745,14 +742,14 @@ class Plan:
         for nm, _ in order:
             f = F[nm]
             tl = f.pose.t
-            f.pose.to(tl + 0.4, lean_follow(nm)(tl + 0.4)).fn(32.2, lean_follow(nm))
-            f.pos.hold(32.2)
+            f.pose.to(tl + 0.4, lean_follow(nm)(tl + 0.4)).fn(31.85, lean_follow(nm))
+            f.pos.hold(31.85)
         # 32,4 : dans le noir, ils sortent en douce vers la porte ; 33,1 : lumière ! ils sont
         # à découvert, en pleine course, et se figent une jambe en l'air
-        run = {"yellow": 360.0, "green": 470.0, "orange": 572.0, "blue": 680.0}
+        run = {"yellow": 345.0, "green": 455.0, "orange": 548.0, "blue": 650.0}
         for i, (nm, _) in enumerate(order):
             f = F[nm]
-            t0 = 32.25 + 0.06 * i
+            t0 = 31.9 + 0.06 * i
             f.pos.hold(t0)
             f.pose.hold(t0).to(t0 + 0.1, (1.0, 1.0, 0.0), ease=linear)
             f.pos.to(t0 + 0.1, (home2[nm], f.cy_for(FLOOR, 1.0)), ease=linear)
@@ -763,7 +760,7 @@ class Plan:
                 if f.pos(tt)[1] + f.h / 2 < BACK_TOP - 6.0:
                     f.layer.set(tt, "front")
                     break
-            f.pose.to(self.t_on - 0.08, (1.0, 1.0, 0.1 if nm != "green" else 0.0))
+            f.pose.to(self.t_on - 0.08, (1.0, 1.0, 0.05 if nm != "green" else 0.0))
             f.leg.set(self.t_on - 0.2, 1 if nm in ("blue", "orange") else -1)
             f.pos.hold(39.6)
             f.pose.hold(39.6)
@@ -791,14 +788,14 @@ class Plan:
     def build_stairs(self):
         b = self.bpos
         # la balle sort par la porte de côté du palier du haut
-        self.bworld.set(38.95, "T")
-        self.bvis.set(39.45, True)
+        self.bworld.set(38.85, "T")
+        self.bvis.set(38.95, True)
         b.set((SW_R + 10.0, LEV["RL3"] - 60.0))
-        b.hold(39.45)
-        self.bscale.to(39.45, 0.7, ease=linear).to(39.65, 1.0)
+        b.hold(38.95)
+        self.bscale.to(38.95, 0.7, ease=linear).to(39.15, 1.0)
         y3 = LEV["RL3"] - RB
-        b.arc(39.75, (RL_X + 20.0, y3), g=SG)
-        self.hit(39.75, "n", ring=950, world="T")
+        b.arc(39.35, (RL_X + 20.0, y3), g=SG)
+        self.hit(39.35, "n", ring=950, world="T")
         seq = [(40.4, "F3.3"), (41.0, "F3.2"), (41.55, "F3.1"), (42.05, "LL2")]
         for (tt, nm) in seq:
             x, y = self.spot(nm)
@@ -927,23 +924,39 @@ class Plan:
         t = step(tbig + 0.45, "F3.1", face=1.0, lean=-0.1) + 0.15
         t = step(t, "LL2", face=1.0, lean=-0.1)
         tp.hold(16.3)
-        # 16,3 : il remonte, une marche à la fois
-        t = 16.4
-        for nm, pause in (("F3.1", 1.2), ("F3.2", 1.4), ("F3.3", 1.5)):
-            t = step(t, nm, face=1.0) + pause
-        t = step(t, "RL3", T=0.5, face=1.0)
-        tp.hold(t + 0.6)
-        # vers la porte
+        # 16,3 : il remonte, une marche à la fois ; chaque anneau qui l'atteint l'arrête
+        P_ = self
+
+        def arrival(th):
+            return th + self.ring_delay(th, self.bpos(th)[:2], tp(th))
+
+        t = step(16.4, "F3.1", face=1.0)
+        t = step(17.5, "F3.2", face=1.0)
+        t = step(18.8, "F3.3", face=1.0)
+        t = step(20.1, "RL3", T=0.5, face=1.0)
+        tp.hold(t + 0.1).to(t + 0.6, (RL_X - 20.0, LEV["RL3"]))
+        # 21,4 : il allait avancer ; figé, un pied en l'air
+        ta = max(arrival(21.4), tp.t + 0.05)
+        self.tfoot.hold(ta).to(ta + 0.07, (0.0, 1.0), ease=out_q).hold(ta + 0.85).to(ta + 1.0, (0.0, 0.0))
+        self.tpose.hold(ta).to(ta + 0.08, (1.0, -0.07, 1.04), ease=out_q).hold(ta + 0.85).to(ta + 1.0, (1.0, 0.0, 1.0))
+        # 22,7 : il lève la pointe vers le plafond, lentement
+        tb_ = max(arrival(21.78 + 0.9), self.tpose.t + 0.05)
+        self.tpose.hold(tb_).to(tb_ + 0.35, (1.0, -0.12, 1.16)).hold(tb_ + 0.75).to(tb_ + 0.95, (1.0, 0.0, 1.0))
+        # 23,65 : il sursaute en arrière, se rattrape
+        tc_ = max(arrival(23.65), self.tpose.t + 0.05)
+        x0_ = tp(tc_)[0]
+        tp.hold(tc_).to(tc_ + 0.12, (x0_ - 26.0, LEV["RL3"]), ease=out_q).to(tc_ + 0.5, (x0_ - 18.0, LEV["RL3"]))
+        self.tpose.hold(tc_).to(tc_ + 0.1, (1.0, -0.2, 1.0), ease=out_q).to(tc_ + 0.45, (1.0, 0.06, 1.0)).to(tc_ + 0.6, (1.0, 0.0, 1.0))
+        # vers la porte, la pointe contre la porte : il écoute
         door_x = SW_R - TB / 2 - 14.0
-        tp.to(24.4, (door_x, LEV["RL3"]), ease=smooth)
         self.door_x = door_x
-        # 24,6 : la pointe contre la porte, il écoute
-        self.tpose.hold(24.5).to(24.95, (1.0, 0.33, 1.0)).hold(25.55)
-        # 25,3 : l'anneau ; il recule d'un pas
-        t253 = 25.3 + self.ring_delay(25.3, (470.0, FLOOR_YB), tp(25.3))
-        t253 = max(t253, 25.6)
-        self.tpose.to(t253 + 0.12, (1.0, -0.08, 1.05), ease=out_q).to(t253 + 0.6, (1.0, 0.0, 1.0))
-        tp.hold(t253).to(t253 + 0.4, (door_x - 55.0, LEV["RL3"]), ease=out_q)
+        tw = tc_ + 0.6
+        tp.hold(tw).to(tw + 0.5, (door_x, LEV["RL3"]), ease=smooth)
+        self.tpose.hold(tw + 0.45).to(tw + 0.8, (1.0, 0.33, 1.0))
+        # 25,0 : l'anneau ; il recule d'un pas
+        t25 = max(arrival(25.0), self.tpose.t + 0.1)
+        self.tpose.hold(t25).to(t25 + 0.12, (1.0, -0.08, 1.05), ease=out_q).to(t25 + 0.6, (1.0, 0.0, 1.0))
+        tp.hold(t25).to(t25 + 0.4, (door_x - 55.0, LEV["RL3"]), ease=out_q)
         tp.hold(27.15).to(27.45, (door_x, LEV["RL3"]))
         self.tpose.hold(27.5)
 
@@ -953,9 +966,21 @@ class Plan:
 
         for tk in (27.6, 27.9, 28.2):
             knock(tk)
-        for tk in (29.7, 30.0):
-            knock(tk)
-        knock(32.75, 1.25)
+        # 29,35 : l'anneau ; il se fige en pleine frappe, l'autre pied en l'air
+        tf_ = max(arrival(29.35), self.tpose.t + 0.05)
+        self.tfoot.hold(tf_).to(tf_ + 0.07, (1.0, 0.0), ease=out_q).hold(tf_ + 0.6).to(tf_ + 0.75, (0.0, 0.0))
+        self.tpose.hold(tf_).to(tf_ + 0.08, (1.0, 0.2, 1.03), ease=out_q).hold(tf_ + 0.6).to(tf_ + 0.75, (1.0, 0.1, 1.0))
+        # il répond : deux coups
+        tk_ = max(tf_ + 0.85, arrival(29.35 + 0.86) + 0.05)
+        knock(tk_)
+        knock(tk_ + 0.3)
+        # le rebond contre le mur : un petit bond en arrière, puis il revient
+        tg_ = max(arrival(self.t_on - 2 * SW_HALF), self.tpose.t + 0.05)
+        x1_ = tp(tg_)[0]
+        tp.hold(tg_).to(tg_ + 0.15, (x1_ - 22.0, LEV["RL3"] - 14.0), ease=out_q).to(tg_ + 0.3, (x1_ - 30.0, LEV["RL3"])).to(tg_ + 0.8, (door_x, LEV["RL3"]))
+        self.tpose.hold(tg_).to(tg_ + 0.15, (1.0, -0.15, 1.08), ease=out_q).to(tg_ + 0.5, (1.0, 0.05, 1.0))
+        # un dernier coup, plus fort, juste avant la lumière
+        knock(max(self.t_on - 0.35, self.tpose.t + 0.05), 1.25)
         self.tpose.hold(self.t_on)
         # la lumière sous la porte : il la fixe
         self.tlight.hold(-1)
@@ -963,22 +988,25 @@ class Plan:
             self.tlight.hold(tt).to(tt + 0.06, float(s), ease=linear)
         self.tlight.hold(70)
         self.tpose.to(self.t_on + 0.3, (1.0, 0.22, 0.95)).hold(self.taps[0])
-        for tt in self.taps:
+        for tt in self.taps[:-1]:
             self.tpose.hold(tt).to(tt + 0.08, (1.0, 0.16, 1.06)).to(tt + 0.4, (1.0, 0.22, 0.95))
+        self.tpose.hold(self.taps[-1] + 0.03)
         # 37,0 : noir ; il baisse la pointe vers son cupcake, se retourne, redescend
-        self.tpose.hold(37.0).to(37.35, (0.96, 0.3, 0.92)).hold(37.45)
-        self.tface.hold(37.4).to(37.75, -1.0)
-        self.tpose.to(37.75, (1.0, -0.12, 0.96))
-        tp.hold(37.45).to(37.75, (RL_X - 15.0, LEV["RL3"]))
-        t = 37.8
-        for nm, gap in (("F3.3", 0.17), ("F3.2", 0.17), ("F3.1", 0.17)):
-            t = step(t, nm, T=0.38, face=-1.0, lean=0.1) + gap
+        # le dernier « noir » : il baisse la pointe vers son cupcake, déçu, se retourne, redescend
+        td = self.tpose.t
+        self.tpose.to(td + 0.18, (0.94, 0.32, 0.9)).hold(td + 0.22)
+        self.tface.hold(td + 0.15).to(td + 0.38, -1.0)
+        self.tpose.to(td + 0.38, (0.97, -0.14, 0.94))
+        tp.hold(td + 0.12).to(td + 0.36, (RL_X - 15.0, LEV["RL3"]))
+        t = td + 0.38
+        for nm, gap in (("F3.3", 0.07), ("F3.2", 0.07), ("F3.1", 0.07)):
+            t = step(t, nm, T=0.35, face=-1.0, lean=0.1) + gap
         t = step(t, "LL2", T=0.38, face=-1.0)
         self.tface.hold(t).to(t + 0.25, 1.0)
         tp.hold(t + 0.25)
         self.tlayer.set(t + 0.25, "back")
         t = t + 0.25
-        for nm, gap in (("F2.3", 0.17), ("F2.2", 0.17), ("F2.1", 0.17)):
+        for nm, gap in (("F2.3", 0.07), ("F2.2", 0.07), ("F2.1", 0.07)):
             t = step(t, nm, T=0.38, face=1.0, lean=0.1) + gap
         t = step(t, "RL1", T=0.42, face=1.0)
         # sur le palier, il avance à petits pas, la pointe basse ; il ne se retourne pas
@@ -1027,19 +1055,24 @@ class Plan:
         self.hit(53.9, "n", ring=600, world="T")
         hop.hold(53.9)
         hop.set((0.0, 0.0))
-        seq2 = [(54.8, "n", 600), (56.2, "p", 300), (57.6, "t", 260)]
+        seq2 = [(54.8, "n", 600), (56.2, "p", 300), (57.4, "p", 300)]
         for (tt, cls, rr) in seq2:
             hop.arc(tt, (0.0, 0.0), g=SG)
             self.hit(tt, cls, ring=rr, world="T")
         self.head_candle.set(53.9, "out")
-        b.fn(57.6, lambda t: self.in_hands(t))
-        # le plus petit rebond, puis il reste dans la crème (noir)
-        hop.to(57.66, (0.0, -4.0), ease=out_q).to(57.76, (0.0, 0.0), ease=linear).hold(60.2)
-        b.fn(60.2, lambda t: self.in_hands(t))
-        self.hit(60.2, "n", ring=1300, world="T")
-        hop.arc(61.5, (0.0, 0.0), g=SG)
-        hop.hold(63.0)
-        b.fn(63.0, lambda t: self.in_hands(t))
+        # 58,5 : le plus petit rebond, au ras de la crème ; son petit anneau souffle les huit bougies
+        T_TINY = 58.5
+        self.t_tiny = T_TINY
+        hop.arc(T_TINY, (0.0, 0.0), g=SG)
+        self.hit(T_TINY, "t", ring=TINY_RING, world="T", squash=0.08)
+        hop.to(T_TINY + 0.07, (0.0, -5.0), ease=out_q).to(T_TINY + 0.16, (0.0, 0.0), ease=linear).hold(T_FINAL)
+        # le noir (0,5 s), puis l'image finale : un « Bounce », et le dernier, sur l'image
+        self.hit(T_FINAL, "n", ring=1300, world="T")
+        hop.arc(T_FINAL + 0.9, (0.0, 0.0), g=SG)
+        self.hit(T_FINAL + 0.9, "n", ring=900, world="T")
+        hop.arc(T_FINAL + 0.9 + 1.25, (0.0, 0.0), g=SG)
+        hop.hold(64.0)
+        b.fn(64.0, lambda t: self.in_hands(t))
         # le triangle
         tp.hold(70)
         tps = self.tpose
@@ -1064,14 +1097,14 @@ class Plan:
         # 54,8 : il se retourne
         self.tface.hold(54.8).to(55.4, -1.0)
         tps.to(55.4, (1.0, 0.0, 1.0)).to(56.0, (1.0, 0.0, 1.08))
-        # 56,2 : il se penche vers les huit flammes et gonfle
-        tps.hold(56.2).to(57.55, (1.38, -0.3, 1.0))
-        tps.hold(59.0)
-        # dans le noir il se dégonfle lentement
-        tps.to(60.2, (1.18, -0.24, 1.0), ease=linear).hold(70)
+        # 56,2 : il se penche vers les huit flammes et gonfle (la plus grande inspiration)
+        tps.hold(56.2).to(58.45, (1.38, -0.12, 1.0))
+        tps.hold(T_FINAL)
+        # l'image finale : il souffle pour rien, la pointe en avant, et se dégonfle
+        self.breath.append((T_FINAL + 0.05, 64.0))
+        tps.to(64.0, (1.12, -0.12, 1.0), ease=linear).hold(70)
         self.tface.hold(70)
-        # les flammes du grand gâteau
-        self.big_out = 57.9
+        self.big_out = 99.0
         # la caméra de l'escalier
         # (calculée dans cam_stairs)
         self.build_friends_stairs()
@@ -1101,7 +1134,8 @@ class Plan:
             up = smooth((t - 54.8) / 0.8) * 60.0
         hh = 50.0 * st + up
         half = b / 2 * max(0.0, 1 - hh / h)
-        return to_w(f * (half + 34.0 + 12.0 * sl), -hh)
+        off = 34.0 - (10.0 * smooth((t - 54.8) / 0.8) if t > 54.8 else 0.0)
+        return to_w(f * (half + off + 12.0 * sl), -hh)
 
     def in_hands(self, t):
         cx, cy = self.cup_center(t)
@@ -1149,7 +1183,7 @@ class Plan:
         path = ["RL3", "F3.3", "F3.2", "F3.1", "LL2", "F2.3", "F2.2", "F2.1"]
         final = {"green": 7, "blue": 6, "yellow": 5, "orange": 5}
         lag = {"green": 0, "blue": 3, "yellow": 5, "orange": 7}
-        xoff = {"yellow": 27.0, "orange": -27.0}
+        xoff = {"yellow": 27.0, "orange": -27.0, "green": -35.0}
         freeze = [(48.4, 49.3), (49.7, 50.5), (51.9, 52.8)]
         # la file : au créneau n, l'ami i va à la case n - i
         slots = []
@@ -1193,9 +1227,10 @@ class Plan:
             f.pos.hold(70)
             f.pose.hold(54.8)
             # 55,0 : ils tendent le gâteau ; 56,2 : ils se penchent avec lui
-            f.pose.to(max(56.4, f.pose.t + 0.2), (1.0, 1.0, 0.0)).to(57.5, (1.0, 1.0, -0.16)).hold(59.0)
-            # 60,2 : tous tournés vers la balle
-            f.pose.to(59.6, (1.0, 1.0, 0.2)).hold(70)
+            lean = 0.0 if nm == "green" else 0.14
+            f.pose.to(max(56.4, f.pose.t + 0.2), (1.0, 1.0, 0.0)).to(58.3, (1.0, 1.0, lean * 0.6)).hold(T_FINAL)
+            # l'image finale : figés, tous penchés vers la balle
+            f.pose.to(T_FINAL + 0.25, (1.0, 1.0, lean)).hold(70)
         self.t_friends_done = max(f.arrive for f in FS.values())
 
 
@@ -1219,10 +1254,10 @@ def ring_state(t, tr, rmax):
 
 # ------------------------------------------------------------------ caméras
 SPLIT_ANCHOR = (540.0, 1400.0)
-ZS, ZF, ZE = 2.5, 1.42, 2.1
-FULL_C = (376.0, 760.0)
-END_C = (470.0, 800.0)
-T_TR0, T_TR1 = 38.75, 39.55
+ZS, ZF, ZE = 2.5, 1.7, 2.1
+CH_XMIN, CH_XMAX = 215.0, 470.0
+END_C = (495.0, 800.0)
+T_TR0, T_TR1 = 38.5, 39.2
 T_Z0, T_Z1 = 46.0, 48.3
 
 
@@ -1233,43 +1268,61 @@ def cam_split_screen(x, y, tri):
 class Cams:
     def __init__(self, plan):
         self.p = plan
-        # le suivi du triangle (vue coupée), lissé
-        ts = np.arange(-1.0, 40.0, 1 / 60.0)
+        dt = 1 / 60.0
+        # la vue coupée suit le triangle, lissé
+        ts = np.arange(-1.0, 70.0, dt)
         raw = np.array([plan.tpos(t) for t in ts])
         sm = raw.copy()
-        k = 1 - math.exp(-(1 / 60.0) / 0.35)
+        k = 1 - math.exp(-dt / 0.35)
         for i in range(1, len(ts)):
             sm[i] = sm[i - 1] + (raw[i] - sm[i - 1]) * k
         self.fts, self.fsm = ts, sm
+        # la poursuite (plein écran) : le cadre tient la balle ET le triangle, lissé
+        door = (SW_R + 10.0, LEV["RL3"] - 60.0)
+        ch = np.zeros((len(ts), 2))
+        for i, t in enumerate(ts):
+            tri = plan.tpos(t)
+            bp = plan.bpos(t)[:2] if plan.bworld(t) == "T" else door
+            mx = 0.4 * tri[0] + 0.6 * bp[0]
+            my = 0.5 * (tri[1] - 60.0 + bp[1])
+            ch[i] = (min(CH_XMAX, max(CH_XMIN, mx)), my)
+        i0 = int((T_TR0 + 1.0) / dt)
+        ch[:i0] = sm[:i0] - np.array([0.0, 60.0])
+        kc = 1 - math.exp(-dt / 0.18)
+        for i in range(i0, len(ts)):
+            ch[i] = ch[i - 1] + (ch[i] - ch[i - 1]) * kc
+        self.csm = ch
+
+    def _i(self, t):
+        return int(min(len(self.fts) - 1, max(0, (t + 1.0) * 60.0)))
 
     def follow(self, t):
-        i = int(min(len(self.fts) - 1, max(0, (t + 1.0) * 60.0)))
-        x, y = self.fsm[i]
+        x, y = self.fsm[self._i(t)]
         return (float(x), float(y) - 60.0)
+
+    def chase(self, t):
+        x, y = self.csm[self._i(t)]
+        return (float(x), float(y))
 
     def stairs(self, t):
         """(cx, cy, z, ax, ay) : le point du monde au centre, le zoom, l'ancre à l'écran."""
         if t < T_TR0:
             c = self.follow(t)
             return (c[0], c[1], ZS, SPLIT_ANCHOR[0], SPLIT_ANCHOR[1])
+        c = self.chase(t)
         if t < T_TR1:
-            c0 = self.follow(T_TR0)
             u = smooth((t - T_TR0) / (T_TR1 - T_TR0))
-            z = ZS + (ZF - ZS) * u
-            return (c0[0] + (FULL_C[0] - c0[0]) * u, c0[1] + (FULL_C[1] - c0[1]) * u, z,
-                    540.0, SPLIT_ANCHOR[1] + (960.0 - SPLIT_ANCHOR[1]) * u)
+            return (c[0], c[1], ZS + (ZF - ZS) * u, 540.0, SPLIT_ANCHOR[1] + (960.0 - SPLIT_ANCHOR[1]) * u)
         if t < T_Z0:
-            return (FULL_C[0], FULL_C[1], ZF, 540.0, 960.0)
+            return (c[0], c[1], ZF, 540.0, 960.0)
         u = smooth((t - T_Z0) / (T_Z1 - T_Z0))
-        uc = clamp01((t - T_Z0) / (T_Z1 - T_Z0)) ** 0.5
-        uc = smooth(uc)
-        return (FULL_C[0] + (END_C[0] - FULL_C[0]) * uc, FULL_C[1] + (END_C[1] - FULL_C[1]) * uc,
-                ZF + (ZE - ZF) * u, 540.0, 960.0)
+        uc = smooth(clamp01((t - T_Z0) / (T_Z1 - T_Z0)) ** 0.5)
+        return (c[0] + (END_C[0] - c[0]) * uc, c[1] + (END_C[1] - c[1]) * uc, ZF + (ZE - ZF) * u, 540.0, 960.0)
 
     def salon_dy(self, t):
         if t < T_TR0:
             return 0.0
-        u = smooth((t - T_TR0) / 0.85)
+        u = smooth((t - T_TR0) / 0.75)
         return -(PANEL_Y + 40.0) * u
 
     def panel_top(self, t):
@@ -1380,6 +1433,7 @@ class Scene(Chapter):
     def setup(self):
         self.P = Plan(self.cfg)
         self.C = Cams(self.P)
+        self.compute_candle_outs()
         self.CHUTE = 4.4
         self.hold_s = self.P.END - self.CHUTE
         self.lines = [(0.0, self.cfg["hook_text"].strip().lower().capitalize(), "title")]
@@ -1546,17 +1600,35 @@ class Scene(Chapter):
         return rot_pts(pts, px, y, tilt)
 
     def dark(self, t):
-        """Le noir de la fin : 0 = vu, 1 = noir total."""
-        if t < 57.9:
-            return 0.0
-        if t < 58.0:
-            return (t - 57.9) / 0.1
-        if t < 60.2:
+        """Le noir de la fin (au plus 0,5 s) : 0 = vu, 1 = noir total."""
+        if self.T_OUT <= t < T_FINAL:
             return 1.0
-        if t < 61.5:
-            u = (t - 60.2)
-            return clamp01(1 - 0.75 * math.exp(-u / 0.5)) if u > 0.05 else 1 - u / 0.05 * 0.75
-        return 1.0
+        return 0.0
+
+    def compute_candle_outs(self):
+        """Quand l'anneau du plus petit rebond atteint chaque flamme : elle se couche dans son
+        sens, puis s'éteint."""
+        P = self.P
+        tt = P.t_tiny
+        cxk, cyk = self.cake_pos(tt)
+        k = P.fk * 0.9
+        bottom = cyk + 82 * k * 0.5
+        hw, hh = 65.0 * k, 82.0 * k
+        cx, cy, z, ax, ay = self.C.stairs(tt)
+        bx, by = P.bpos(tt)[:2]
+        bsx, bsy = ax + (bx - cx) * z, ay + (by - cy) * z
+        v = ring_speed(TINY_RING)
+        self.c_arr, self.c_out, self.c_dir = [], [], []
+        for j in range(8):
+            x = cxk - hw + 12 * k + j * (2 * hw - 24 * k) / 7
+            y = bottom - hh - 36 * k - 14 * k
+            sx, sy = ax + (x - cx) * z, ay + (y - cy) * z
+            d = math.hypot(sx - bsx, sy - bsy)
+            arr = tt + max(0.0, d - 0.9 * R) / v
+            self.c_arr.append(arr)
+            self.c_out.append(arr + 0.07)
+            self.c_dir.append(1.0 if sx > bsx else -1.0)
+        self.T_OUT = max(self.c_out) + 0.03
 
     # ---------------------------------------------------------- dessin
     def draw(self, dr, s, tl, S):
@@ -1599,9 +1671,12 @@ class Scene(Chapter):
     def candle_h(self, k, t):
         """Hauteur relative de la flamme k du gâteau (0 = éteinte)."""
         P = self.P
-        if t >= P.big_out:
+        if t >= self.c_out[k]:
             return 0.0
         h = 1.0 + 0.08 * math.sin(t * 17 + k * 1.7) + 0.05 * math.sin(t * 31 + k)
+        u = t - (self.c_arr[k] - 0.06)
+        if u > 0:
+            h *= 1 - 0.6 * clamp01(u / 0.12)
         if k == 7 and P.cdl_free(t):
             return h
         # 12,5 : toutes se couchent ; la n°3 s'éteint presque
@@ -1755,16 +1830,28 @@ class Scene(Chapter):
             dr.ellipse(V.box(hx - 9 + sh, hy - 9, hx + 9 + sh, hy + 9), fill=self.lit((90, 80, 50), (230, 200, 110), hx, hy, t))
 
     def draw_switch(self, dr, V, t):
-        x0, y0, x1, y1 = SWITCH
-        plate = self.lit((50, 46, 52), (220, 214, 200), x0, y0, t)
-        dr.rounded_rectangle(V.box(x0, y0, x1, y1), radius=V.L(8), fill=plate, outline=dim(plate, 0.6), width=max(1, int(V.L(3))))
+        """Un gros interrupteur ; il s'illumine quand Bounce le tape."""
+        x0, x1 = SWITCH[0], SWITCH[2]
+        cx, cy = (x0 + x1) / 2, SWITCH_Y
+        y0, y1 = cy - 56.0, cy + 56.0
+        flash = 0.0
+        for tt in self.P.sw_taps:
+            u = t - tt
+            if 0 <= u < 0.5:
+                flash = max(flash, 1 - u / 0.5)
+        if flash > 0:
+            for k in range(6, 0, -1):
+                r = 70.0 + 22.0 * k
+                dr.ellipse(V.box(cx - r, cy - r, cx + r, cy + r),
+                           fill=mix(self.lit(WALL_D, WALL_L, cx, cy, t), (255, 240, 170), 0.12 * flash * (7 - k)))
+        plate = mix(self.lit((70, 64, 70), (226, 220, 206), x0, y0, t), (255, 250, 220), flash)
+        dr.rounded_rectangle(V.box(x0, y0, x1, y1), radius=V.L(10), fill=plate, outline=dim(plate, 0.55), width=max(1, int(V.L(4))))
         on = self.P.sw(t)
-        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
-        lever = mix((70, 66, 70), (250, 248, 240), max(self.light(t), 0.35))
+        lever = mix(mix((90, 84, 90), (250, 248, 240), max(self.light(t), 0.4)), (255, 230, 120), flash)
         if on:
-            dr.rectangle(V.box(cx - 12, cy - 30, cx + 12, cy + 2), fill=lever, outline=dim(plate, 0.4), width=max(1, int(V.L(2))))
+            dr.rounded_rectangle(V.box(cx - 17, cy - 40, cx + 17, cy + 4), radius=V.L(6), fill=lever, outline=dim(plate, 0.4), width=max(1, int(V.L(3))))
         else:
-            dr.rectangle(V.box(cx - 12, cy - 2, cx + 12, cy + 30), fill=lever, outline=dim(plate, 0.4), width=max(1, int(V.L(2))))
+            dr.rounded_rectangle(V.box(cx - 17, cy - 4, cx + 17, cy + 40), radius=V.L(6), fill=lever, outline=dim(plate, 0.4), width=max(1, int(V.L(3))))
 
     def draw_table(self, dr, V, t):
         P = self.P
@@ -1810,17 +1897,32 @@ class Scene(Chapter):
             stick = mix(dim(stick, 0.4), stick, max(L, 0.7) if lit_k is None else lit_k)
             dr.polygon(V.P(R_(rect_pts(x - 4.5 * k, y0 - 36 * k, x + 4.5 * k, y0))), fill=stick)
             fh = self.candle_h(j, t)
+            px, py = rot_pts([(x, y0 - 36 * k)], pivot[0], pivot[1], rock)[0]
             if fh > 0.02:
-                px, py = rot_pts([(x, y0 - 36 * k)], pivot[0], pivot[1], rock)[0]
-                draw_flame(dr, V, px, py, 34 * k * fh, 15 * k, lean + rock)
-            elif t >= self.P.big_out:
-                # la mèche rougeoie
-                px, py = rot_pts([(x, y0 - 36 * k)], pivot[0], pivot[1], rock)[0]
+                # l'anneau du plus petit rebond : la flamme se couche dans son sens
+                ring_lean = 0.0
+                u = t - (self.c_arr[j] - 0.06)
+                if u > 0:
+                    ring_lean = self.c_dir[j] * 1.4 * clamp01(u / 0.1)
+                draw_flame(dr, V, px, py, 34 * k * fh, 15 * k, lean + rock + ring_lean)
+            elif t >= self.c_out[j]:
+                # la mèche rougeoie, un filet de fumée monte
                 g = 0.65 + 0.35 * math.sin(t * 5 + j * 1.3)
-                fade = clamp01(1 - (t - 61.5) / 0.05) if t > 61.5 else 1.0
                 rr = 4.5 * k
-                dr.ellipse(V.box(px - rr * 2.2, py - rr * 2.2, px + rr * 2.2, py + rr * 2.2), fill=mix(BG, (90, 18, 8), g * fade))
-                dr.ellipse(V.box(px - rr, py - rr * 1.4, px + rr, py + rr * 0.6), fill=mix(BG, (255, 70, 30), g * fade))
+                dr.ellipse(V.box(px - rr * 2.2, py - rr * 2.2, px + rr * 2.2, py + rr * 2.2), fill=mix(BG, (90, 18, 8), g))
+                dr.ellipse(V.box(px - rr, py - rr * 1.4, px + rr, py + rr * 0.6), fill=mix(BG, (255, 70, 30), g))
+                if lit_k is None or lit_k > 0.05:
+                    lk_ = 1.0 if lit_k is None else lit_k
+                    age = t - self.c_out[j]
+                    for m in range(7):
+                        uu = (age * 1.1 + m / 7.0) % 1.0 if age > 0.9 else (age * 1.1 - m / 7.0)
+                        if uu <= 0 or uu >= 1.0:
+                            continue
+                        sx_ = px + (self.c_dir[j] * 10 * uu + 7 * math.sin(uu * 7 + j + t * 2)) * k * 2
+                        sy_ = py - uu * 120 * k
+                        rad = (3 + 9 * uu) * k
+                        dr.ellipse(V.box(sx_ - rad, sy_ - rad, sx_ + rad, sy_ + rad),
+                                   fill=mix(mix(BG, (96, 88, 100), lk_), (215, 215, 225), 0.85 * (1 - uu) * lk_))
 
     def draw_candle(self, dr, V, x, y, a, t, lit=True, k=1.0):
         pts = rot_pts(rect_pts(x - 4.5 * k, y - 18 * k, x + 4.5 * k, y + 18 * k), x, y, a)
@@ -1856,7 +1958,7 @@ class Scene(Chapter):
         k = 1.0
         w, h = f.w * sx, f.h * sy
         if salon:
-            col = self.lit(dim(f.col, 0.18), f.col, x, y, t)
+            col = self.lit(dim(f.col, 0.45), f.col, x, y, t)
         else:
             col = mix((0, 0, 0), f.col, light_k if light_k is not None else 1.0)
         dark = dim(col, 0.72)
@@ -1889,15 +1991,16 @@ class Scene(Chapter):
             hat = f.hat(t)
             hc1, hc2 = HATS[f.name]
             if salon:
-                hc1 = self.lit(dim(hc1, 0.2), hc1, x, y - h, t)
-                hc2 = self.lit(dim(hc2, 0.2), hc2, x, y - h, t)
+                hc1 = self.lit(dim(hc1, 0.5), hc1, x, y - h, t)
+                hc2 = self.lit(dim(hc2, 0.5), hc2, x, y - h, t)
             else:
                 lk = light_k if light_k is not None else 1.0
                 hc1, hc2 = mix((0, 0, 0), hc1, lk), mix((0, 0, 0), hc2, lk)
-            hw_ = min(0.6 * f.w, 56.0 * f.w / 105.0 if f.w < 80 else 56.0)
-            hh_ = 42.0 * (f.w / 105.0 if f.w < 80 else 1.0)
+            sc_h = f.w / 105.0 if f.name != "green" else f.w / 80.0 * 0.85
+            hw_ = 62.0 * sc_h
+            hh_ = 66.0 * sc_h
             if f.name == "green":
-                hw_, hh_ = 48.0 * (f.w / 80.0), 42.0 * (f.w / 80.0)
+                pass
             if hat == "crushed":
                 pts = [Pp(-hw_ * 0.75, -h / 2), Pp(hw_ * 0.75, -h / 2), Pp(hw_ * 0.35, -h / 2 - hh_ * 0.32), Pp(-hw_ * 0.45, -h / 2 - hh_ * 0.25)]
                 dr.polygon(V.P(pts), fill=hc1)
@@ -1909,7 +2012,7 @@ class Scene(Chapter):
                     half = hw_ / 2 * (1 - j)
                     dr.line(V.P([Pp(-half, yy), Pp(half, yy)]), fill=hc2, width=max(1, int(V.L(5 * f.w / 105.0 + 1))))
                 pp = Pp(0, -h / 2 - hh_)
-                r = 7.0 * (f.w / 105.0 if f.w < 80 else 1.0)
+                r = 10.0 * sc_h
                 dr.ellipse(V.box(pp[0] - r, pp[1] - r, pp[0] + r, pp[1] + r), fill=hc2)
         # bras
         if arms:
@@ -1995,16 +2098,18 @@ class Scene(Chapter):
                             else:
                                 lean = -0.5 * math.sin(math.pi * u)
                     draw_flame(dr, V, tx, ty, 26 * k * fh * (1 + 0.08 * math.sin(t * 23)), 12 * k, lean)
-                elif t < 55.6:
-                    # filet de fumée
+                else:
+                    # filet de fumée, qui ne s'arrête pas
                     tx, ty = rot_pts([(cx, cy - 26 * k)], cx, cy, tilt)[0]
                     for j in range(5):
                         u = (t - 53.95 - j * 0.12)
+                        if u > 1.4:
+                            u = u % 1.4
                         if 0 < u < 1.4:
                             px = tx + 6 * math.sin(u * 5 + j) * k
                             py = ty - u * 45 * k
                             rad = (3 + 5 * u) * k
-                            dr.ellipse(V.box(px - rad, py - rad, px + rad, py + rad), fill=mix(BG, (120, 120, 130), 0.7 * (1 - u / 1.4)))
+                            dr.ellipse(V.box(px - rad, py - rad, px + rad, py + rad), fill=mix((96, 88, 100), (215, 215, 225), 0.8 * (1 - u / 1.4)))
 
     # ---- l'escalier
     def draw_stairs(self, dr, t, S, oy=0.0):
@@ -2024,10 +2129,16 @@ class Scene(Chapter):
                 c = mix(STAIR_WALL, (124, 84, 40), (1 - k / 14) ** 1.6 * 0.8 * fl)
                 dr.ellipse(V.box(cxk - r, cyk - r, cxk + r, cyk + r), fill=mix(BG, c, amb))
         # murs latéraux, plafond
-        side = mix(BG, (11, 11, 18), amb)
-        dr.rectangle(V.box(-600, -600, 0, 2600), fill=side)
-        dr.rectangle(V.box(SW_R, -600, SW_R + 600, 2600), fill=side)
-        dr.rectangle(V.box(-600, -600, SW_R + 600, LEV["RL3"] - 230.0), fill=side)
+        side = mix(BG, (14, 14, 22), amb)
+        wallc = mix(BG, (70, 66, 92), amb)
+        edge = mix(BG, (120, 116, 150), amb)
+        dr.rectangle(V.box(-600, -600, -40, 2600), fill=side)
+        dr.rectangle(V.box(-40, -600, 0, 2600), fill=wallc)
+        dr.rectangle(V.box(-6, -600, 0, 2600), fill=edge)
+        dr.rectangle(V.box(SW_R + 40, -600, SW_R + 600, 2600), fill=side)
+        dr.rectangle(V.box(SW_R, -600, SW_R + 40, 2600), fill=wallc)
+        dr.rectangle(V.box(SW_R, -600, SW_R + 6, 2600), fill=edge)
+        dr.rectangle(V.box(-600, -600, SW_R + 600, LEV["RL3"] - 2 * RISE * (STEPS + 1) - 240.0), fill=side)
         # la porte de côté (palier du haut)
         dx0, dy0, dx1, dy1 = SDOOR
         op = P.sdoor(t)[0]
@@ -2044,15 +2155,20 @@ class Scene(Chapter):
                        fill=mix(STAIR_WALL, (255, 236, 170), 0.32 * lb))
             dr.rectangle(V.box(dx0 - 4, dy1 - 5, dx0 + 26, dy1), fill=mix(STAIR_WALL, (255, 246, 200), lb))
         # les volées : celles du fond plus sombres
-        for fl in ("F0", "F2"):
+        for fl in ("F0", "F2", "F4"):
             self.draw_flight(dr, V, fl, STAIR_BACK, amb)
         self.draw_rail(dr, V, "F2", amb)
-        for nm in ("LL0", "RL1", "LL2", "RL3", "RL-1", "LL-2"):
-            y = LEV.get(nm, LEV["LL0"] + RISE * (STEPS + 1) * (1 if nm == "RL-1" else 2))
+        lv = dict(LEV)
+        lv["RL-1"] = LEV["LL0"] + RISE * (STEPS + 1)
+        lv["LL-2"] = LEV["LL0"] + 2 * RISE * (STEPS + 1)
+        lv["LL4"] = LEV["RL3"] - RISE * (STEPS + 1)
+        lv["RL5"] = LEV["RL3"] - 2 * RISE * (STEPS + 1)
+        for nm in ("LL0", "RL1", "LL2", "RL3", "RL-1", "LL-2", "LL4", "RL5"):
+            y = lv[nm]
             x0, x1 = (-30.0, FX0) if nm.startswith("LL") else (FX1, SW_R + 30.0)
             dr.rectangle(V.box(x0, y, x1, y + 34), fill=mix(BG, STAIR_FRONT, amb))
             dr.rectangle(V.box(x0, y, x1, y + 5), fill=mix(BG, (90, 90, 114), amb))
-        for fl in ("F1", "F3", "F-1"):
+        for fl in ("F1", "F3", "F-1", "F5"):
             self.draw_flight(dr, V, fl, STAIR_FRONT, amb)
         # les acteurs, par-dessus les volées
         lk = amb
@@ -2069,8 +2185,6 @@ class Scene(Chapter):
             self.draw_breath(dr, V, t, lk)
         if dk > 0:
             self.draw_dark_end(dr, V, t, dk)
-            if 60.2 <= t < 61.5 and bw is not None and lk > 0.02:
-                self.draw_ball(dr, V, t, bw, light_k=None)
 
     def cake_in_stairs(self, t):
         f = self.P.FS["green"]
@@ -2080,13 +2194,19 @@ class Scene(Chapter):
         f = self.P.FS["green"]
         x, y, sx, sy, a = f.state(t)
         k = self.P.fk
-        return (x, y - f.h / 2 - 82.0 * k * 0.9 * 0.5)
+        return (x - 14.0, y - f.h / 2 - 82.0 * k * 0.9 * 0.5)
 
     def flight_treads(self, fl):
         P = self.P
         if fl in ("F1", "F2", "F3"):
             return [P.tread(fl, k) for k in range(1, STEPS + 1)]
         y0 = LEV["LL0"]
+        if fl == "F4":
+            ya = LEV["RL3"]
+            return [(FX1 - TREAD * k, FX1 - TREAD * (k - 1), ya - RISE * k) for k in range(1, STEPS + 1)]
+        if fl == "F5":
+            ya = LEV["RL3"] - RISE * (STEPS + 1)
+            return [(FX0 + TREAD * (k - 1), FX0 + TREAD * k, ya - RISE * k) for k in range(1, STEPS + 1)]
         if fl == "F0":
             # sous LL0, la volée du fond descend vers la droite
             return [(FX0 + TREAD * (k - 1), FX0 + TREAD * k, y0 + RISE * k) for k in range(1, STEPS + 1)]
@@ -2221,9 +2341,16 @@ class Scene(Chapter):
                 tx -= f * 2.0
                 ty -= 4.0
                 tx += f * 30.0      # il souffle à côté
+            final = b0 >= T_FINAL
+            if final:
+                # il souffle encore, pour rien, vers les mèches éteintes
+                cxk, cyk = self.cake_pos(t)
+                tx, ty = cxk, cyk - 30.0
             for j in range(3):
                 off = (j - 1) * 9.0
                 k0 = clamp01(u * 1.6 - j * 0.1)
+                if final:
+                    k0 = clamp01(((t - b0) * 1.3 + j * 0.15) % 1.0 * 1.4)
                 pts = []
                 for m in range(10):
                     v = m / 9 * k0
@@ -2231,7 +2358,7 @@ class Scene(Chapter):
                     py = tipy + (ty - tipy) * v + off + 4 * math.sin(v * 10 + t * 20 + j)
                     pts.append((px, py))
                 if len(pts) > 1:
-                    dr.line(V.P(pts), fill=mix(BG, (200, 210, 230), lk * 0.8 * (1 - u * 0.5)), width=max(1, int(V.L(3))))
+                    dr.line(V.P(pts), fill=mix(BG, (200, 210, 230), lk * 0.8 * (1 - (0.0 if final else u) * 0.5)), width=max(1, int(V.L(3))))
 
     def draw_dark_end(self, dr, V, t, dk):
         """Noir total ; les mèches rougeoient ; la silhouette du triangle se dégonfle ;
@@ -2239,8 +2366,6 @@ class Scene(Chapter):
         P = self.P
         if dk >= 0.999:
             dr.rectangle([0, 0, W * V.S, H * V.S], fill=BG)
-        if t >= 61.5:
-            return
         # les braises du grand gâteau
         cxk, cyk = self.cake_pos(t)
         k = P.fk * 0.9
@@ -2253,11 +2378,6 @@ class Scene(Chapter):
             rr = 4.5 * k * 1.2
             dr.ellipse(V.box(x - rr * 2.4, y - rr * 2.4, x + rr * 2.4, y + rr * 2.4), fill=mix(BG, (110, 22, 8), g))
             dr.ellipse(V.box(x - rr, y - rr * 1.3, x + rr, y + rr * 0.7), fill=mix(BG, (255, 74, 30), g))
-        if t >= 58.9 and t < 60.2:
-            # la silhouette, découpée sur la lueur des braises
-            pts = self.tri_poly(t)
-            dr.polygon(V.P(pts), fill=(16, 10, 22))
-            dr.line(V.P(pts + [pts[0]]), fill=(70, 20, 22), width=max(1, int(V.L(3))))
 
     # ---- les anneaux
     def draw_rings(self, dr, t, S):
@@ -2280,8 +2400,6 @@ class Scene(Chapter):
                 cx, cy = ax + (x - cxs) * z, ay + (y - cys) * z
                 rr = r
                 cl = None
-            if t >= 61.5 and tr < 60.0:
-                continue
             col = mix(BG, (246, 246, 255), inten)
             draw_ring_poly(dr, cx, cy, rr, 9.0 + 5.0 * inten, col, S, clip=cl)
 
@@ -2297,12 +2415,12 @@ DEFAULTS = {
     "hook_text_s": 2.6, "hook_top": 0.085, "hook_font_size": 92,
     "narrator_voice": ak.VOICE_NAME, "narrator_length": 1.0, "narr_gap_s": 0.0,
     "sub_y": 1.5, "sub_font_size": 10,
-    "watermark_y": 0.95, "end_hold_s": 0.45, "narr_tail_s": 0.0,
+    "watermark_y": 0.95, "end_hold_s": 0.04, "narr_tail_s": 0.0,
     "scene_top": 0.22, "min_duration_s": 30.0, "max_duration_s": 70.0,
     "show_counter": False, "hook_voice": False,
 }
 
-CLASS_GAIN = {"n": 0.9, "L": 1.0, "m": 0.55, "p": 0.5, "t": 0.2}
+CLASS_GAIN = {"n": 0.9, "L": 1.0, "m": 0.55, "p": 0.5, "t": 0.4}
 
 
 class Sim(StorySim):
