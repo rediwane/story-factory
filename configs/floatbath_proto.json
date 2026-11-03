@@ -1,0 +1,15 @@
+{
+ "name": "floatbath_proto",
+ "theme": "floatbath",
+ "seed": 1,
+ "hook_text": "Can Float finish her bath?",
+ "float_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_provisoire",
+ "controle": {
+  "seuils": {
+   "silence_max_s": 3.9
+  },
+  "pourquoi": {
+   "silence_max_s": "une scène unique sans narrateur : le découpage décidé avec le propriétaire place trois silences voulus (Bounce tombé dans l'eau ne touche plus rien, la seconde de calme avant le plongeon, Float seule après la porte) ; ils durent 2,2 à 3,8 s, tous les autres trous restent sous 1,6 s"
+  }
+ }
+}
