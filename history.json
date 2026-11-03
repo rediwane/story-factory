@@ -329,6 +329,40 @@
     "measured_at": null
    },
    "script": "src/stories/matter.py (branche proto-matter)"
+  },
+  {
+   "name": "life_proto",
+   "date": "2026-11-04",
+   "theme": "life",
+   "config": "configs/life_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Ever Sit Still?",
+   "duration_s": 62.85,
+   "hashtags": [
+    "#lifestory",
+    "#animation",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/life_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-04T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9153872046635338311.mp4",
+   "metricool_post_id": 414947077,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (la vie de Bounce en une minute, proposé par Claude au propriétaire), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/life.py (branche proto-life)"
   }
  ],
  "themes": [
