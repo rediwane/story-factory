@@ -371,7 +371,7 @@
    "config": "configs/roast_proto.json",
    "role": "owner",
    "hook_text": "Look at this f*cking purple ball.",
-   "duration_s": 63.37,
+   "duration_s": 64.0,
    "hashtags": [
     "#bounce",
     "#roast",
@@ -381,8 +381,8 @@
    "caption": "captions/roast_proto.md",
    "slot": "14:30",
    "scheduled_time": "2026-11-04T14:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15725368494449779530.mp4",
-   "metricool_post_id": 415033420,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18069828700367869227.mp4",
+   "metricool_post_id": 415394414,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -493,6 +493,10 @@
   {
    "date": "2026-11-03T10:50+01:00",
    "note": "Session owner : roast_proto programmée le 04/11 à 14h30 (post 415033420). Idée du propriétaire : le narrateur insulte Bounce pendant une minute ; première réplique « Look at this f*cking purple ball. » (6 mots, pas une question, et « purple » alors que Bounce est rose : choix du propriétaire). Les gros mots sont bipés (sinusoïde 1 kHz synthétisée par src/stories/roast.py, aucun fichier audio) et étoilés à l'écrit : décision explicite du propriétaire, exception à la règle « aucun son ajouté » pour cette vidéo seulement. Juges : muet PASSE ; son RECALÉ (bips 4 à 5 LU au-dessus de la voix), v2 bip −6 dB et crête −1,5 dBTP → PASSE."
+  },
+  {
+   "date": "2026-11-03T16:30+01:00",
+   "note": "Session owner : roast_proto remplacée dans le post du 04/11 14h30 (nouvel id 415394414). Voix du narrateur passée sur Chatterbox (voix plus énervée, validée à l'écoute par le propriétaire), bip qui laisse passer le début du mot, quelques répliques allongées ; 64,0 s. Juges : muet PASSE ; son RECALÉ (fins de mots audibles sur 3 répliques) → bips allongés → corrigé. Le propriétaire garde le faux mort de la fin."
   }
  ]
 }
