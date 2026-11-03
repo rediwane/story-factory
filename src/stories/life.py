@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import base
 from base import dim, circle
 from chapters import StorySim
-from listkit import Chapter as _Chapter, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body, separate, body_poly
+from listkit import Chapter as _Chapter, RED, GREEN, AMBER, FLOOR_Y, SCENE_TOP, glow, mix, settle_body, separate, body_poly, sat_mtv
 
 
 class Chapter(_Chapter):
@@ -90,12 +90,37 @@ class DayOne(Chapter):
         self.R = 46.0
         self.hop_init(560.0, self.BOT, start_h=150.0, gain=(1.0, 1.0), min_h=80.0, max_h=700.0, wobble=30.0,
                       xmin=520, xmax=600, h_ref=250.0)
-        self.hops = [260.0, 104.0, 430.0, 380.0]
+        self.hops = [499.0, 545.0, 190.0, 240.0]
         self.rock = 0.0
         self.rock_w = 0.0
         self.line("Day one.", "title", 0.0)
         self.leave = False
-        self.spin = 2.6
+        self.spin = 1.4
+        self.lift = 0.0                         # de combien il a soulevé le mobile
+        self.lift_v = 0.0
+        self.touch = False
+
+    MCX, MY = 560.0, 760.0
+
+    def mob_need(self, ang):
+        """De combien il faut soulever le mobile pour qu'il ne rentre pas dans Bounce."""
+        bx, top_y, R = self.bx, self.by, self.R
+        need = 0.0
+        half = 210 * abs(math.cos(ang))
+        xa, xb = self.MCX - half, self.MCX + half
+        xc = min(xb, max(xa, bx))
+        if abs(xc - bx) < R:
+            ytop = top_y - math.sqrt(R * R - (xc - bx) ** 2)
+            need = max(need, self.MY + 3.0 - ytop)
+        for k in range(4):
+            a = ang + k * math.pi / 2
+            px = self.MCX + 210 * math.cos(a)
+            pr = 36 + 10 * math.sin(a)
+            dx = px - bx
+            if abs(dx) < R + pr:
+                yc = top_y - math.sqrt((R + pr) ** 2 - dx * dx)
+                need = max(need, self.MY + 92 - yc)
+        return need
 
     def on_land(self, k, evs):
         n = self.hits
@@ -108,17 +133,35 @@ class DayOne(Chapter):
             self.h = self.hops[n - 1]
             self.min_h = self.max_h = self.h
         self.rock_w += 1.4 * k * (1 if n % 2 else -1)
-        if self.h >= 240:
-            self.spin += 3.5
         if n == len(self.hops):
             # le dernier saut : par-dessus le bord du berceau, jusqu'au sol
             self.leave = True
-            self.xmin, self.xmax, self.wobble = 170.0, 170.0, 0.0
+            self.xmin, self.xmax, self.wobble = 235.0, 235.0, 0.0
 
     def after(self, dt, evs):
-        self.spin = max(1.4, self.spin - 0.6 * dt)
+        self.spin = max(1.4, self.spin - 0.8 * dt)
+        self.ang = getattr(self, "ang", 0.0) + self.spin * dt
         self.rock_w += (-30.0 * self.rock - 2.0 * self.rock_w) * dt
         self.rock += self.rock_w * dt
+        # le mobile : léger, il part avec sa tête quand il le cogne, puis retombe sur ses fils
+        need = self.mob_need(self.ang)
+        if need > self.lift:
+            if not self.touch:
+                self.spin += 4.0
+                self.touch = True
+            self.lift = need
+            self.lift_v = max(-self.vy, 0.0)
+        else:
+            self.touch = need > self.lift - 2.0
+            self.lift_v -= self.g * dt
+            self.lift += self.lift_v * dt
+            if self.lift < need:
+                self.lift = need; self.lift_v = max(0.0, -self.vy)
+            if self.lift <= 0.0:
+                self.lift = 0.0
+                if self.lift_v < -60.0:
+                    self.spin += 1.2
+                self.lift_v = -0.3 * self.lift_v if self.lift_v < -60.0 else 0.0
         if self.leave and self.bx < self.BX0 - self.R - 4:
             self.floor_y = FLOOR_Y
         if self.payoff:
@@ -127,7 +170,8 @@ class DayOne(Chapter):
 
     def snapshot(self):
         s = self.base_snap()
-        s["spin"] = self.spin
+        s["ang"] = self.ang if hasattr(self, "ang") else 0.0
+        s["lift"] = self.lift
         s["rock"] = self.rock
         s["end"] = self.end_t
         return s
@@ -152,10 +196,10 @@ class DayOne(Chapter):
             if SCENE_TOP + 30 < y < FLOOR_Y - 40:
                 dr.regular_polygon((P(x), P(y), P(18 + 6 * (k % 2))), 5, fill=mix(wall, (255, 225, 140), 0.45))
         night_window(dr, P, 800, 760, 1000, 960, wall, moon=(950, 810))
-        # le mobile au-dessus de son berceau
-        cx, my = 560.0, 790.0
+        # le mobile au-dessus de son berceau (soulevé quand il le cogne)
+        cx, my = self.MCX, self.MY - s["lift"]
         dr.line([(P(cx), P(SCENE_TOP)), (P(cx), P(my))], fill=(150, 150, 165), width=int(P(5)))
-        ang = s["t"] * s["spin"]
+        ang = s["ang"]
         dr.line([(P(cx - 210 * math.cos(ang)), P(my)), (P(cx + 210 * math.cos(ang)), P(my))], fill=(170, 170, 185), width=int(P(5)))
         for k in range(4):
             a = ang + k * math.pi / 2
@@ -182,9 +226,10 @@ class DayOne(Chapter):
         # son premier mot, dans une bulle
         if s["end"] is not None and 0 <= s["t"] - s["end"] < 1.6:
             bx, by = s["bx"], s["by"]
-            x0, y0, x1, y1 = bx + 60, by - 230, bx + 420, by - 110
+            x0 = max(20.0, bx - 110)
+            x0, y0, x1, y1 = x0, by - 350, x0 + 360, by - 230
             dr.rounded_rectangle([P(x0), P(y0), P(x1), P(y1)], radius=int(P(30)), fill=(250, 250, 252))
-            dr.polygon([(P(x0 + 40), P(y1 - 4)), (P(x0 + 100), P(y1 - 4)), (P(bx + 40), P(by - 50))], fill=(250, 250, 252))
+            dr.polygon([(P(bx - 10), P(y1 - 4)), (P(bx + 60), P(y1 - 4)), (P(bx + 10), P(by - self.R - 8))], fill=(250, 250, 252))
             dr.text((P((x0 + x1) / 2), P((y0 + y1) / 2)), "BOUNCE!", fill=(30, 20, 40), anchor="mm", font=base.font(int(P(64))))
 
 
@@ -224,37 +269,96 @@ class School(Chapter):
                 self.topple(j)
                 break
 
+    PILE_X = 215.0
+
     def topple(self, j):
+        """La pile s'écroule par le haut : les livres partent l'un après l'autre et
+        retombent en tas par terre, chacun sur le précédent ; aucun ne traverse un autre."""
         self.fall = []
+        top = []
+        j = max(j, self.N - 4)                   # les quatre du haut s'en vont, le bas de la pile tient
         for i in range(self.N):
             x = 450.0 + self.off[i]
             y = self.DTOP - self.BH * (i + 0.5)
-            c = {"x": x, "y": y, "a": 0.0, "vx": 0.0, "vy": 0.0, "w": 0.0, "rest": i < j, "i": i}
-            if i >= j:
-                c["vx"] = -self.rng.uniform(120, 420) * (1 + 0.15 * (i - j))
-                c["vy"] = -self.rng.uniform(0, 120)
-                c["w"] = -self.rng.uniform(2.0, 4.5)
+            c = {"x": x, "y": y, "a": 0.0, "vx": 0.0, "vy": 0.0, "w": 0.0, "rest": True, "i": i}
             self.fall.append(c)
+            if i >= j:
+                top.append(c)
+        top.sort(key=lambda c: -c["i"])
+        self.cascade = top
+        for k, c in enumerate(top):
+            c["go"] = self.t if k == 0 else 1e9
+            c["vy0"] = -330.0 if k == 0 else -150.0
+            c["k"] = k
+
+    def launch(self, c):
+        """Il glisse du haut de la pile, vers la gauche, et tombe."""
+        c["go"] = None; c["rest"] = False
+        c["vx"] = -self.rng.uniform(250, 290)
+        c["vy"] = c["vy0"]
+        c["w"] = -self.rng.uniform(0.3, 0.6)
+        c["below"] = c["i"] - 1                  # il glisse sur celui du dessous sans frottement
 
     def shape(self, c):
         return [(-self.BW / 2, -self.BH / 2), (self.BW / 2, -self.BH / 2), (self.BW / 2, self.BH / 2), (-self.BW / 2, self.BH / 2)]
 
     def ground(self, c):
+        """Ce qu'il y a sous un livre : le pupitre, un livre déjà posé, ou le sol."""
+        gy = FLOOR_Y
         if self.DX0 < c["x"] < self.DX1 and c["y"] < self.DTOP - self.BH * 0.4:
-            return self.DTOP
-        return FLOOR_Y
+            gy = self.DTOP
+        c["_on_floor"] = gy == FLOOR_Y
+        for o in self.fall:
+            # un livre ne porte que s'il est lui-même bien posé : la pile restée sur le
+            # pupitre, ou un tas qui repose sur le sol (jamais un escalier dans le vide)
+            if o is c or not ((o.get("rest") and not o.get("down")) or o.get("floor")) or o["i"] == c.get("below"):
+                continue
+            top = o["y"] - self.BH / 2
+            # il ne tient dessus que si son milieu est au-dessus : sinon il glisse à côté
+            if abs(c["x"] - o["x"]) < self.BW / 2 - 12 and c["y"] < o["y"] - self.BH * 0.5 and top < gy:
+                gy = top
+                c["_on_floor"] = bool(o.get("floor"))
+        return gy
 
     def after(self, dt, evs):
         if self.fall is not None:
-            for c in self.fall:
+            # du plus bas au plus haut : chacun se pose sur ceux déjà posés
+            for k, c in enumerate(self.cascade):
+                # chaque livre part quand celui du dessus l'a quitté
+                if c.get("go") is not None and (self.t >= c["go"] or abs(self.cascade[k - 1]["x"] - c["x"]) > self.BW * 0.62):
+                    self.launch(c)
+            for c in sorted(self.fall, key=lambda c: -c["y"]):
+                if c["rest"] and c.get("down") and self.ground(c) > c["y"] + self.BH / 2 + 2:
+                    c["rest"] = False; c["down"] = False; c["floor"] = False   # ce qui le portait a glissé : il retombe
                 if c["rest"]:
                     continue
                 c["vy"] += self.g * dt
                 c["x"] += c["vx"] * dt; c["y"] += c["vy"] * dt; c["a"] += c["w"] * dt
                 if c["x"] < 90:
-                    c["x"] = 90; c["vx"] = abs(c["vx"]) * 0.3
-                settle_body(c, self.ground(c), math.pi, dt, self.shape(c))
-            if not self.payoff and any(not c["rest"] and c["y"] > FLOOR_Y - 80 for c in self.fall):
+                    c["x"] = 90; c["vx"] = abs(c["vx"]) * 0.2
+                if settle_body(c, self.ground(c), math.pi, dt, self.shape(c)):
+                    c["down"] = True
+                    c["floor"] = c["_on_floor"]
+                # un livre posé qu'il heurte par le côté le repousse : ils ne se traversent pas
+                pc = body_poly(c, self.shape(c))
+                for o in self.fall:
+                    if o is c or not (o.get("rest") or o.get("down")):
+                        continue
+                    d, nx, ny = sat_mtv(pc, body_poly(o, self.shape(o)))
+                    if d > 0.5:
+                        c["x"] -= nx * d; c["y"] -= ny * d
+                        vn = c["vx"] * nx + c["vy"] * ny
+                        if vn > 0:
+                            c["vx"] -= nx * vn; c["vy"] -= ny * vn
+                        if ny > 0.5 and abs(c["x"] - o["x"]) >= self.BW / 2 - 12:
+                            # posé sur un coin : il bascule et glisse de l'autre côté
+                            sg = 1.0 if c["x"] > o["x"] else -1.0
+                            c["vx"] = sg * max(abs(c["vx"]), 140.0) if c["vx"] * sg < 140.0 else c["vx"]
+                            c["w"] += sg * 4.0 * dt
+                            c["rest"] = False
+                        pc = body_poly(c, self.shape(c))
+            separate([c for c in self.fall if not (c["rest"] or c.get("down"))], self.shape, iters=3, max_step=4.0)
+            if not self.payoff and any(not c["rest"] and c["y"] > self.DTOP + 40 for c in self.fall):
                 self.finish("DETENTION")
                 self.line("Detention.", "det", self.next_landing() + 1.05)
         if self.payoff:
@@ -317,7 +421,7 @@ class School(Chapter):
             dr.line([(P(540), P(505)), (P(ex), P(ey))], fill=(150, 150, 160), width=int(P(22)))
         circle(dr, P(540), P(505), P(22), (110, 110, 120))
         # la maîtresse : de dos, puis elle se retourne
-        tx = 830 + 70 * math.sin(s["t"] * 0.9) - 60 * s["turn"]
+        tx = 885 + 30 * math.sin(s["t"] * 0.9) - 20 * s["turn"]
         self.figure(dr, P, tx, FLOOR_Y, (110, 70, 90), h=300, w=104, tilt=-s["turn"])
         # le pupitre, la chaise
         wood = (120, 86, 58)
@@ -517,14 +621,14 @@ class Apartment(Chapter):
         self.hop_init(540.0, self.FL, start_h=0.0, gain=(0.95, 1.08), min_h=280.0, max_h=320.0, wobble=6.0,
                       xmin=535, xmax=545, h_ref=300.0, start_air=False)
         self.on = "still"; self.by = self.FL - self.R; self.h = 300.0
-        self.line("Twenty five.", "title", 0.0)
+        self.line("Twenty-five.", "title", 0.0)
         self.line("Downstairs neighbor.", "neighbor", 0.9)
         self.crack = 0.0
         self.open = None
         self.dust = []
         self.chunks = []
         self.lamp = 0.0
-        self.lamp_w = 2.5
+        self.lamp_w = 4.0
 
     def on_land(self, k, evs):
         if self.open is not None:
@@ -623,10 +727,17 @@ class Apartment(Chapter):
             y0 = FL - h - y_off
             dr.rectangle([P(x), P(y0), P(x + w), P(y0 + h)], fill=(170, 130, 86))
             dr.rectangle([P(x), P(y0 + h / 2 - 6), P(x + w), P(y0 + h / 2 + 6)], fill=(140, 104, 66))
-        # en bas : la télé du voisin, qui clignote
-        tv = [(70, 120, 200), (200, 90, 140), (90, 180, 120), (220, 200, 90)][int(s["t"] * 10) % 4]
+        # en bas : la télé du voisin, allumée
         dr.rectangle([P(30), P(1180), P(330), P(1400)], fill=(30, 30, 34))
-        dr.rectangle([P(46), P(1196), P(314), P(1384)], fill=tv)
+        dr.rectangle([P(46), P(1196), P(314), P(1384)], fill=(70, 110, 170))
+        # à l'écran, une poursuite en voiture : la barrière défile (ça bouge, sans clignoter)
+        circle(dr, P(250), P(1236), P(26), (235, 220, 140))
+        for k in range(7):
+            px_ = 46 + ((k * 48 - s["t"] * 260) % 336) - 30
+            x0_, x1_ = max(46, px_), min(314, px_ + 22)
+            if x1_ > x0_:
+                dr.rectangle([P(x0_), P(1270), P(x1_), P(1384)], fill=(30, 40, 52))
+        dr.rectangle([P(46), P(1296), P(314), P(1306)], fill=(30, 40, 52))
         dr.rectangle([P(140), P(1400), P(220), P(FLOOR_Y)], fill=(70, 56, 46))
         # le plancher, épais ; la fissure ; les trappes
         slab = (120, 100, 86)
@@ -668,9 +779,22 @@ class Apartment(Chapter):
         dr.rectangle([P(330), P(self.COUCH - 90), P(750), P(self.COUCH)], fill=(130, 60, 60))
         dr.rectangle([P(310), P(self.COUCH - 40), P(350), P(FLOOR_Y)], fill=(120, 54, 54))
         dr.rectangle([P(730), P(self.COUCH - 40), P(770), P(FLOOR_Y)], fill=(120, 54, 54))
-        # le voisin, debout, qui lève les yeux ; il sursaute quand le plafond cède
-        jump = abs(math.sin(s["t"] * 9.0)) * 60.0 if s["flap"] > 0 else 0.0
-        self.figure(dr, P, 830, FLOOR_Y - jump, (80, 120, 96), h=340, w=110)
+        # le voisin, debout devant sa télé : il lève les yeux quand le plafond craque, et
+        # sursaute, les yeux ronds, quand Bounce lui tombe dessus
+        nx_, nh = 830.0, 250.0
+        jump = abs(math.sin(s["t"] * 9.0)) * 24.0 if s["flap"] > 0 else 0.0
+        self.figure(dr, P, nx_, FLOOR_Y - jump, (80, 120, 96), h=nh, w=104)
+        hx, hy = nx_, FLOOR_Y - jump - nh - 46
+        if s["flap"] > 0:
+            for ex in (-15, 15):
+                circle(dr, P(hx + ex), P(hy - 6), P(13), (250, 250, 252))
+                circle(dr, P(hx + ex - 2), P(hy - 9), P(6), (20, 20, 26))
+            dr.text((P(hx + 78), P(hy - 6)), "!", fill=(250, 220, 120), anchor="mm", font=base.font(int(P(72))))
+        else:
+            up = s["crack"] > 0.05
+            for ex in (-15, 15):
+                circle(dr, P(hx + ex), P(hy - 4), P(9), (240, 240, 244))
+                circle(dr, P(hx + ex - (0 if up else 4)), P(hy - 4 - (5 if up else 0)), P(4.5), (20, 20, 26))
         for (x, y, vx, t0, r) in s["dust"]:
             age = s["t"] - t0
             yy = y + 200 * age + 400 * age * age
@@ -680,6 +804,11 @@ class Apartment(Chapter):
             body = {"x": c["x"], "y": c["y"], "a": c["a"]}
             hs = c["s"] / 2
             dr.polygon([(P(x), P(y)) for (x, y) in body_poly(body, [(-hs, -hs * 0.7), (hs, -hs * 0.7), (hs, hs * 0.7), (-hs, hs * 0.7)])], fill=(200, 188, 168))
+        if s.get("on") == "still":
+            # posé, il ne tient pas en place : il trépigne
+            s = dict(s)
+            s["by"] = s["by"] - 16 * abs(math.sin(s["t"] * 13.0))
+            s["bx"] = s["bx"] + 7 * math.sin(s["t"] * 23.0)
         self.bounce(dr, P, s)
 
 
@@ -699,7 +828,7 @@ class Wedding(FirstLove):
         self.hop_init(430.0, self.SEAT, start_h=260.0, gain=(0.95, 1.08), min_h=245.0, max_h=310.0, wobble=8.0,
                       xmin=424, xmax=436, h_ref=220.0)
         self.start_drop()
-        self.line("Twenty nine.", "title", 0.0)
+        self.line("Twenty-nine.", "title", 0.0)
         self.line("Do you take her?", "vow", 2.12)
         self.reply("vow", 0.35)
         self.resume = 4.3
@@ -749,8 +878,15 @@ class Wedding(FirstLove):
         self.confetti = [c for c in self.confetti if c[1] < FLOOR_Y]
         self.hearts = []
 
+    def reply_local(self):
+        """L'instant (local) où il répond « Bounce » à la question."""
+        st = getattr(self, "_story", None)
+        end = st._line_end.get(f"{self._idx}:vow") if st is not None else None
+        return None if end is None else end + 0.35 - st.t0
+
     def snapshot(self):
         s = super().snapshot()
+        s["reply"] = self.reply_local()
         s["conf"] = [tuple(c) for c in self.confetti]
         s["petals"] = [tuple(p) for p in self.petals]
         return s
@@ -800,6 +936,13 @@ class Wedding(FirstLove):
         bx, by = s["bx"], s["by"]
         dr.polygon([(P(bx), P(by + 44)), (P(bx - 26), P(by + 30)), (P(bx - 26), P(by + 58))], fill=(20, 20, 26))
         dr.polygon([(P(bx), P(by + 44)), (P(bx + 26), P(by + 30)), (P(bx + 26), P(by + 58))], fill=(20, 20, 26))
+        # sa réponse, dans une bulle : sans le son, on lit ce qu'il a dit
+        rt = s.get("reply")
+        if rt is not None and 0 <= s["t"] - rt < 1.2:
+            x0, y0, x1, y1 = bx - 200, by - 330, bx + 160, by - 210
+            dr.rounded_rectangle([P(x0), P(y0), P(x1), P(y1)], radius=int(P(30)), fill=(250, 250, 252))
+            dr.polygon([(P(bx - 40), P(y1 - 4)), (P(bx + 30), P(y1 - 4)), (P(bx), P(by - self.R - 8))], fill=(250, 250, 252))
+            dr.text((P((x0 + x1) / 2), P((y0 + y1) / 2)), "BOUNCE!", fill=(30, 20, 40), anchor="mm", font=base.font(int(P(64))))
 
 
 # ---------------------------------------------------------------- 33 ans
@@ -818,7 +961,7 @@ class Dad(Chapter):
         self.hop_init(330.0, FLOOR_Y, start_h=260.0, gain=(0.95, 1.1), min_h=220.0, max_h=330.0, wobble=40.0,
                       xmin=280, xmax=380, h_ref=260.0)
         self.start_drop()
-        self.line("Thirty three.", "title", 0.0)
+        self.line("Thirty-three.", "title", 0.0)
         self.baby = {"x": 700.0, "y": self.CBOT - 26.0, "vy": 0.0, "on": "sleep", "w": 0.0, "last": -9.0, "n": 0}
         self.rb = 26.0
 
@@ -900,13 +1043,14 @@ class Dad(Chapter):
         x, y, on, w, stir = s["baby"]
         # le mobile au-dessus du lit, comme celui de son premier jour
         ang = s["t"] * 3.2
-        dr.line([(P(700), P(SCENE_TOP)), (P(700), P(900))], fill=(150, 150, 165), width=int(P(5)))
-        dr.line([(P(700 - 170 * math.cos(ang)), P(900)), (P(700 + 170 * math.cos(ang)), P(900))], fill=(170, 170, 185), width=int(P(5)))
+        my = 790.0                                # assez haut pour que le bébé ne l'atteigne jamais
+        dr.line([(P(700), P(SCENE_TOP)), (P(700), P(my))], fill=(150, 150, 165), width=int(P(5)))
+        dr.line([(P(700 - 170 * math.cos(ang)), P(my)), (P(700 + 170 * math.cos(ang)), P(my))], fill=(170, 170, 185), width=int(P(5)))
         for k in range(4):
             a = ang + k * math.pi / 2
             mx = 700 + 170 * math.cos(a)
-            dr.line([(P(mx), P(900)), (P(mx), P(960))], fill=(150, 150, 165), width=int(P(3)))
-            dr.regular_polygon((P(mx), P(985), P(30 + 8 * math.sin(a))), 5,
+            dr.line([(P(mx), P(my)), (P(mx), P(my + 60))], fill=(150, 150, 165), width=int(P(3)))
+            dr.regular_polygon((P(mx), P(my + 85), P(30 + 8 * math.sin(a))), 5,
                                fill=[(250, 220, 90), (130, 200, 250), (250, 150, 180), (160, 230, 160)][k])
         # le lit à barreaux
         wood = (220, 220, 232)
@@ -947,9 +1091,9 @@ class Old(Chapter):
         self.hop_init(400.0, self.SEAT, start_h=175.0, gain=(1.0, 1.0), min_h=175.0, max_h=175.0, wobble=0.0,
                       xmin=400, xmax=400, h_ref=120.0)
         self.start_drop()
-        self.line("Eighty eight.", "title", 0.0)
+        self.line("Eighty-eight.", "title", 0.0)
         self.still_t = None
-        self.kids = [{"x": 760.0, "y": FLOOR_Y - 24, "vy": -700.0, "vx": 0.0, "r": 24.0, "col": (255, 150, 210)},
+        self.kids = [{"x": 130.0, "y": FLOOR_Y - 24, "vy": -700.0, "vx": 0.0, "r": 24.0, "col": (255, 150, 210)},
                      {"x": 860.0, "y": FLOOR_Y - 22, "vy": -400.0, "vx": 0.0, "r": 22.0, "col": (255, 130, 190)},
                      {"x": 660.0, "y": FLOOR_Y - 20, "vy": -900.0, "vx": 0.0, "r": 20.0, "col": (255, 165, 220)}]
         self.jump = None
@@ -980,13 +1124,14 @@ class Old(Chapter):
                 kd["y"] = FLOOR_Y - kd["r"]
                 kd["vx"] = 0.0
                 kd["vy"] = -math.sqrt(2 * self.g * (150.0 + 40 * i))
-        # au bout de trois secondes immobile, le plus petit lui saute dessus
-        if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 3.1:
+        # au bout de trois secondes immobile, le plus petit lui saute dessus, par la gauche
+        # (de l'autre côté, il y a le dossier et la canne)
+        if self.still_t is not None and self.jump is None and not self.back and self.t - self.still_t > 2.9:
             kd = self.kids[0]
-            if kd["vy"] > 0:
+            if kd["vy"] > 0 and kd["y"] > FLOOR_Y - kd["r"] - 160:
                 self.jump = kd
-                T = 0.6
-                tx, ty = self.bx + 10, self.by - self.R - kd["r"]
+                T = 0.8
+                tx, ty = self.bx - 6, self.by - self.R - kd["r"]
                 kd["vx"] = (tx - kd["x"]) / T
                 kd["vy"] = (ty - kd["y"] - 0.5 * self.g * T * T) / T
         if self.jump is not None:
@@ -994,8 +1139,11 @@ class Old(Chapter):
             kd["vy"] += self.g * dt
             kd["x"] += kd["vx"] * dt; kd["y"] += kd["vy"] * dt
             d = math.hypot(kd["x"] - self.bx, kd["y"] - self.by)
-            if d < self.R + kd["r"] and kd["vy"] > 0 and not self.back:
-                # le petit retombe sur lui : il repart
+            if d < self.R + kd["r"] and not self.back:
+                # le petit retombe sur lui, posé contre sa tête (jamais dedans) : il repart
+                nx, ny = (kd["x"] - self.bx) / d, (kd["y"] - self.by) / d
+                kd["x"] = self.bx + nx * (self.R + kd["r"] + 0.5)
+                kd["y"] = self.by + ny * (self.R + kd["r"] + 0.5)
                 self.back = True
                 # le petit lui tombe dessus : un choc, il dit son nom, et il bondit comme jamais
                 if self.t - self.last_hit >= 0.15:
@@ -1003,14 +1151,11 @@ class Old(Chapter):
                     evs.append(("hit", "floor"))
                 self.hit_t = self.t
                 self.min_h, self.max_h, self.gain, self.h = 240.0, 300.0, (0.95, 1.1), 260.0
-                self.leap_at = self.t + 0.15         # le petit rebondit d'abord sur sa tête, vers le jardin
+                self.leap_at = self.t + 0.3          # le petit rebondit d'abord sur sa tête, vers la maison
                 if not self.payoff:
                     self.finish("NEVER")
-                kd["y"] = self.by - self.R - kd["r"] - 1
-                kd["vy"] = -900.0; kd["vx"] = 380.0
+                kd["vy"] = -900.0; kd["vx"] = -230.0
                 self.jump = None
-            if kd["x"] > 1000 or kd["y"] > FLOOR_Y - kd["r"]:
-                kd["y"] = min(kd["y"], FLOOR_Y - kd["r"])
         if getattr(self, "leap_at", None) is not None and self.t >= self.leap_at:
             self.leap_at = None
             self.leap(650.0)                     # un bond de joie : sa réaction tient dedans
@@ -1060,8 +1205,6 @@ class Old(Chapter):
         # sa canne, contre le fauteuil
         dr.line([(P(540), P(1440)), (P(570), P(1210))], fill=(180, 150, 110), width=int(P(9)))
         dr.arc([P(560), P(1190), P(610), P(1240)], 180, 360, fill=(180, 150, 110), width=int(P(9)))
-        for (x, y, r, c) in s["kids"]:
-            small_ball(dr, P, x, y, r, c)
         st = s["still"]
         if st is not None and st >= 0:
             f = base.font(int(P(46)))
@@ -1074,6 +1217,9 @@ class Old(Chapter):
             circle(dr, P(bx + k * 16), P(by - R + 4), P(10), (236, 236, 240))
         dr.arc([P(bx - 34), P(by - 22), P(bx - 6), P(by + 6)], 0, 360, fill=(30, 20, 30), width=int(P(4)))
         dr.arc([P(bx + 6), P(by - 22), P(bx + 34), P(by + 6)], 0, 360, fill=(30, 20, 30), width=int(P(4)))
+        # les petits-enfants, devant lui
+        for (x, y, r, c) in s["kids"]:
+            small_ball(dr, P, x, y, r, c)
 
 
 DEFAULTS = {
@@ -1090,6 +1236,11 @@ class Sim(StorySim):
     def __init__(self, cfg, rng):
         cfg["_chapters"] = CHAPTERS
         super().__init__(cfg, rng)
+
+    def _open(self, i):
+        super()._open(i)
+        self.sims[i]._story = self               # un chapitre peut lire l'horloge du narrateur
+        self.sims[i]._idx = i
 
 
 if __name__ == "__main__":
