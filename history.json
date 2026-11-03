@@ -363,6 +363,40 @@
     "measured_at": null
    },
    "script": "src/stories/life.py (branche proto-life)"
+  },
+  {
+   "name": "roast_proto",
+   "date": "2026-11-04",
+   "theme": "roast",
+   "config": "configs/roast_proto.json",
+   "role": "owner",
+   "hook_text": "Look at this f*cking purple ball.",
+   "duration_s": 63.37,
+   "hashtags": [
+    "#bounce",
+    "#roast",
+    "#satisfying",
+    "#animation"
+   ],
+   "caption": "captions/roast_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-04T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15725368494449779530.mp4",
+   "metricool_post_id": 415033420,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "idée du propriétaire faite en session (le narrateur insulte Bounce pendant une minute, gros mots bipés à sa demande) ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/roast.py (branche proto-roast)"
   }
  ],
  "themes": [
@@ -455,6 +489,10 @@
   {
    "date": "2026-11-03T02:55+01:00",
    "note": "Run de la routine (nuit du 02 au 03/11). Nettoyage : six_hobbies_20261102, doubling_proto et machine_proto rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 31 578 vues (48 h), halloween 3 710 (48 h), six_sports 23 960 (24 h, mesurée à 36 h), six_hobbies 13 238 (9 h), doubling_proto 9 417 (19 h), machine_proto 5 300 (15 h) ; daily 02/11. Le 03/11 est déjà pris : outre cats_proto (18h00), Metricool porte deux vidéos narrées de Bounce au format liste, faites en session et absentes de history.json : « Can Anyone Do Bounce's Makeup? » (post 414552817, 21h00, 64,2 s, créé le 02/11 à 22h33) et « Will Bounce Get Hired? » (post 414653885, 14h30, 64,9 s, créé le 03/11 à 00h33). Arrêt à l'étape 2, aucune liste produite ; les deux posts ne sont pas inventés dans videos[] : à consigner par la session qui les a faits (config, script, caption). Créneaux libres restants (8h00, 11h30) laissés au run de bouncefactory. Environnement : rediwane/bouncefactory n'est pas accessible à cette session (clone refusé, dépôt hors périmètre GitHub de la routine) ; controle.py ne pourrait donc pas faire le test de nouveauté contre ses thèmes et accroches : à ajouter aux dépôts de la routine avant le prochain run qui écrit une liste."
+  },
+  {
+   "date": "2026-11-03T10:50+01:00",
+   "note": "Session owner : roast_proto programmée le 04/11 à 14h30 (post 415033420). Idée du propriétaire : le narrateur insulte Bounce pendant une minute ; première réplique « Look at this f*cking purple ball. » (6 mots, pas une question, et « purple » alors que Bounce est rose : choix du propriétaire). Les gros mots sont bipés (sinusoïde 1 kHz synthétisée par src/stories/roast.py, aucun fichier audio) et étoilés à l'écrit : décision explicite du propriétaire, exception à la règle « aucun son ajouté » pour cette vidéo seulement. Juges : muet PASSE ; son RECALÉ (bips 4 à 5 LU au-dessus de la voix), v2 bip −6 dB et crête −1,5 dBTP → PASSE."
   }
  ]
 }
