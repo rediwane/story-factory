@@ -60,9 +60,33 @@ def bleep_len(word):
     return float(min(0.55, max(0.28, 0.08 + 0.045 * letters)))
 
 
+BANK = {}
+
+
+def load_bank(cfg):
+    """Une banque de répliques déjà dites et bipées (cfg["narrator_bank"] : un dossier avec
+    index.json {texte affiché : fichier wav}) : elle remplace la synthèse pour ces textes,
+    et leurs durées fixent le calage. Rien n'est chargé sans la clé."""
+    path = cfg.get("narrator_bank")
+    if not path:
+        return
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    path = path if os.path.isabs(path) else os.path.join(root, path)
+    import json as _json, wave as _wave
+    for text, fn in _json.load(open(os.path.join(path, "index.json"), encoding="utf-8")).items():
+        with _wave.open(os.path.join(path, fn)) as w:
+            x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float64) / 32768.0
+            assert w.getframerate() == SR and w.getnchannels() == 1
+        BANK[text] = x / (np.max(np.abs(x)) + 1e-9)
+
+
 def roast_say(text, voice=narr_voice.DEFAULT_VOICE, length_scale=None, sr=SR):
-    """`voice.say`, avec les mots étoilés remplacés par un bip. Une phrase sans étoile
-    passe telle quelle."""
+    """`voice.say`, avec les mots étoilés remplacés par un bip. Une phrase de la banque est
+    lue telle quelle ; une phrase sans étoile passe à la synthèse."""
+    if text in BANK:
+        return BANK[text]
+    if BANK:
+        print(f"[roast] hors banque : « {text} »", file=sys.stderr)
     if not text or "*" not in text:
         return _orig_say(text, voice, length_scale, sr)
     key = (text, voice, length_scale, sr)
@@ -124,12 +148,12 @@ def steady_hero_word(text, cfg):
 
 base.hero_word = steady_hero_word
 
-# le mix : crête d'échantillon à 0,8 (−1,9 dBFS) au lieu de 0,89, pour que la crête vraie
+# le mix : crête d'échantillon à 0,66 (−3,6 dBFS) au lieu de 0,89, pour que la crête vraie
 # reste sous −1 dBTP après l'encodage AAC (et le réencodage de TikTok)
 _orig_write_wav = ak.write_wav
 
 
-def write_wav_headroom(buf, path, sr=SR, peak=0.8, headroom_pct=99.5):
+def write_wav_headroom(buf, path, sr=SR, peak=0.66, headroom_pct=99.5):
     return _orig_write_wav(buf, path, sr=sr, peak=peak, headroom_pct=headroom_pct)
 
 
@@ -142,7 +166,7 @@ R = 180.0                      # Bounce : 360 px de diamètre
 G = 1350.0
 FLOOR = 1640.0
 YC = FLOOR - R                 # centre de Bounce posé au sol
-H_MAX = 920.0                  # le plus haut rebond : il reste sous les sous-titres
+H_MAX = 1000.0                 # le plus haut rebond : il reste sous les sous-titres
 TMAX = 2 * math.sqrt(2 * H_MAX / G)
 WL = 0.82                      # le « Bounce » le plus long que piper rend (0,67 à 0,80 s mesurés)
 PRE = 0.12                     # fin du « Bounce » -> début de la réplique (base.py écarte ses mots de 0,1 s de la voix)
@@ -351,6 +375,9 @@ def stomp(p, n):
     p.objs.append({"kind": "boot", "times": times, "xs": xs, "dwell": comp + hold + decomp})
 
 
+USELESS = "Useless sh*t!"
+
+
 def build(cfg):
     p = Plan(cfg)
     p.chapter()
@@ -361,61 +388,57 @@ def build(cfg):
     p.contacts.append({"t": 0.32, "x": 420.0, "kind": "floor", "voiced": False, "amp": SQ_A})
     p.arc(p.hook_end + 0.22, 470.0)
     # 1. le parpaing
-    p.say("Stop bouncing.", title=True, x1=520.0)
+    p.say("Stop bouncing!", title=True, x1=520.0)
     impact(p, "block", out=1)
-    p.say("You little sh*t.")
-    p.hop()
+    p.say("You little sh*t!")
     # 2. l'enclume
     p.chapter()
     p.say("Right. Anvil.", title=True)
     p.hop(1.0, 430.0)
     pin(p, "anvil", ["Stop saying your f*cking name!"], zoom=1.12)
-    p.say("Oh, f*ck off.")
-    p.hop()
+    p.say("Oh, f*ck off!")
     # 3. le piano
     p.chapter()
-    p.say("Piano, d*ckhead.", title=True)
-    p.hop(1.05)
-    p.hop(1.05, 560.0)
+    p.say("Here's a piano, d*ckhead!", title=True)
+    p.hop(1.0)
+    p.hop(1.1, 560.0)
     impact(p, "piano", out=-1, big=True)
     p.say("What the f*ck?")
-    p.say("Nobody likes you.")
-    p.hop()
     # 4. la tapette
     p.chapter()
-    p.say("Hold still, a**hole.", title=True, x1=600.0)
+    p.say("Hold still, a**hole!", title=True, x1=600.0)
     swat(p)
     p.say("Why won't you stop?")
-    p.say("Useless sh*t.")
+    p.say(USELESS)
     # 5. la botte
     p.chapter()
     p.say("Boot.", title=True)
     p.hop(1.3, 470.0)
     stomp(p, 3)
     p.say("Why are you still round?")
-    p.say("F*ck you.")
+    p.say("F*ck you!")
     # 6. seize tonnes
     p.chapter()
-    p.say("Sixteen tons.", title=True)
+    p.say("Sixteen tons!", title=True)
     p.hop(1.0)
     p.hop(1.1, 450.0)
-    pin(p, "weight", ["Finally.", "Peace and f*cking quiet."], tremble=0.5, zoom=1.16)
+    pin(p, "weight", ["Finally. Peace and f*cking quiet."], tremble=0.5, zoom=1.16)
     p.say("Oh, f*ck me.")
     # 7. il abandonne
     p.chapter()
-    p.say("Fine. Bounce forever.", title=True)
-    e = p.line("See if I care.")
+    p.say("Fine. Bounce forever!", title=True)
+    e = p.line("See if I care!")
     ts = p.arc(e + POST + 0.05, 440.0, kind="stop", voiced=False, amp=0.12)
-    e = p.line("...Bounce?", after=ts + 1.1)
-    p.zooms.append((ts + 0.05, e + 0.1, 1.0, 1.5, 440.0, FLOOR, "lin"))
+    e = p.line("...Bounce? You okay?", after=ts + 1.0)
+    p.zooms.append((ts + 0.05, e + 0.1, 1.0, 1.6, 440.0, FLOOR, "lin"))
     p.segs.append((ts, e + 0.12, "still", (p.x,)))
     p.t = e + 0.12
     tc = p.arc(e + 0.12 + 0.72, 445.0)
     p.chute(tc)
     p.chapters[-1]["smug"] = tc
-    p.zooms.append((tc + 0.5, tc + 0.9, 1.5, 1.0, 440.0, FLOOR))
-    e = p.line("Mother-f*cker.")
-    p.arc(e + POST + 0.05, 470.0)
+    p.zooms.append((tc + 0.5, tc + 0.9, 1.6, 1.0, 440.0, FLOOR))
+    e = p.line("Oh, you mother-f*cker!")
+    p.to(e + POST + 0.05, 470.0)
     p.end = p.t
     # après la fin : il repart, la vidéo boucle sur son premier rebond
     p.segs.append((p.t, p.t + 3.0, "arc", (p.x, p.x)))
@@ -855,7 +878,7 @@ DEFAULTS = {
     "chapter_max_s": 13.0,
     "narrator_length": 0.9,
     "hook_narrator": True, "hook_text_s": 2.6, "hook_top": 0.06, "hook_font_size": 92,
-    "sub_y": 0.155, "sub_font_size": 60, "sub_words": 4,
+    "sub_y": 0.125, "sub_font_size": 60, "sub_words": 4,
     "watermark_y": 0.95, "end_hold_s": 0.85, "narr_tail_s": 0.6, "narr_gap_s": 0.3,
     "scene_top": 0.215, "min_duration_s": 30.0,
 }
@@ -864,6 +887,7 @@ DEFAULTS = {
 class Sim(StorySim):
     def __init__(self, cfg, rng):
         PLAN.clear()
+        load_bank(cfg)
         cfg["_chapters"] = CHAPTERS
         super().__init__(cfg, rng)
 

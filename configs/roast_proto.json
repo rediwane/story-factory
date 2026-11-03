@@ -2,5 +2,6 @@
  "name": "roast_proto",
  "theme": "roast",
  "seed": 1,
- "hook_text": "Look at this f*cking purple ball."
+ "hook_text": "Look at this f*cking purple ball!",
+ "narrator_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/roast/vt/bank"
 }
