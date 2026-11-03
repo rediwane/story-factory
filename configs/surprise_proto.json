@@ -1,0 +1,16 @@
+{
+ "name": "surprise_proto",
+ "theme": "surprise",
+ "seed": 1,
+ "hook_text": "WILL HE RUIN THE SURPRISE?",
+ "controle_seuils": {
+  "silence_max_s": [
+   2.3,
+   "le découpage validé pose des silences voulus : sous le coussin (un seul rebond étouffé entre 4,4 et 9,6 : silences de 1,8 s), les deux secondes sans aucun son sous le rectangle vert (10,4-12,5) et le noir total avant le dernier anneau (58,4-60,2) ; aucun ne dépasse 2,2 s"
+  ],
+  "fenetre_figee_s": [
+   2.4,
+   "le noir total de la fin (57,9-60,2, 2,3 s, seules les mèches rougeoient) est un temps voulu du découpage validé"
+  ]
+ }
+}
