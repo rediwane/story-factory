@@ -531,6 +531,40 @@
     "measured_at": "2026-11-04T02:45+01:00"
    },
    "script": "src/stories/floatbath.py (branche proto-floatbath)"
+  },
+  {
+   "name": "nameoc_proto",
+   "date": "2026-11-04",
+   "theme": "nameoc",
+   "config": "configs/nameoc_proto.json",
+   "role": "owner",
+   "hook_text": "What's her name?",
+   "duration_s": 14.9,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/nameoc_proto.md",
+   "slot": "16:10",
+   "scheduled_time": "2026-11-04T16:10:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13403096481768863455.mp4",
+   "metricool_post_id": 416617133,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session, hors créneau (6e vidéo du jour, décision du propriétaire) : le perso d'un fan présenté sans nom, le narrateur demande de le nommer ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/nameoc.py (branche proto-nameoc)"
   }
  ],
  "themes": [
