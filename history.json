@@ -798,6 +798,74 @@
     "measured_at": null
    },
    "script": "src/stories/fall.py (branche proto-beamfall)"
+  },
+  {
+   "name": "crush_proto",
+   "date": "2026-11-06",
+   "theme": "crush",
+   "config": "configs/crush_proto.json",
+   "role": "owner",
+   "hook_text": "Can Crush bounce?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/crush_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-06T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10662837228087625372.mp4",
+   "metricool_post_id": 417050856,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/crush.py (branche proto-blubcrush)"
+  },
+  {
+   "name": "blub_proto",
+   "date": "2026-11-06",
+   "theme": "blub",
+   "config": "configs/blub_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce save Blub?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/blub_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-06T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-12257148474253042965.mp4",
+   "metricool_post_id": 417033480,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/blub.py (branche proto-blubcrush)"
   }
  ],
  "themes": [
