@@ -1,0 +1,7 @@
+{
+ "name": "sneak_proto",
+ "theme": "sneak",
+ "seed": 1,
+ "hook_text": "Can Bounce sneak past Snooze?",
+ "snooze_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/snooze/banque"
+}
