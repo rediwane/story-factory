@@ -169,12 +169,11 @@ SX = 400.0                       # Snooze sur son oreiller
 FY = FLOOR - RB                  # Bounce posé au sol
 HEAD_Y = SY - R - RB             # Bounce posé sur la tête de Snooze
 CLOCK_C, CLOCK_R = (330.0, 760.0), 70.0
-STAND = (790.0, 1250.0, 880.0)   # la table de nuit : x0, dessus, x1
-LAMP_X = 835.0
-DOOR = (930.0, 1040.0, 1072.0)   # x0, haut, x1
-RUG = (870.0, 1075.0)
+FOOT = (610.0, 1120.0, 640.0)    # le pied de lit, dur : x0, dessus, x1
+DOOR = (900.0, 1040.0, 1040.0)   # x0, haut, x1
+RUG = (830.0, 1045.0)
 RUG_Y = FY + 10                  # le tapis est mou : Bounce s'y enfonce un peu, sans bruit
-T_CLOCK, T_LAMP = 8.10, 32.10
+T_CLOCK = 5.80
 
 
 def draw_snooze_at(dr, x, y, r, S, open_k=0.0, look=0.0, talk=0.0, smile=False, sq=0.0):
@@ -243,56 +242,77 @@ class Sim:
 
         def c(t, x, y, hard=True):
             C.append((t, x, y, hard))
-        # le début : de tout petits rebonds, vers la droite
-        for i, x in enumerate((110, 140, 170, 195, 215, 205)):
-            c(0.6 + 1.0 * i, x, FY)
-        c(6.95, 255, 980 - RB)                                      # la tête de lit
-        c(T_CLOCK, CLOCK_C[0], CLOCK_C[1] - CLOCK_R - RB)          # sur l'horloge, qui tombe
-        c(9.15, SX, HEAD_Y); c(10.2, SX, HEAD_Y); c(11.25, SX, HEAD_Y)
-        c(12.35, 610, YM - RB + 8, hard=False)                     # le matelas : mou
-        xs = [640, 560, 700, 620, 720, 540, 690, 600, 710, 560, 680, 620, 700, 580, 660, 600, 700, 640]
-        t = 13.4
-        for i, x in enumerate(xs):
-            c(t, x, FY)
-            t += 0.80 if i % 4 != 3 else 1.15
-        c(30.95, 812, STAND[1] - RB)                               # la table de nuit
-        c(T_LAMP, LAMP_X, 1090 - RB)                               # l'abat-jour : la lampe tombe
-        for x in (700, 650, 760, 700, 790, 730, 820):
-            t = C[-1][0] + 1.08
-            c(t, x, FY)
+        P_ = {"HB": (255.0, 980 - RB, True), "CLK": (CLOCK_C[0], CLOCK_C[1] - CLOCK_R - RB, True),
+              "HEAD": (SX, HEAD_Y, True), "FOOT": (FOOT[0] + 15, FOOT[1] - RB, True),
+              "SOFT": (545.0, YM - RB + 8, False)}
+        moves = [("F", 125, 0.6), ("F", 150, 1.0), ("F", 175, 1.05), ("F", 200, 1.05), ("HB", 0, 1.05), ("CLK", 0, 1.05),
+                 ("HEAD", 0, 1.05), ("SOFT", "marmonne2", 1.0), ("HEAD", 0, 0.95), ("FOOT", 0, 1.0), ("HEAD", 0, 1.0),
+                 ("FOOT", 0, 0.95), ("HEAD", 0, 0.95), ("SOFT", "marmonne1", 0.95), ("HEAD", 0, 0.95)]
+        for d in (0.9, 0.9, 0.85, 0.85, 0.85, 0.85, 0.8, 0.8, 0.8):
+            moves.append(("FOOT" if moves[-1][0] == "HEAD" else "HEAD", 0, d))
+        moves += [("SOFT", "marmonne2", 0.95), ("HEAD", 0, 0.95), ("FOOT", 0, 1.0)]
+        for x in (760, 720, 790, 735, 780, 745, 790, 760):
+            moves.append(("F", x, 1.0 if x == 760 and moves[-1][0] == "FOOT" else 0.95))
+        L = []
+        t = 0.0
+        for kind, arg, d in moves:
+            t = d if kind == "F" and arg == 125 else t + d
+            if kind == "F":
+                c(t, float(arg), FY)
+            else:
+                x, y, hard = P_[kind]
+                c(t, x, y, hard)
+                if kind == "SOFT":
+                    L.append((t + 0.01, arg))
+            if kind == "CLK":
+                self.t_clock = t
         # le tapis : mou, plus un bruit
-        t = C[-1][0] + 1.15
+        t += 1.05
         self.t_rug = t
-        for x in (960, 985, 965, 980, 962, 984):
-            c(t, x, RUG_Y, hard=False); t += 0.78
+        for x in (930, 950, 935, 948, 932, 950):
+            c(t, x, RUG_Y, hard=False); t += 0.8
         self.t_wake = self.t_rug + 1.25
-        self.t_off = t + 0.3                                        # il redescend du tapis
-        c(self.t_off, 830, FY)
+        self.t_off = t + 0.0
+        c(self.t_off, 770, FY)
         self.awake = [(self.t_wake, self.t_off + 0.18)]
         t = self.t_off + 1.05
-        c(t, 800, FY)
-        # rug / sol / rug / sol, de plus en plus vite
+        c(t, 740, FY)
         for dt in (1.0, 0.85, 0.75, 0.65):
             t_r = t + dt
-            c(t_r, 965, RUG_Y, hard=False)
+            c(t_r, 940, RUG_Y, hard=False)
             t_f = t_r + dt
-            c(t_f, 830, FY)
+            c(t_f, 770, FY)
             self.awake.append((t_r + 0.35, t_f + 0.12))
             t = t_f
-        # il abandonne : il rebondit sur place, pour que Snooze dorme
-        for x in (790, 760, 790, 760, 790, 770, 790):
-            t += 1.0
-            c(t, x, FY)
+        # il abandonne et rebondit pour que Snooze dorme, de plus en plus haut, sur le pied de lit et le sol
+        seq = [("F", 735), ("FOOT", 0), ("F", 780), ("FOOT", 0), ("SOFT", 0), ("FOOT", 0), ("F", 745), ("FOOT", 0),
+               ("F", 790), ("FOOT", 0), ("F", 760), ("FOOT", 0), ("F", 780), ("FOOT", 0), ("F", 750)]
+        k = 0
+        self.t_content = None
+        while t < 60.4:
+            kind, arg = seq[k % len(seq)]
+            t += 0.95
+            if kind == "F":
+                c(t, float(arg), FY)
+            elif kind == "SOFT":
+                c(t, *P_["SOFT"][:2], hard=False)
+                if self.t_content is None:
+                    self.t_content = t + 0.01
+            else:
+                c(t, *P_["FOOT"][:2])
+            k += 1
+        self.L_snooze = L
         self.C = sorted(C)
-        self.end_s = min(66.0, max(61.6, self.C[-1][0] + 0.6))
+        self.end_s = max(61.2, self.C[-1][0] + 0.9)
         self.hits = [(e[0], "hard") for e in self.C if e[3]]
         self.hi = 0
         self.head_hits = [e[0] for e in self.C if abs(e[1] - SX) < 1 and e[3]]
-        self.clock_hit = T_CLOCK + 0.75                            # l'horloge lui tombe sur la tête
+        self.clock_hit = self.t_clock + 0.75                            # l'horloge lui tombe sur la tête
         self.head_hits.append(self.clock_hit)
         tw = self.t_wake
-        L = [(5.55, "marmonne1"), (self.clock_hit + 0.2, "marmonne2"), (23.6, "marmonne1"),
-             (tw + 0.9, "agace1"), (self.end_s - 3.4, "content")]
+        L = list(self.L_snooze) + [(tw + 0.9, "agace1")]
+        # le « Snooze » content de la fin, dans un vol entre deux contacts assez espacés
+        L.append((self.t_content, "content"))
         self.lines = [(t, "Snooze " + k, f"s{i}") for i, (t, k) in enumerate(L)]
         self.payoff_at = tw + 2.3
 
@@ -300,7 +320,7 @@ class Sim:
     def bounce_at(self, t):
         C = self.C
         if t <= C[0][0]:
-            return arc(t, -0.5, 40.0, 900.0, C[0][0], C[0][1], C[0][2])
+            return arc(t, -0.5, 120.0, 900.0, C[0][0], C[0][1], C[0][2])
         for a, b in zip(C, C[1:]):
             if a[0] <= t <= b[0]:
                 return arc(t, a[0], a[1], a[2], b[0], b[1], b[2])
@@ -370,20 +390,20 @@ class Sim:
         dr.ellipse([RUG[0] * S, (FLOOR - 12) * S, RUG[1] * S, (FLOOR + 14) * S], fill=(150, 60, 70))
         dr.ellipse([(RUG[0] + 20) * S, (FLOOR - 6) * S, (RUG[1] - 20) * S, (FLOOR + 8) * S], fill=(176, 84, 92))
         # l'horloge murale, puis sa chute
-        if t < T_CLOCK + 0.15:
+        if t < self.t_clock + 0.15:
             cx, cy = CLOCK_C
             ang = 0.0
         else:
-            k = t - (T_CLOCK + 0.15)
+            k = t - (self.t_clock + 0.15)
             if k < 0.6:
                 s = k / 0.6
                 cx, cy = lerp(CLOCK_C[0], SX, s), lerp(CLOCK_C[1], SY - R - CLOCK_R + 10, s * s)
             elif k < 1.4:
                 s = (k - 0.6) / 0.8
-                cx = lerp(SX, 560, s)
-                cy = lerp(SY - R - CLOCK_R + 10, FLOOR - CLOCK_R, s) - 260 * math.sin(math.pi * s)
+                cx = lerp(SX, 530, s)
+                cy = lerp(SY - R - CLOCK_R + 10, YM - CLOCK_R + 6, s) - 200 * math.sin(math.pi * s)
             else:
-                cx, cy = 560, FLOOR - CLOCK_R
+                cx, cy = 530, YM - CLOCK_R + 6
             ang = min(k, 1.4) * 5.0
         dr.ellipse([(cx - CLOCK_R) * S, (cy - CLOCK_R) * S, (cx + CLOCK_R) * S, (cy + CLOCK_R) * S], fill=(230, 226, 214), outline=(70, 60, 64), width=int(7 * S))
         for a, ln in ((ang - 1.2, 0.5), (ang + 0.6, 0.75)):
@@ -391,9 +411,12 @@ class Sim:
         # le lit
         rect(230, 980, 282, FLOOR, BED)
         dr.ellipse([225 * S, 960 * S, 287 * S, 1004 * S], fill=BED)
-        rect(230, YM + 70, 780, YM + 120, BED)
-        rect(250, YM + 120, 278, FLOOR, BED); rect(745, YM + 120, 772, FLOOR, BED)
-        rect(282, YM, 780, YM + 72, MATT)
+        rect(230, YM + 70, 640, YM + 120, BED)
+        rect(250, YM + 120, 278, FLOOR, BED)
+        rect(282, YM, 610, YM + 72, MATT)
+        f0, ftop, f1 = FOOT
+        rect(f0, ftop, f1, FLOOR, BED)
+        dr.ellipse([(f0 - 5) * S, (ftop - 20) * S, (f1 + 5) * S, (ftop + 22) * S], fill=BED)
         dr.rounded_rectangle([292 * S, (YM - 52) * S, 510 * S, (YM + 6) * S], radius=26 * S, fill=PILLOW)
         # Snooze
         awake = self.is_awake(t)
@@ -417,25 +440,18 @@ class Sim:
                 col = mix(wall, (170, 170, 200), min(1.0, ph * 3, (1 - ph) * 3))
                 dr.text((zx * S, zy * S), "z" if i % 2 else "Z", fill=col, anchor="mm", font=font(int((34 + 30 * ph) * S)))
         # la couverture
-        top = [(lerp(470, 780, i / 30) * S, (YM - 24 + 5 * math.sin(lerp(470, 780, i / 30) / 50)) * S) for i in range(31)]
-        dr.polygon(top + [(780 * S, (YM + 76) * S), (470 * S, (YM + 76) * S)], fill=BLANKET)
-        # la table de nuit et la lampe
-        sx0, stop, sx1 = STAND
-        rect(sx0, stop, sx1, FLOOR, (70, 52, 46))
-        k = max(0.0, min(1.0, (t - T_LAMP - 0.1) / 0.55))
-        a = -math.pi / 2 * (k ** 2)              # elle bascule vers la gauche
-        if k >= 1.0:
-            a = -math.pi / 2
-        px, py = sx0 + 10 if k > 0 else LAMP_X, stop
-        if k > 0:
-            # le pied tourne autour du coin de la table, puis la lampe tombe au sol
-            px, py = lerp(LAMP_X, sx0 - 40, k), lerp(stop, FLOOR - 16, k ** 2)
-        ca, sa = math.cos(a), math.sin(a)
-
-        def RP(u, v):
-            return ((px + u * ca - v * sa) * S, (py + u * sa + v * ca) * S)
-        dr.polygon([RP(-8, 0), RP(8, 0), RP(8, -80), RP(-8, -80)], fill=(150, 140, 120))
-        dr.polygon([RP(-45, -80), RP(45, -80), RP(28, -160), RP(-28, -160)], fill=(220, 200, 150))
+        top = [(lerp(470, 610, i / 30) * S, (YM - 24 + 5 * math.sin(lerp(470, 610, i / 30) / 50)) * S) for i in range(31)]
+        dr.polygon(top + [(610 * S, (YM + 76) * S), (470 * S, (YM + 76) * S)], fill=BLANKET)
+        # le bruit, visible sans le son : une onde blanche part de chaque contact dur
+        for (th, hx, hy, hard) in self.C:
+            d = t - th
+            if hard and 0 <= d < 0.7:
+                rr = RB + 40 + 420 * d
+                col = mix(wall, (235, 235, 245), (1 - d / 0.7) * 0.85)
+                cyy = hy + RB * 0.6
+                dr.ellipse([(hx - rr) * S, (cyy - rr) * S, (hx + rr) * S, (cyy + rr) * S], outline=col, width=int(7 * S))
+        if awake:
+            dr.text(((SX + 10) * S, (SY - R - 110 - 45 * sit) * S), "!", fill=(255, 220, 90), anchor="mm", font=font(120 * S))
         # Bounce
         base.ball(dr, bx * S, by * S, RB * S)
 
