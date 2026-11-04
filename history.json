@@ -565,6 +565,69 @@
     "measured_at": null
    },
    "script": "src/stories/nameoc.py (branche proto-nameoc)"
+  },
+  {
+   "name": "snooze_proto",
+   "date": "2026-11-04",
+   "theme": "snooze",
+   "config": "configs/snooze_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce wake him up?",
+   "duration_s": 61.82,
+   "hashtags": [],
+   "caption": null,
+   "slot": null,
+   "scheduled_time": null,
+   "media_url": null,
+   "metricool_post_id": null,
+   "post_url": null,
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session publiée à la main par le propriétaire le 04/11, en réponse au fan qui a créé Snooze ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/snooze.py (branche proto-snooze)"
+  },
+  {
+   "name": "clip4_proto",
+   "date": "2026-11-04",
+   "theme": "clip4",
+   "config": "configs/clip4_proto.json",
+   "role": "owner",
+   "hook_text": "Can anyone stop Bounce?",
+   "duration_s": 106.8,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/clip4_proto.md",
+   "slot": "18:25",
+   "scheduled_time": "2026-11-04T18:25:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13222998911216023768.mp4",
+   "metricool_post_id": 416786489,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "clip musical décidé par le propriétaire (Bounce, Float, Snooze, Still ; chanson Suno du propriétaire), hors créneau ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/clip4.py (branche proto-clip4)"
   }
  ],
  "themes": [
