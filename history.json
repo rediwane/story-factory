@@ -628,6 +628,176 @@
     "measured_at": null
    },
    "script": "src/stories/clip4.py (branche proto-clip4)"
+  },
+  {
+   "name": "doctor_proto",
+   "date": "2026-11-05",
+   "theme": "doctor",
+   "config": "configs/doctor_proto.json",
+   "role": "owner",
+   "hook_text": "Can the doctor cure Bounce?",
+   "duration_s": 63.15,
+   "hashtags": [
+    "#bounce",
+    "#doctor",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/doctor_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-05T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-5841441629716996576.mp4",
+   "metricool_post_id": 416861391,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/doctor.py (branche proto-doctor)"
+  },
+  {
+   "name": "beam_proto",
+   "date": "2026-11-05",
+   "theme": "beam",
+   "config": "configs/beam_proto.json",
+   "role": "owner",
+   "hook_text": "Will Beam sneeze?",
+   "duration_s": 61.42,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/beam_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-05T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-11987835155965746215.mp4",
+   "metricool_post_id": 416863434,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/beam.py (branche proto-beamfall)"
+  },
+  {
+   "name": "sneak_proto",
+   "date": "2026-11-05",
+   "theme": "sneak",
+   "config": "configs/sneak_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce sneak past Snooze?",
+   "duration_s": 61.32,
+   "hashtags": [
+    "#bounce",
+    "#snooze",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/sneak_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-05T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9443995233338169902.mp4",
+   "metricool_post_id": 416861469,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/sneak.py (branche proto-sneak)"
+  },
+  {
+   "name": "date_proto",
+   "date": "2026-11-05",
+   "theme": "date",
+   "config": "configs/date_proto.json",
+   "role": "owner",
+   "hook_text": "Will Still say yes?",
+   "duration_s": 63.42,
+   "hashtags": [
+    "#bounce",
+    "#still",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/date_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-05T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15264744102489739314.mp4",
+   "metricool_post_id": 416861510,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/date.py (branche proto-date)"
+  },
+  {
+   "name": "fall_proto",
+   "date": "2026-11-05",
+   "theme": "fall",
+   "config": "configs/fall_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce fall?",
+   "duration_s": 61.72,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#autumn",
+    "#fyp"
+   ],
+   "caption": "captions/fall_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-05T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9554979085790377788.mp4",
+   "metricool_post_id": 416863492,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/fall.py (branche proto-beamfall)"
   }
  ],
  "themes": [
