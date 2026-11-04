@@ -100,7 +100,7 @@ base.hero_word = steady_hero_word
 # ------------------------------------------------------------------ Crush
 WHO = "Crush"
 LINES = {"crush": "crush.wav", "fort": "fort.wav", "q": "q.wav"}
-GAIN = {"fort": 1.15, "crush": 0.8}
+GAIN = {"fort": 1.15}
 
 W, H = 1080, 1920
 R = 100.0
