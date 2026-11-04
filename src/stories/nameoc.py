@@ -75,9 +75,9 @@ DEFAULTS = {
     "end_s": 14.9,
     # les répliques du narrateur : (déclencheur, texte)
     "lines": [
-        [2.35, "This is the new guy."],
-        [4.50, "He doesn't have a name yet."],
-        [7.90, "Name him in the comments."],
+        [2.35, "This is the new girl."],
+        [4.50, "She doesn't have a name yet."],
+        [7.90, "Name her in the comments."],
     ],
     "look_camera_s": 7.9,
 }
