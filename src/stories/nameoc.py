@@ -18,6 +18,31 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import base
 from base import dim
 
+# la voix de Bounce ne rend pas « Bounce » deux fois à la même longueur : on garde un tirage
+# court (<= 0,78 s), une fois par processus, pour que chaque mot tienne entre deux phrases.
+_orig_hero_word = base.hero_word
+_hero_memo = {}
+
+
+def steady_hero_word(text, cfg):
+    key = (text, cfg["hero_voice_pitch"], cfg["hero_voice_length"])
+    if key not in _hero_memo:
+        best = None
+        for _ in range(12):
+            v = _orig_hero_word(text, cfg)
+            if v is None:
+                break
+            if best is None or len(v) < len(best):
+                best = v
+            if len(v) / base.ak.SR <= 0.78:
+                break
+        _hero_memo[key] = best
+    v = _hero_memo[key]
+    return None if v is None else v.copy()
+
+
+base.hero_word = steady_hero_word
+
 DEFAULTS = {
     "fps": 60,
     "min_duration_s": 8.0,
@@ -26,9 +51,9 @@ DEFAULTS = {
     "narrator_length": 1.05,
     "sub_y": 0.83,
     "sub_font_size": 60,
-    "oc_x": 540.0, "oc_r": 250.0,
+    "oc_x": 540.0, "oc_r": 115.0,
     "floor_y": 1360.0,
-    "bounce_r": 80.0,
+    "bounce_r": 110.0,
     # les contacts de Bounce : (t, "floor"|"head", x) ; il entre en l'air depuis la gauche.
     # Ceux qui tombent pendant l'accroche ou une phrase du narrateur restent muets (base) :
     # les autres sont calés entre les phrases pour que chaque « Bounce » s'entende.
@@ -45,7 +70,7 @@ DEFAULTS = {
         [10.40, "floor", 150.0],
         [11.50, "head", 540.0],
         [12.60, "floor", 930.0],
-        [13.70, "floor", 760.0],
+        [13.70, "floor", 240.0],
     ],
     "end_s": 14.9,
     # les répliques du narrateur : (déclencheur, texte)
@@ -90,7 +115,7 @@ class Sim:
         self.ocy = fy - R
         pts = [(-0.35, -60.0, 700.0)]          # entrée : en l'air, hors champ à gauche
         for (t, kind, x) in cfg["contacts"]:
-            y = (self.ocy - 1.04 * R - rb) if kind == "head" else (fy - rb)
+            y = (self.ocy - R - rb + 4) if kind == "head" else (fy - rb)
             pts.append((t, x, y, kind))
         self.pts = pts
         self.contacts = [(p[0], p[3]) for p in pts[1:]]
@@ -115,7 +140,7 @@ class Sim:
         # après le dernier contact : il repart vers le haut
         a = pts[-1]
         s = (t - a[0]) / 1.1
-        x = a[1] + (a[1] - pts[-2][1]) * 0.25 * s
+        x = a[1] + (a[1] - pts[-2][1]) * 0.03 * s
         y = a[2] - 4 * 520 * s * (1 - s)
         return x, y
 
@@ -157,6 +182,9 @@ class Sim:
         return squash, wince, (gx, gy), annoy, k
 
     def draw_oc(self, dr, t, S):
+        """Le perso du fan aux proportions de nos persos (comme Bounce : un disque, un halo,
+        un visage au trait noir), avec ses couleurs : disque clair, halo olive ; son bandeau
+        bleu et son nœud ; ses yeux mi-clos sous des sourcils qui tombent vers la droite."""
         cfg = self.cfg
         R = cfg["oc_r"]
         squash, wince, (gx, gy), annoy, cam = self.oc_state(t)
@@ -175,8 +203,9 @@ class Sim:
             if outline is not None:
                 dr.line(q + [q[0]], fill=outline, width=max(1, int(width * R * S)), joint="curve")
 
-        def ell(u, v, ru, rv, n=40):
-            return [(u + ru * math.cos(2 * math.pi * i / n), v + rv * math.sin(2 * math.pi * i / n)) for i in range(n)]
+        def ell(u, v, ru, rv, n=40, a0=0.0, a1=2 * math.pi):
+            return [(u + ru * math.cos(a0 + (a1 - a0) * i / n), v + rv * math.sin(a0 + (a1 - a0) * i / n))
+                    for i in range(n + (0 if a1 - a0 >= 2 * math.pi else 1))]
 
         def stroke(pts, w, col=OC_INK):
             q = [P(u, v) for u, v in pts]
@@ -185,47 +214,51 @@ class Sim:
             for (x, y) in (q[0], q[-1]):
                 dr.ellipse([x - rr, y - rr, x + rr, y + rr], fill=col)
 
-        # ombre au sol
-        dr.ellipse([(cx - R * 0.95 * sx) * S, (fy - 16) * S, (cx + R * 0.95 * sx) * S, (fy + 16) * S], fill=(4, 4, 6))
-        # le corps : anneau olive, disque clair décalé vers le bas à droite (l'anneau est épais en haut à gauche)
-        poly(ell(0, 0, 1, 1, 64), fill=OC_OUT)
-        poly(ell(0.06, 0.17, 0.70, 0.70, 64), fill=OC_IN)
+        # le halo olive puis le disque clair, comme le halo violet de Bounce
+        poly(ell(0, 0, 1.6, 1.6, 64), fill=dim(OC_OUT, 0.55))
+        poly(ell(0, 0, 1.0, 1.0, 64), fill=OC_IN)
 
-        # le visage suit Bounce : les traits glissent un peu dans le sens du regard
-        fx, fv = gx * 0.06, max(-0.02, min(0.03, gy * 0.03))
-        # sourcils : deux traits épais qui descendent vers la droite ; plus bas quand il s'agace
-        lo = 0.05 * annoy + 0.07 * wince
-        stroke([(-0.44 + fx, -0.36 + fv + lo * 0.4), (-0.20 + fx, -0.26 + fv + lo)], 0.14)
-        stroke([(-0.01 + fx, -0.25 + fv + lo), (0.42 + fx, -0.12 + fv + lo * 0.4)], 0.14)
+        # le regard : seules les pupilles bougent, sous la paupière
+        px, pv = gx * 0.05, max(-0.01, min(0.03, gy * 0.03))
+        lo = 0.05 * annoy + 0.06 * wince
+        # sourcils : plats et lourds, qui tombent vers la droite ; plus bas quand il s'agace
+        stroke([(-0.60, -0.50 + lo * 0.4), (-0.18, -0.40 + lo)], 0.12)
+        stroke([(0.14, -0.44 + lo), (0.60, -0.30 + lo * 0.4)], 0.12)
         if wince > 0.5:
-            # yeux plissés : deux traits
-            stroke([(-0.52 + fx, -0.07 + fv), (-0.26 + fx, -0.05 + fv)], 0.09)
-            stroke([(-0.06 + fx, 0.03 + fv), (0.22 + fx, 0.05 + fv)], 0.09)
+            stroke([(-0.52, -0.14), (-0.20, -0.12)], 0.10)
+            stroke([(0.16, -0.10), (0.50, -0.07)], 0.10)
         else:
-            # les yeux : deux taches pleines, la gauche allongée, la droite qui coule en bas à droite
-            poly(ell(-0.39 + fx, -0.07 + fv, 0.17, 0.09), fill=OC_INK)
-            poly(ell(0.07 + fx, 0.02 + fv, 0.15, 0.125), fill=OC_INK)
-            poly([(0.13 + fx, 0.07 + fv), (0.25 + fx, 0.12 + fv), (0.22 + fx, 0.17 + fv), (0.08 + fx, 0.11 + fv)], fill=OC_INK)
-        # bouche : petit trait en biais, ondulé pendant la grimace
+            # les yeux mi-clos : la moitié basse d'une pupille noire, coupée par une paupière droite ;
+            # le gauche allongé avec un cil vers l'extérieur, le droit plus grand qui coule en bas
+            for (eu, ev, ru, rv) in ((-0.36, -0.16, 0.17, 0.13), (0.33, -0.12, 0.17, 0.15)):
+                poly([(eu - ru, ev)] + ell(eu + px, ev + pv * 0.5, ru, rv, 24, 0.0, math.pi)[::-1] + [(eu + ru, ev)], fill=OC_INK)
+                stroke([(eu - ru - 0.02, ev), (eu + ru + 0.02, ev)], 0.07)
+            stroke([(-0.53, -0.16), (-0.62, -0.22)], 0.06)
+            poly([(0.42, -0.02), (0.52, 0.07), (0.46, 0.10), (0.37, 0.02)], fill=OC_INK)
+        # bouche : petit trait en biais ; ondulé pendant la grimace
         if wince > 0.5:
-            stroke([(-0.37 + fx, 0.42 + fv), (-0.29 + fx, 0.38 + fv), (-0.20 + fx, 0.43 + fv), (-0.11 + fx, 0.39 + fv)], 0.07)
+            stroke([(-0.20, 0.42), (-0.10, 0.37), (0.0, 0.43), (0.10, 0.38)], 0.08)
         else:
-            stroke([(-0.34 + fx, 0.37 + fv), (-0.13 + fx, 0.44 + fv)], 0.085)
+            stroke([(-0.20, 0.38), (0.10, 0.46)], 0.09)
 
-        # sur la tête, d'après le dessin : le nœud clair (deux pans et le bulbe), le haut-de-forme bleu
-        poly([(0.64, -0.96), (1.17, -1.04), (1.11, -0.68), (0.68, -0.72)], fill=BOW_FILL, outline=BOW_LINE, width=0.065)
-        poly([(0.64, -0.53), (0.94, -0.32), (0.77, -0.34), (0.62, -0.45)], fill=BOW_FILL, outline=BOW_LINE, width=0.065)
-        rot = math.radians(-25)
-        bulb = []
-        for i in range(48):
-            k = 2 * math.pi * i / 48
-            w = 0.27 * (1.0 - 0.32 * max(0.0, -math.sin(k)))       # en poire : plus étroit en haut
-            u, v = w * math.cos(k), 0.37 * math.sin(k)
-            bulb.append((0.49 + u * math.cos(rot) - v * math.sin(rot), -0.77 + u * math.sin(rot) + v * math.cos(rot)))
-        poly(bulb, fill=BOW_FILL, outline=BOW_LINE, width=0.065)
-        poly([(-0.21, -0.47), (0.21, -0.64), (0.13, -0.45)], fill=HAT_FILL, outline=HAT_LINE, width=0.06)
-        poly([(-0.17, -0.83), (-0.11, -1.06), (0.28, -0.96), (0.19, -0.74)], fill=HAT_FILL, outline=HAT_LINE, width=0.06)
-        stroke([(-0.30, -0.83), (0.21, -0.64)], 0.075, HAT_LINE)
+        # le bandeau bleu en travers du haut de la tête, et le nœud clair sur le côté droit
+        band = ell(0, 0, 0.99, 0.99, 20, math.radians(-128), math.radians(-62))
+        inner = ell(0, 0, 0.79, 0.79, 20, math.radians(-128), math.radians(-62))[::-1]
+        poly(band + inner, fill=HAT_FILL, outline=HAT_LINE, width=0.05)
+        kx, ky = 0.36, -0.86
+
+        def lobe(ang, L, Wd):
+            ca, sa = math.cos(ang), math.sin(ang)
+            pts = []
+            for i in range(32):
+                k = 2 * math.pi * i / 32
+                u, v = L / 2 * (1 + math.cos(k)), Wd * math.sin(k) * (0.55 + 0.45 * (1 + math.cos(k)) / 2)
+                pts.append((kx + u * ca - v * sa, ky + u * sa + v * ca))
+            return pts
+        poly(lobe(math.radians(-25), 0.50, 0.20), fill=BOW_FILL, outline=BOW_LINE, width=0.06)
+        poly(lobe(math.radians(-120), 0.46, 0.19), fill=BOW_FILL, outline=BOW_LINE, width=0.06)
+        poly(lobe(math.radians(40), 0.30, 0.10), fill=BOW_FILL, outline=BOW_LINE, width=0.06)
+        poly(ell(kx, ky, 0.10, 0.09, 20), fill=BOW_FILL, outline=BOW_LINE, width=0.06)
 
     def draw(self, dr, snap, t, S):
         cfg = self.cfg
