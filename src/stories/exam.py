@@ -51,7 +51,7 @@ def steady_hero_word(text, cfg):
 base.hero_word = steady_hero_word
 
 # ------------------------------------------------------------------ la voix du surveillant
-LINES = ["Shh.", "Quiet, please.", "That's a warning.", "Second warning.", "Last warning.",
+LINES = ["Hush.", "Quiet, please.", "That's a warning.", "Second warning.", "Last warning.",
          "I'm not leaving your side.", "Pencils down.", "Wrong answer: minus one.",
          "Everyone else: minus twelve.", "Zero. Top of the class."]
 BANK = {"path": None}
@@ -68,6 +68,26 @@ def bank_say(text, voice=narr_voice.DEFAULT_VOICE, length_scale=None, sr=SR):
 
 
 narr_voice.say = bank_say
+
+
+# ------------------------------------------------------------------ la réverbération, par FFT
+def fft_reverb(x, sr, tail_s=0.8, wet=0.5):
+    """Même calcul que base.reverb (même réponse impulsionnelle, même mélange), mais la
+    convolution passe par la FFT : quelques millisecondes au lieu de minutes."""
+    n = int(tail_s * sr)
+    ir = np.random.default_rng(7).standard_normal(n) * np.exp(-np.arange(n) / (sr * tail_s / 4))
+    ir[0] = 0.0
+    ir /= (np.sum(np.abs(ir)) + 1e-9) / 3.0
+    m = len(x) + n - 1
+    size = 1 << (m - 1).bit_length()
+    wetx = np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)[:m]
+    out = np.zeros(len(wetx))
+    out[:len(x)] += x * (1 - wet)
+    out += wetx * wet
+    return out / (np.max(np.abs(out)) + 1e-9)
+
+
+base.reverb = fft_reverb
 
 # ------------------------------------------------------------------ le calendrier
 G = 2600.0
@@ -136,9 +156,9 @@ T_CROSS = 33.8
 T_ROW2 = 38.0
 T_WAVE = 38.9
 T_BLUE_CHAIR = 41.7
-T_CROWD = (42.6, 43.5)
+T_CROWD = (42.6, 44.15)
 T_WAKE = 46.8
-T_SLEEPER_RUN = (47.7, 48.45)
+T_SLEEPER_RUN = (47.6, 48.6)
 T_PENCILS = 48.65
 T_SCATTER = (48.95, 49.4)
 T_PULL = 50.45
@@ -497,37 +517,35 @@ class Sim:
         if name == "blue" and T_BLUE_CHAIR <= t < T_CROWD[0]:
             p["stand"] = smooth((t - T_BLUE_CHAIR) / 0.3)
             p["dy"] -= 70.0 * k * p["stand"]
-        # la grappe dans le dos du surveillant
-        slot = CROWD.get(name)
-        if slot is not None:
-            t0 = T_CROWD[0] + CROWD_DELAY[name]
-            t1 = t0 + 0.75
-            if name == "sleeper":
-                t0, t1 = T_SLEEPER_RUN
+        # la grappe dans le dos du surveillant : on y va par l'allée de gauche et par
+        # l'espace devant le dernier rang, jamais à travers une table
+        route = CROWD_PATH.get(name)
+        if route is not None:
+            t0, t1 = CROWD_T[name]
             ts0, ts1 = T_SCATTER
             if t0 <= t < ts1 + 0.4:
-                seat = (s["x"], seat_y(row), k)
-                dst = slot
                 if t < t1:
-                    u = smooth((t - t0) / (t1 - t0))
-                    x, fy, kk = (lerp(a, b, u) for a, b in zip(seat, dst))
+                    x, fy = along(route, smooth((t - t0) / (t1 - t0)))
                     p["walk"] = 1.0
                     p["stand"] = 1.0
                 elif t < ts0:
-                    x, fy, kk = dst
+                    x, fy = route[-1]
                     p["stand"] = 1.0
                 else:
-                    u = smooth((t - ts0) / (ts1 - ts0 + 0.0))
-                    x, fy, kk = (lerp(a, b, u) for a, b in zip(dst, seat))
+                    u = smooth((t - ts0) / (ts1 - ts0))
+                    x, fy = along(route, 1.0 - u)
                     p["walk"] = 1.0 if u < 1 else 0.0
                     p["stand"] = 1.0 - smooth((t - ts1) / 0.3) if t > ts1 else 1.0
+                kk = k_for(fy)
                 p["x"], p["sy"], p["k"] = x, fy, kk
-                p["depth"] = 3.2 if fy > 1620 else 2.9
+                p["depth"] = depth_for(fy)
+                if p["walk"] == 0.0 and p["stand"] < 1.0 and t > ts1:
+                    p["depth"] = row
                 p["dy"] = 0.0
                 p["lean"] = 0.0
                 if t1 <= t < ts0:
-                    # regarder la feuille par-dessus l'épaule du surveillant, gribouiller
-                    p["lean"] = -0.25
+                    # regarder la feuille de Bounce par-dessus l'épaule du surveillant, gribouiller
+                    p["lean"] = -0.22
                     p["stretch"] = 1.12
                     hh = [h for h in HARD if t1 <= h <= t]
                     if hh and t - hh[-1] < 0.9:
@@ -554,9 +572,51 @@ class Sim:
         return p
 
 
-CROWD = {"yellow": (712.0, 1566.0, 0.95), "green": (788.0, 1560.0, 0.95), "teal": (864.0, 1566.0, 0.95),
-         "blue": (742.0, 1655.0, 1.0), "orange": (852.0, 1660.0, 1.0), "sleeper": (798.0, 1668.0, 1.0)}
-CROWD_DELAY = {"yellow": 0.0, "green": 0.15, "teal": 0.05, "blue": 0.3, "orange": 0.2, "sleeper": 0.0}
+FRONT = 1690.0                 # l'espace devant le dernier rang (pieds)
+AISLE_X = 275.0                # l'allée de gauche, entre la table du vert et celle de Bounce
+CROWD_PATH = {
+    "yellow": [(815.0, 1590.0), (790.0, FRONT), (700.0, 1650.0)],
+    "green": [(140.0, 1590.0), (150.0, FRONT), (700.0, FRONT), (775.0, 1646.0)],
+    "blue": [(140.0, 1345.0), (AISLE_X, 1385.0), (AISLE_X, FRONT), (735.0, FRONT)],
+    "orange": [(410.0, 1345.0), (AISLE_X, 1395.0), (AISLE_X, FRONT), (835.0, 1694.0)],
+    "teal": [(815.0, 1345.0), (AISLE_X + 30.0, 1415.0), (AISLE_X, 1440.0), (AISLE_X, FRONT), (850.0, 1650.0)],
+    "sleeper": [(410.0, 1111.0), (AISLE_X, 1150.0), (AISLE_X, FRONT), (790.0, 1702.0)],
+}
+CROWD_T = {"yellow": (42.6, 43.3), "green": (42.65, 43.75), "blue": (42.7, 43.9), "orange": (42.75, 43.95),
+           "teal": (42.8, 44.15), "sleeper": (47.6, 48.6)}
+
+
+def along(route, u):
+    """Point à la fraction u (0..1) de la longueur d'une ligne brisée."""
+    segs = [math.hypot(bx - ax, by - ay) for (ax, ay), (bx, by) in zip(route, route[1:])]
+    total = sum(segs) or 1.0
+    d = clamp01(u) * total
+    for (a, b), L in zip(zip(route, route[1:]), segs):
+        if d <= L or L == segs[-1]:
+            f = 0.0 if L == 0 else min(1.0, d / L)
+            return (a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f)
+        d -= L
+    return route[-1]
+
+
+def k_for(fy):
+    pts = [(1111.0, 0.84), (1345.0, 0.92), (1590.0, 1.0), (1700.0, 1.02)]
+    if fy <= pts[0][0]:
+        return pts[0][1]
+    for (a, ka), (b, kb) in zip(pts, pts[1:]):
+        if fy <= b:
+            return ka + (kb - ka) * (fy - a) / (b - a)
+    return pts[-1][1]
+
+
+def depth_for(fy):
+    if fy < 1250:
+        return 1.5
+    if fy < 1500:
+        return 2.5
+    if fy < 1620:
+        return 2.9
+    return 3.2
 
 
 # ------------------------------------------------------------------ le dessin
@@ -747,6 +807,20 @@ class Drawer:
         pen.circ(x + ww / 2 - 16, top3 - 8 - hh * 0.55, 5, (230, 230, 240))
 
     # ---- élèves
+    def chair(self, pen, s, p):
+        """La chaise d'un élève, toujours à sa place (même quand il est parti)."""
+        x = s["x"]
+        ck = ROWS[s["row"]][1]
+        tip = p["chair_tip"]
+        cy = seat_y(s["row"])
+        pts = [(x - 70 * ck, cy - 10 * ck), (x + 70 * ck, cy - 10 * ck), (x + 70 * ck, cy + 8 * ck), (x - 70 * ck, cy + 8 * ck)]
+        if tip:
+            pts = [(px, py + 18 * tip) for px, py in pts]
+        pen.poly(pts, (72, 72, 90))
+        for sx in (-1, 1):
+            lx = x + sx * 60 * ck
+            pen.rect(lx - 5 * ck, cy + 8 * ck + 18 * tip, lx + 5 * ck, cy + 70 * ck + 6 * tip, (72, 72, 90))
+
     def student(self, pen, s, t, p):
         k = p["k"]
         bw, bh, hr = student_dims(s)
@@ -756,18 +830,6 @@ class Drawer:
         col = s["col"]
         stand = p["stand"]
         walk = p["walk"]
-        # chaise (quand il est assis à sa place)
-        at_seat = abs(x - s["x"]) < 2 and abs(seat - seat_y(s["row"])) < 2
-        if at_seat:
-            ck = ROWS[s["row"]][1]
-            tip = p["chair_tip"]
-            cy = seat_y(s["row"])
-            pts = [(x - 70 * ck, cy - 10 * ck), (x + 70 * ck, cy - 10 * ck), (x + 70 * ck, cy + 8 * ck), (x - 70 * ck, cy + 8 * ck)]
-            pts = rot(pts, x, cy + 70 * ck, -0.0) if tip == 0 else [(px, py + 18 * tip) for px, py in pts]
-            pen.poly(pts, (72, 72, 90))
-            for sx in (-1, 1):
-                lx = x + sx * 60 * ck
-                pen.rect(lx - 5 * ck, cy + 8 * ck + 18 * tip, lx + 5 * ck, cy + 70 * ck + 6 * tip, (72, 72, 90))
         # corps
         base_y = seat + p["dy"]
         legs = 0.0
@@ -1066,6 +1128,10 @@ class Drawer:
             if not drawn_proctor and proctor_depth < row:
                 self.proctor(pen, t, P, False)
                 drawn_proctor = True
+            for s in STUDENTS:
+                p = poses[s["name"]]
+                if row - 1 < p["depth"] < row:
+                    heads[s["name"]] = self.student(pen, s, t, p)
             for x in COLX:
                 if row == 3 and x == COLX[1]:
                     self.desk(pen, x, 3)
@@ -1076,6 +1142,9 @@ class Drawer:
                 occupied = any(s["row"] == row and s["x"] == x for s in STUDENTS)
                 if occupied:
                     self.sheet_on_desk(pen, x, row, t, fly)
+            for s in STUDENTS:
+                if s["row"] == row:
+                    self.chair(pen, s, poses[s["name"]])
             if row == 3 and self.bounce_behind(t):
                 self.bounce(pen, t)
             for s in STUDENTS:
@@ -1156,7 +1225,7 @@ class FullSim(Sim):
 DEFAULTS = {
     "hook_text_s": 2.6, "hook_top": 0.085, "hook_font_size": 92,
     "narrator_voice": "bm_lewis", "narrator_length": 1.0, "narr_gap_s": 0.05,
-    "sub_y": 0.135, "sub_font_size": 66, "sub_words": 6, "narr_tail_s": 0.0,
+    "sub_y": 0.135, "sub_font_size": 62, "sub_words": 6, "narr_tail_s": 0.0,
     "watermark_y": 0.94, "end_hold_s": 0.05, "min_duration_s": 30.0, "max_duration_s": 70.0,
     "show_counter": False, "hook_voice": True,
 }
