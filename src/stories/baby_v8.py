@@ -1297,7 +1297,10 @@ class Sim:
                     if self.sc.mom_col(t) > 0.0:     # Maman est là : la bulle monte au-dessus de sa tête
                         cy = 215.0
                     cx = 895 - bw / 2            # à droite : jamais sur la tête de Maman
-                    self.bubble(dr, S, lines, fs, k, (cx, cy), (hx, hy - hr * 0.9), fill, ink)
+                    tgt = (hx, hy - hr * 0.9)
+                    if self.sc.mom_col(t) > 0.0:     # la pointe vise le côté droit de sa tête, loin de Maman
+                        tgt = (hx + hr * 0.75, hy - hr * 0.7)
+                    self.bubble(dr, S, lines, fs, k, (cx, cy), tgt, fill, ink)
                 continue
             # Maman dans la chambre : à côté de sa tête, du côté le plus libre, entre y 300 et 480
             hd = getattr(self, "_mom_head", None)
