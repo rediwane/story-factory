@@ -1,0 +1,12 @@
+{
+ "name": "roll_v3",
+ "theme": "roll_v3",
+ "seed": 3,
+ "hook_text": "Will they fall?",
+ "hook_top": 0.125,
+ "hook_font_size": 76,
+ "hook_text_s": 8.6,
+ "hero_shock_s": 0.35,
+ "hero_lose": "Oh no.",
+ "voice_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/lot3/banque_roll"
+}
