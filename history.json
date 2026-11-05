@@ -1104,6 +1104,40 @@
     "measured_at": null
    },
    "script": "src/stories/hideseek.py (branche proto-hideseek)"
+  },
+  {
+   "name": "baby_proto",
+   "date": "2026-11-07",
+   "theme": "baby",
+   "config": "configs/baby_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce wake the baby?",
+   "duration_s": 62.23,
+   "hashtags": [
+    "#bounce",
+    "#babysitting",
+    "#parentsoftiktok",
+    "#fyp"
+   ],
+   "caption": "captions/baby_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-07T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-4041040687498057882.mp4",
+   "metricool_post_id": 417781994,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/baby.py (branche proto-baby)"
   }
  ],
  "themes": [
