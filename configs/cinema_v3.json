@@ -1,0 +1,14 @@
+{
+  "name": "cinema_v3",
+  "seed": 11,
+  "hook_text": "How many get kicked out?",
+  "hook_narrator": true,
+  "narrator_length": 0.95,
+  "hook_top": 0.125,
+  "hook_font_size": 80,
+  "hook_text_s": 99.0,
+  "voice_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/lot4/cinema/bank",
+  "fps": 60,
+  "end_hold_s": 0.0,
+  "hero_win": ""
+}
