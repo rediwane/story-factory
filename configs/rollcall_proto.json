@@ -1,0 +1,9 @@
+{
+ "name": "rollcall_proto",
+ "theme": "rollcall",
+ "seed": 1,
+ "hook_text": "Who's your favorite?",
+ "draw_from": ["/home/user/sf-clip/src/stories", "/home/user/sf-bf/src/stories", "/home/user/sf-bc/src/stories"],
+ "voices": {"Float": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_H/3_contente.wav", "Snooze": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/snooze/banque/1_marmonne.wav", "Beam": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_beam/cri.wav",
+            "Fall": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_fall/joie.wav", "Blub": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_blub/joie.wav", "Crush": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/crush.wav"}
+}
