@@ -1,0 +1,21 @@
+{
+ "name": "hideseek_proto",
+ "theme": "hideseek",
+ "seed": 1,
+ "hook_text": "Can Bounce stay hidden?",
+ "draw_from": ["/home/user/sf-clip/src/stories", "/home/user/sf-bf/src/stories", "/home/user/sf-bc/src/stories"],
+ "voices": {
+  "crush": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/crush.wav",
+  "crush_fort": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/fort.wav",
+  "crush_q": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/q.wav",
+  "bea": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_beam/bea.wav",
+  "beabea": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_beam/beabea.wav",
+  "beam_cri": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_beam/cri.wav",
+  "beam_petit": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/fb/banque_beam/petit.wav",
+  "blub_peur": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_blub/peur.wav",
+  "float_agace": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_H/2_agace.wav",
+  "float_sec": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_H/1_sec.wav",
+  "float_glacial": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/float/banque_H/4_glacial.wav"
+ },
+ "voice_gain": {"beam_petit": 0.7, "crush_fort": 1.15}
+}
