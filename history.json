@@ -1036,6 +1036,74 @@
     "measured_at": null
    },
    "script": "src/stories/slo.py (branche proto-slo)"
+  },
+  {
+   "name": "wedding_proto",
+   "date": "2026-11-07",
+   "theme": "wedding",
+   "config": "configs/wedding_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce hold his peace?",
+   "duration_s": 63.27,
+   "hashtags": [
+    "#bounce",
+    "#wedding",
+    "#speaknow",
+    "#fyp"
+   ],
+   "caption": "captions/wedding_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-07T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18311508626602373365.mp4",
+   "metricool_post_id": 417768780,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/wedding.py (branche proto-wedding)"
+  },
+  {
+   "name": "hideseek_proto",
+   "date": "2026-11-08",
+   "theme": "hideseek",
+   "config": "configs/hideseek_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce stay hidden?",
+   "duration_s": 61.17,
+   "hashtags": [
+    "#bounce",
+    "#hideandseek",
+    "#oc",
+    "#animation"
+   ],
+   "caption": "captions/hideseek_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-08T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9006956134518819494.mp4",
+   "metricool_post_id": 417768869,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/hideseek.py (branche proto-hideseek)"
   }
  ],
  "themes": [
