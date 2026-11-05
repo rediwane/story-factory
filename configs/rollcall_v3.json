@@ -1,0 +1,10 @@
+{
+ "name": "rollcall_v3",
+ "theme": "rollcall_v3",
+ "seed": 6,
+ "hook_text": "How many blocks, you think?",
+ "hook_top": 0.125,
+ "hook_font_size": 96,
+ "hook_text_s": 8.3,
+ "end_hold_s": 0.0
+}
