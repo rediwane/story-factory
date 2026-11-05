@@ -1,2 +1,2 @@
-Roll just wants to play. Bounce just wants to bounce. 🟢 Who wins this one? 👇
-#bounce #oc #animation #fyp
+Six threads… then five… then one. Did they fall or not?
+#bounce #circus #tightrope #animation

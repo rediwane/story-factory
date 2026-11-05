@@ -1,0 +1,21 @@
+{
+ "name": "hideseek_v3",
+ "theme": "hideseek_v3",
+ "seed": 3,
+ "hook_text": "How do you find Bounce?",
+ "draw_from": [
+  "/home/user/sf-clip/src/stories",
+  "/home/user/sf-bf/src/stories",
+  "/home/user/sf-bc/src/stories"
+ ],
+ "voices": {
+  "crush": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/crush.wav",
+  "crush_fort": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/fort.wav",
+  "crush_q": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/q.wav",
+  "crush_qlow": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/bc/banque_crush/q.wav"
+ },
+ "voice_gain": {
+  "crush_fort": 1.15,
+  "crush_qlow": 0.45
+ }
+}

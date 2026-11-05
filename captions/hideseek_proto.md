@@ -1,2 +1,2 @@
-He was ON his head the whole time. 👀 Who should seek next? 👇
-#bounce #hideandseek #oc #animation
+Best hiding spot in the house. Almost.
+#bounce #hideandseek #animation #oc

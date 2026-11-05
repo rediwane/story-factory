@@ -871,21 +871,21 @@
    "name": "rollcall_proto",
    "date": "2026-11-06",
    "theme": "rollcall",
-   "config": "configs/rollcall_proto.json",
+   "config": "configs/rollcall_v3.json",
    "role": "owner",
-   "hook_text": "Who's your favorite?",
-   "duration_s": 61.62,
+   "hook_text": "How many blocks, you think?",
+   "duration_s": 65.92,
    "hashtags": [
     "#bounce",
+    "#gamenight",
     "#oc",
-    "#animation",
-    "#fyp"
+    "#animation"
    ],
    "caption": "captions/rollcall_proto.md",
    "slot": "11:30",
    "scheduled_time": "2026-11-06T11:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2415840008298126589.mp4",
-   "metricool_post_id": 417591120,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-757744355008001432.mp4",
+   "metricool_post_id": 418107314,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -899,27 +899,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/rollcall.py (branche proto-rollcall)"
+   "script": "src/stories/rollcall_v3.py (branche proto-rollcall)",
+   "methode": "S3·A3·2e·R2·C2·P3·F1·E2·O1·T1·Z2·N3·Q2·L2",
+   "outcome": "soirée jeu : chaque coup de Bounce sur la table fait tomber des blocs de la tour sur la tête de Still qui ne bouge jamais ; fausse fin à 46 s, puis le petit coup de 61,5 s fait tout basculer sur Bounce, enseveli"
   },
   {
    "name": "detonate_proto",
    "date": "2026-11-06",
    "theme": "detonate",
-   "config": "configs/detonate_proto.json",
+   "config": "configs/detonate_v3.json",
    "role": "owner",
-   "hook_text": "Will Detonate explode?",
-   "duration_s": 62.5,
+   "hook_text": "Which bounce sets him off?",
+   "duration_s": 62.63,
    "hashtags": [
     "#bounce",
     "#oc",
-    "#animation",
-    "#fyp"
+    "#trampoline",
+    "#animation"
    ],
    "caption": "captions/detonate_proto.md",
    "slot": "14:30",
    "scheduled_time": "2026-11-06T14:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9675898068647908030.mp4",
-   "metricool_post_id": 417596538,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-8414464324822548939.mp4",
+   "metricool_post_id": 418107354,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -933,27 +935,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/detonate.py (branche proto-detonate)"
+   "script": "src/stories/detonate_v3.py (branche proto-detonate)",
+   "methode": "S2·A2·3e·R1·C3·P2·F2·E1·O2·T2·Z1·N2·Q1·L0",
+   "outcome": "sur un trampoline, chaque « Bounce » coûte un morceau de coque à Detonate ; coque vide sans explosion à 43 s, puis il gonfle à chaque rebond ; après un silence, un dernier « Bounce » le fait éclater en confettis sur Bounce"
   },
   {
    "name": "grounded_proto",
    "date": "2026-11-06",
    "theme": "grounded",
-   "config": "configs/grounded_proto.json",
+   "config": "configs/grounded_v3.json",
    "role": "owner",
-   "hook_text": "Can Grounded stop Bounce?",
-   "duration_s": 61.82,
+   "hook_text": "How do you ground Bounce?",
+   "duration_s": 63.87,
    "hashtags": [
     "#bounce",
-    "#oc",
-    "#animation",
+    "#grounded",
+    "#bouncingball",
     "#fyp"
    ],
    "caption": "captions/grounded_proto.md",
    "slot": "18:00",
    "scheduled_time": "2026-11-06T18:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2843873891366391388.mp4",
-   "metricool_post_id": 417599831,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-3019708314640476817.mp4",
+   "metricool_post_id": 418113805,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -967,27 +971,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/grounded.py (branche proto-rollgrounded)"
+   "script": "src/stories/grounded_v3.py (branche proto-rollgrounded)",
+   "methode": "S1·A4·2e·R1·C1·P3·F3·E1·O2·T3·Z0·N2·Q2·L1",
+   "outcome": "Grounded lâche sur Bounce des charges de plus en plus lourdes (livre, pile, panier, briques, 1 TON, lui-même) pendant que la peine monte ; à 61,8 s la pile bascule, le panier frôle Bounce et retombe sur Grounded"
   },
   {
    "name": "roll_proto",
    "date": "2026-11-07",
    "theme": "roll",
-   "config": "configs/roll_proto.json",
+   "config": "configs/roll_v3.json",
    "role": "owner",
-   "hook_text": "Can Bounce dodge Roll?",
-   "duration_s": 61.82,
+   "hook_text": "Will they fall?",
+   "duration_s": 62.27,
    "hashtags": [
     "#bounce",
-    "#oc",
-    "#animation",
-    "#fyp"
+    "#circus",
+    "#tightrope",
+    "#animation"
    ],
    "caption": "captions/roll_proto.md",
    "slot": "08:00",
    "scheduled_time": "2026-11-07T08:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-5116124189942963852.mp4",
-   "metricool_post_id": 417605709,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-6297014532890917061.mp4",
+   "metricool_post_id": 418108080,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1001,27 +1007,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/roll.py (branche proto-rollgrounded)"
+   "script": "src/stories/roll_v3.py (branche proto-roll3)",
+   "methode": "S1·A1·3e·R1·C3·P2·F4·E2·O1·T1·Z0·N3·Q1·L0",
+   "outcome": "funambule : chaque « Bounce » sur Roll fait claquer un des six fils du point faible de la corde ; le dernier fil tient et fait fronde à 59,3 s, renvoyant les deux balles au départ"
   },
   {
    "name": "slo_proto",
    "date": "2026-11-07",
    "theme": "slo",
-   "config": "configs/slo_proto.json",
+   "config": "configs/slo_v3.json",
    "role": "owner",
-   "hook_text": "Can Bounce get past Slo?",
-   "duration_s": 64.27,
+   "hook_text": "Bounces till he's out?",
+   "duration_s": 63.93,
    "hashtags": [
     "#bounce",
     "#oc",
-    "#slowmotion",
-    "#fyp"
+    "#garage",
+    "#animation"
    ],
    "caption": "captions/slo_proto.md",
    "slot": "21:00",
    "scheduled_time": "2026-11-07T21:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10824482178925345161.mp4",
-   "metricool_post_id": 417606122,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-6757341034023334297.mp4",
+   "metricool_post_id": 418107492,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1035,27 +1043,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/slo.py (branche proto-slo)"
+   "script": "src/stories/slo_v3.py (branche proto-slo)",
+   "methode": "S3·A3·3e·R2·C3·P3·F1·E2·O2·T2·Z0·N3·Q1·L2",
+   "outcome": "garage : chaque « Bounce » sur Slo gonfle sa bulle de ralenti ; Bounce tape lui-même le bouton de la porte à 6 s ; fausse fin devant la porte à 53 s, son « Bounce » sur le seuil réveille Slo et la porte se ferme à 60 s"
   },
   {
    "name": "wedding_proto",
    "date": "2026-11-07",
    "theme": "wedding",
-   "config": "configs/wedding_proto.json",
+   "config": "configs/wedding_v3.json",
    "role": "owner",
-   "hook_text": "Can Bounce hold his peace?",
-   "duration_s": 63.27,
+   "hook_text": "When would you object?",
+   "duration_s": 61.97,
    "hashtags": [
     "#bounce",
     "#wedding",
-    "#speaknow",
-    "#fyp"
+    "#weddingtiktok",
+    "#animation"
    ],
    "caption": "captions/wedding_proto.md",
    "slot": "11:30",
    "scheduled_time": "2026-11-07T11:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18311508626602373365.mp4",
-   "metricool_post_id": 417768780,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10124897616626656899.mp4",
+   "metricool_post_id": 418107394,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1069,27 +1079,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/wedding.py (branche proto-wedding)"
+   "script": "src/stories/wedding_v3.py (branche proto-wedding)",
+   "methode": "S3·A2·2e·R1·C1·P3·F4·E1·O2·T3·Z1·N2·Q1·L1",
+   "outcome": "on glisse du mou sous Bounce pour le faire taire pendant la cérémonie, il le perd à chaque fois ; objection à 38 s, la mariée part à 45 s (fausse fin) ; « …husband… and… » puis 2 s de silence et « BOUNCE. » à 60 s"
   },
   {
    "name": "hideseek_proto",
    "date": "2026-11-08",
    "theme": "hideseek",
-   "config": "configs/hideseek_proto.json",
+   "config": "configs/hideseek_v3.json",
    "role": "owner",
-   "hook_text": "Can Bounce stay hidden?",
-   "duration_s": 61.17,
+   "hook_text": "How do you find Bounce?",
+   "duration_s": 63.82,
    "hashtags": [
     "#bounce",
     "#hideandseek",
-    "#oc",
-    "#animation"
+    "#animation",
+    "#oc"
    ],
    "caption": "captions/hideseek_proto.md",
    "slot": "08:00",
    "scheduled_time": "2026-11-08T08:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9006956134518819494.mp4",
-   "metricool_post_id": 417768869,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-7222441857123566762.mp4",
+   "metricool_post_id": 418107523,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1103,27 +1115,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/hideseek.py (branche proto-hideseek)"
+   "script": "src/stories/hideseek_v3.py (branche proto-hideseek)",
+   "methode": "S2·A4·2e·R3·C1·P2·F2·E1·O2·T1·Z1·N3·Q1·L1",
+   "outcome": "chaque « Bounce » envoie un anneau et Crush bondit vers le bruit ; Bounce finit sur la tête de Crush à 42 s ; Crush abandonne, mais Bounce heurte la poutre de la porte à 61,7 s et se fait trouver"
   },
   {
    "name": "baby_proto",
    "date": "2026-11-07",
    "theme": "baby",
-   "config": "configs/baby_proto.json",
+   "config": "configs/baby_v3.json",
    "role": "owner",
-   "hook_text": "Will Bounce wake the baby?",
-   "duration_s": 62.23,
+   "hook_text": "How will Mom react?",
+   "duration_s": 61.23,
    "hashtags": [
     "#bounce",
-    "#babysitting",
-    "#parentsoftiktok",
-    "#fyp"
+    "#baby",
+    "#firstword",
+    "#animation"
    ],
    "caption": "captions/baby_proto.md",
    "slot": "18:00",
    "scheduled_time": "2026-11-07T18:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-4041040687498057882.mp4",
-   "metricool_post_id": 417781994,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-16473766668549311795.mp4",
+   "metricool_post_id": 418103783,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1137,27 +1151,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/baby.py (branche proto-baby)"
+   "script": "src/stories/baby_v3.py (branche proto-baby)",
+   "methode": "S1·A4·3e·R1·C2·P1·F3·E1·O1·T3·Z2·N2·Q2·L0",
+   "outcome": "chaque « BOUNCE » réveille le bébé d'un cran ; Maman entre à 47 s, « Who woke you up? », le bébé dit « BOUNCE! » ; elle vire au rouge puis se dégonfle à 59 s : « His first word! »"
   },
   {
    "name": "yoga_proto",
    "date": "2026-11-08",
    "theme": "yoga",
-   "config": "configs/yoga_proto.json",
+   "config": "configs/yoga_v3.json",
    "role": "owner",
-   "hook_text": "Can Bounce find inner peace?",
-   "duration_s": 61.6,
+   "hook_text": "Will Bounce calm down?",
+   "duration_s": 62.55,
    "hashtags": [
     "#bounce",
     "#yoga",
-    "#satisfying",
+    "#namaste",
     "#animation"
    ],
    "caption": "captions/yoga_proto.md",
    "slot": "14:30",
    "scheduled_time": "2026-11-08T14:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-17497309892458874035.mp4",
-   "metricool_post_id": 417785355,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-16546802198253627405.mp4",
+   "metricool_post_id": 418107590,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1171,27 +1187,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/yoga.py (branche proto-yoga)"
+   "script": "src/stories/yoga_v3.py (branche proto-yoga)",
+   "methode": "S1·A1·3e·R2·C2·P1·F1·E2·O1·T1·Z0·N2·Q2·L0",
+   "outcome": "chaque « Bounce » sur le parquet casse une posture ; la prof tombe à 48 s ; à 58,7 s Bounce se coince dans le hublot devant la lune, la classe joint les mains : « Namaste »"
   },
   {
    "name": "firstday_proto",
    "date": "2026-11-07",
    "theme": "firstday",
-   "config": "configs/firstday_proto.json",
+   "config": "configs/firstday_v3.json",
    "role": "owner",
-   "hook_text": "Will Bounce get fired?",
-   "duration_s": 63.2,
+   "hook_text": "Fired for bouncing?",
+   "duration_s": 62.93,
    "hashtags": [
     "#bounce",
     "#officehumor",
-    "#firstday",
-    "#corporatelife"
+    "#animation",
+    "#fyp"
    ],
    "caption": "captions/firstday_proto.md",
    "slot": "14:30",
    "scheduled_time": "2026-11-07T14:30:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-1940473507865697923.mp4",
-   "metricool_post_id": 417787373,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-4884396052471637417.mp4",
+   "metricool_post_id": 418107432,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1205,27 +1223,29 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/firstday.py (branche proto-firstday)"
+   "script": "src/stories/firstday_v3.py (branche proto-firstday)",
+   "methode": "S2·A1·3e·R3·C2·P1·F2·E2·O1·T3·Z2·N3·Q2·L2",
+   "outcome": "au bureau, chaque « Bounce » compte comme une main levée et lui donne une tâche ; Kevin prend PITCH à 40 s ; à l'appel sur FIRED il est sur son coussin, muet, mais un dernier petit rebond frôle le bureau à 59,6 s"
   },
   {
    "name": "exam_proto",
    "date": "2026-11-08",
    "theme": "exam",
-   "config": "configs/exam_proto.json",
+   "config": "configs/exam_v3.json",
    "role": "owner",
-   "hook_text": "Will Bounce pass the exam?",
-   "duration_s": 64.7,
+   "hook_text": "When do cheaters get caught?",
+   "duration_s": 62.62,
    "hashtags": [
     "#bounce",
     "#exam",
-    "#schoollife",
+    "#school",
     "#fyp"
    ],
    "caption": "captions/exam_proto.md",
    "slot": "18:00",
    "scheduled_time": "2026-11-08T18:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-3051913167604821025.mp4",
-   "metricool_post_id": 417788978,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-17581839434114746867.mp4",
+   "metricool_post_id": 418110256,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1239,7 +1259,81 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/exam.py (branche proto-exam)"
+   "script": "src/stories/exam_v3.py (branche proto-exam)",
+   "methode": "S3·A2·3e·R3·C3·P3·F4·E1·O2·T3·Z1·N3·Q1·L1",
+   "outcome": "la salle recopie les ronds roses de Bounce ; 0 à 42 s, puis les copies identiques prennent −19 chacune ; Bounce est premier avec zéro"
+  },
+  {
+   "name": "camping_v3",
+   "date": "2026-11-08",
+   "theme": "camping",
+   "role": "owner",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-08T11:30:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "How many bears?",
+   "duration_s": 63.67,
+   "hashtags": [
+    "#bounce",
+    "#bears",
+    "#camping",
+    "#fyp"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2480853591098976715.mp4",
+   "metricool_post_id": 418114073,
+   "methode": "S2·A3·3e·R1·C1·P3·F3·E2·O1·T2·Z2·N2·Q2·L2",
+   "outcome": "chaque « Bounce » attire un ours de plus dans la tente ; une ourse géante à 47 s écrase tout ; Bounce s'échappe de justesse par l'aération et tombe sur le rocher, qui était un ours",
+   "script": "src/stories/camping_v3.py (branche proto-camping)",
+   "config": "configs/camping_v3.json",
+   "caption": "captions/camping_v3.md"
+  },
+  {
+   "name": "cinema_v3",
+   "date": "2026-11-08",
+   "theme": "cinema",
+   "role": "owner",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-08T21:00:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "How many get kicked out?",
+   "duration_s": 63.57,
+   "hashtags": [
+    "#bounce",
+    "#movietheater",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18331253928044804194.mp4",
+   "metricool_post_id": 418114100,
+   "methode": "S2·A3·3e·R1·C1·P2·F4·E2·O2·T3·Z0·N2·Q1·L2",
+   "outcome": "tout ce que la lampe de l'ouvreur éclaire est mis dehors, jamais Bounce ; la salle se vide, Bounce envoie la lampe sur l'écran et le personnage du film est expulsé ; la lampe finit braquée sur la caméra",
+   "script": "src/stories/cinema_v3.py (branche proto-cinema)",
+   "config": "configs/cinema_v3.json",
+   "caption": "captions/cinema_v3.md"
   }
  ],
  "themes": [
