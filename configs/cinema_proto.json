@@ -1,0 +1,8 @@
+{
+  "name": "cinema_proto",
+  "seed": 7,
+  "hook_text": "Will Bounce get kicked out?",
+  "voice_bank": "/tmp/claude-0/-home-user-bouncefactory/b9b675be-c303-52dd-8eb3-2f9df7a3dbaa/scratchpad/lot4/cinema/bank",
+  "fps": 60,
+  "end_hold_s": 0.0
+}
