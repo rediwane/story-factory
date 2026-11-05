@@ -866,6 +866,108 @@
     "measured_at": null
    },
    "script": "src/stories/blub.py (branche proto-blubcrush)"
+  },
+  {
+   "name": "rollcall_proto",
+   "date": "2026-11-06",
+   "theme": "rollcall",
+   "config": "configs/rollcall_proto.json",
+   "role": "owner",
+   "hook_text": "Who's your favorite?",
+   "duration_s": 61.62,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/rollcall_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-06T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2415840008298126589.mp4",
+   "metricool_post_id": 417591120,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/rollcall.py (branche proto-rollcall)"
+  },
+  {
+   "name": "detonate_proto",
+   "date": "2026-11-06",
+   "theme": "detonate",
+   "config": "configs/detonate_proto.json",
+   "role": "owner",
+   "hook_text": "Will Detonate explode?",
+   "duration_s": 62.5,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/detonate_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-06T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9675898068647908030.mp4",
+   "metricool_post_id": 417596538,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/detonate.py (branche proto-detonate)"
+  },
+  {
+   "name": "grounded_proto",
+   "date": "2026-11-06",
+   "theme": "grounded",
+   "config": "configs/grounded_proto.json",
+   "role": "owner",
+   "hook_text": "Can Grounded stop Bounce?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/grounded_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-06T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2843873891366391388.mp4",
+   "metricool_post_id": 417599831,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/grounded.py (branche proto-rollgrounded)"
   }
  ],
  "themes": [
