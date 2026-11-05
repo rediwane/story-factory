@@ -1172,6 +1172,74 @@
     "measured_at": null
    },
    "script": "src/stories/yoga.py (branche proto-yoga)"
+  },
+  {
+   "name": "firstday_proto",
+   "date": "2026-11-07",
+   "theme": "firstday",
+   "config": "configs/firstday_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce get fired?",
+   "duration_s": 63.2,
+   "hashtags": [
+    "#bounce",
+    "#officehumor",
+    "#firstday",
+    "#corporatelife"
+   ],
+   "caption": "captions/firstday_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-07T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-1940473507865697923.mp4",
+   "metricool_post_id": 417787373,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/firstday.py (branche proto-firstday)"
+  },
+  {
+   "name": "exam_proto",
+   "date": "2026-11-08",
+   "theme": "exam",
+   "config": "configs/exam_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce pass the exam?",
+   "duration_s": 64.7,
+   "hashtags": [
+    "#bounce",
+    "#exam",
+    "#schoollife",
+    "#fyp"
+   ],
+   "caption": "captions/exam_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-08T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-3051913167604821025.mp4",
+   "metricool_post_id": 417788978,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/exam.py (branche proto-exam)"
   }
  ],
  "themes": [
