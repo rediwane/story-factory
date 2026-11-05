@@ -968,6 +968,74 @@
     "measured_at": null
    },
    "script": "src/stories/grounded.py (branche proto-rollgrounded)"
+  },
+  {
+   "name": "roll_proto",
+   "date": "2026-11-07",
+   "theme": "roll",
+   "config": "configs/roll_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce dodge Roll?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/roll_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-07T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-5116124189942963852.mp4",
+   "metricool_post_id": 417605709,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/roll.py (branche proto-rollgrounded)"
+  },
+  {
+   "name": "slo_proto",
+   "date": "2026-11-07",
+   "theme": "slo",
+   "config": "configs/slo_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce get past Slo?",
+   "duration_s": 64.27,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#slowmotion",
+    "#fyp"
+   ],
+   "caption": "captions/slo_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-07T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10824482178925345161.mp4",
+   "metricool_post_id": 417606122,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/slo.py (branche proto-slo)"
   }
  ],
  "themes": [
