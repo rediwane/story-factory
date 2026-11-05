@@ -1123,10 +1123,10 @@
    "name": "baby_proto",
    "date": "2026-11-07",
    "theme": "baby",
-   "config": "configs/baby_v6.json",
+   "config": "configs/baby_v8.json",
    "role": "owner",
    "hook_text": "How will Mom react?",
-   "duration_s": 61.67,
+   "duration_s": 61.48,
    "hashtags": [
     "#bounce",
     "#baby",
@@ -1136,8 +1136,8 @@
    "caption": "captions/baby_proto.md",
    "slot": "18:00",
    "scheduled_time": "2026-11-07T18:00:00+01:00",
-   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9160268256931912534.mp4",
-   "metricool_post_id": 418189255,
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2232250149315486973.mp4",
+   "metricool_post_id": 418295325,
    "post_url": null,
    "status": "scheduled",
    "excluded": true,
@@ -1151,9 +1151,9 @@
     "shares": null,
     "measured_at": null
    },
-   "script": "src/stories/baby_v6.py (branche proto-baby)",
+   "script": "src/stories/baby_v8.py (branche proto-baby)",
    "methode": "S1·A4·3e·R1·C2·P1·F3·E1·O1·T3·Z2·N2·Q2·L0",
-   "outcome": "chaque « Bounce » réveille le bébé d'un cran pendant que Maman se rapproche à chaque visite ; le bébé fait semblant de dormir puis babille « B… Bou… Boun… » ; Maman entre à 45 s, le bébé la balle du doigt : « BOUNCE! » ; elle vire au rouge, sa main approche, puis « His first word! » à 57,4 s"
+   "outcome": "Bounce fait tomber la pancarte sur le bébé, qui se met à rebondir avec lui ; trois visites de Maman, trois faux sommeils différents ; à 36 s « Who woke you up? » → « BOUNCE! », sa colère fond : « His first word! » à 40 s ; relance « Say... Mama! » → « BOUNCE! » ; elle finit par rebondir avec eux"
   },
   {
    "name": "yoga_proto",
