@@ -652,10 +652,10 @@ class Sim:
         dr.polygon([(P(x), P(y)) for (x, y) in inner], fill=(240, 236, 230))
         a = math.atan2(pts[1][1] - pts[0][1], pts[1][0] - pts[0][0])
         if abs(a) < 0.05:
-            dr.text((P(cx), P(cy)), "QUIET ZONE", fill=(200, 50, 60), anchor="mm", font=base.font(P(44)))
+            dr.text((P(cx), P(cy)), "QUIET ZONE", fill=(200, 50, 60), anchor="mm", font=base.font(P(37)))
         else:
             from PIL import Image, ImageDraw
-            fnt = base.font(P(44))
+            fnt = base.font(P(37))
             w, h = int(P(280)), int(P(66))
             im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
             ImageDraw.Draw(im).text((w / 2, h / 2), "QUIET ZONE", fill=(200, 50, 60, 255), anchor="mm", font=fnt)
