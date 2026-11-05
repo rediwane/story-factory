@@ -698,7 +698,7 @@ class Sim:
                 dd = t - c[0]
                 if 0 <= dd < 2.4:
                     for j in range(6):
-                        px = c[1] + (j - 2.5) * 20 + dd * (470 - c[1]) * 0.35 - dd * 30
+                        px = c[1] + (j - 2.5) * 20 + dd * (418 - c[1]) * 0.35 - dd * 30
                         py = SOFA_UNDER + 70 - dd * 25 - (j % 3) * 22
                         rr = 16 + 12 * dd + (j % 2) * 6
                         ell(px, py, rr, rr * 0.8, mix(WALL_LR, DUST, 0.8 * (1 - dd / 2.4)))
@@ -720,7 +720,7 @@ class Sim:
         # éclair rouge de l'éternuement
         if T_SNEEZE <= t <= T_SNEEZE + 0.35:
             k = 1 - (t - T_SNEEZE) / 0.35
-            cxs, cys = 470, SOFA_UNDER + 90
+            cxs, cys = 418, SOFA_UNDER + 90
             pts = []
             for i in range(16):
                 rr = (160 if i % 2 == 0 else 60) * (0.6 + 0.6 * (1 - k))
@@ -825,10 +825,10 @@ class Sim:
     # ---------------------------------------------------------- les personnages
     def beam_pos(self, t):
         if t < T_SNEEZE:
-            return 478.0, FL - RBM, 0.0
+            return 418.0, FL - RBM, 0.0
         if t < T_SNEEZE + 0.9:
             s = ease((t - T_SNEEZE) / 0.9)
-            return lerp(478, 115, s), FL - RBM, -s * 6.0
+            return lerp(418, 115, s), FL - RBM, -s * 6.0
         x, y = 115.0, FL - RBM
         hop = 0.0
         p = self.speaking(t, "b_help")
