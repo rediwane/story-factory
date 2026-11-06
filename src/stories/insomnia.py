@@ -1,16 +1,15 @@
 """
-Prototype « insomnia » : Insomnia (perso d'un fan, le frère de Snooze : balle verte, yeux énormes injectés,
-cernes, petite bouche ronde, tasse de café) essaie de dormir. Bounce rebondit au pied de son lit : chaque
-« BOUNCE » lui rouvre les yeux, alors que le matelas (mou, muet) le laisse s'endormir. Trois réveils qui
-montent (le bruit, la lumière de la lampe qu'il éteint et rallume, le café qu'il lui envoie dans la bouche
-en plein bâillement) ; survolté, Insomnia éclaire la chambre de ses yeux. Puis la règle se retourne : il
-compte les Bounce comme des moutons (une bulle de pensée, une barrière, de petits Bounce qui sautent), et
-chaque « BOUNCE » l'endort d'un cran. À un cheveu du sommeil, Bounce rebondit enfin en silence sur le
-matelas : c'est le silence qui le réveille. « Insomnia. »
+Prototype « insomnia » (v2) : Insomnia (perso d'un fan, le frère de Snooze : balle verte, yeux énormes injectés,
+cernes, petite bouche ronde, tasse de café) s'endort enfin ; Bounce, au pied du lit, le fait décoller de
+l'oreiller à chaque « BOUNCE ». La lampe qu'il éteint (soulagement) puis rallume en se balançant ; le café qu'il
+catapulte dans sa bouche en plein bâillement (la tasse finit en chapeau) ; survolté, Insomnia éclaire la chambre
+de ses yeux. Puis il compte les Bounce comme des moutons : chaque « BOUNCE » fait sauter un Bounce rêvé par-dessus
+la barrière (bâtons, pyramide, faux pas, point d'interrogation pendant les silences, remise à zéro). Fier, Bounce
+rebondit de plus en plus près de la lampe ; effrayé, il se fait de plus en plus doux : le Bounce rêvé ne passe plus
+la barrière, et Insomnia se réveille. « Insomnia. »
 
-Tout est calculé d'avance sur une horloge (contacts, voix, états). Le monde est dessiné à l'échelle de
-l'écran 1080×1920 puis mis à l'échelle de la config (aperçu 540×960). L'audio suit les instants exacts
-des contacts : il est identique quel que soit le nombre d'images par seconde.
+Tout est calculé d'avance sur une horloge (contacts, voix, états). Le monde est dessiné zoomé (K) puis recadré à
+la résolution de la config (aperçu 540×960). L'audio suit les instants exacts des contacts.
 
     python3 src/stories/insomnia.py configs/<name>.json [--simulate]
 """
@@ -120,32 +119,33 @@ base.hook_audio = lambda cfg: None
 
 # ------------------------------------------------------------------ géométrie (monde ; écran = monde × K − (OX, OY))
 W, H = 1080, 1920
-K = 1.1
-OX, OY = 497.0 * K - 540.0, 760.0 * K - 860.0
+K = 1.25
+OX, OY = 470.0 * K - 540.0, 1064.0 * K - 1330.0
 G = 2600.0
 R = 118.0                         # Bounce
-RI = 135.0                        # Insomnia (disque de rayon RI, halo 1,6 RI)
-IX, IY = 295.0, 960.0             # Insomnia, assis contre l'oreiller
+RI = 130.0                        # Insomnia (disque de rayon RI, halo 1,6 RI)
+IX, IY = 255.0, 966.0             # Insomnia, assis contre l'oreiller
 BED_TOP = 1064.0                  # dessus de la couverture
 SOFT_Y = BED_TOP - R
-FOOT_X = 840.0                    # face intérieure du pied de lit
+FOOT_X = 756.0                    # face intérieure du pied de lit
 F_POS = (FOOT_X - R, 880.0)
-PIVOT = (640.0, -40.0)
+PIVOT = (600.0, -40.0)
 ROD = 620.0                       # pivot -> bas de l'abat-jour
 SHADE_H = 80.0
-CUP = (438.0, 1000.0, 502.0, 1068.0)   # tasse (x0, y0, x1, y1), anse à droite
-C_POS = (550.0, 1006.0 - R)
-PHOTO = (160.0, 560.0, 340.0, 720.0)
-WINDOW = (700.0, 262.0, 880.0, 482.0)
-CLOUD_C = (362.0, 372.0)
-FENCE_X = 362.0
-GROUND_Y = 440.0
-CS = 0.86
-MINI_R = 30.0
+CUP = (376.0, 986.0, 448.0, 1064.0)   # la tasse (x0, y0, x1, y1), anse à droite
+C_POS = (512.0, 890.0)
+PHOTO = (140.0, 560.0, 300.0, 700.0)
+WINDOW = (612.0, 292.0, 752.0, 482.0)
+CLOUD_C = (372.0, 352.0)
+FENCE_X = 372.0
+GROUND_Y = 446.0
+FENCE_H = 74.0
+MINI_R = 38.0
+XL, XR = FENCE_X - 118.0, FENCE_X + 118.0
+PILE = [(500.0, 0), (550.0, 0), (525.0, 1)]
 
 # couleurs
 BG = (8, 8, 12)
-NIGHT = (7, 8, 20)
 WALL = (40, 46, 84)
 WALL_D = (30, 34, 64)
 WOOD = (150, 104, 70)
@@ -165,12 +165,12 @@ I_BAG = (120, 108, 140)
 VEIN = (196, 60, 60)
 INK = (16, 14, 20)
 CUPC = (244, 244, 248)
-COFFEE = (110, 66, 40)
+COFFEE = (128, 76, 44)
 LAMP = (230, 200, 120)
-LAMP_OFF = (110, 96, 70)
+LAMP_OFF = (120, 106, 80)
 SKY = (16, 22, 50)
 MOON = (240, 236, 200)
-CLOUDC = (232, 230, 250)
+CLOUDC = (236, 234, 252)
 CLOUD_E = (150, 146, 190)
 GRASS = (120, 180, 110)
 ZCOL = (196, 176, 255)
@@ -195,6 +195,12 @@ def lerp(a, b, k):
     return a + (b - a) * k
 
 
+def night(col, k):
+    """La couleur au clair de lune : assombrie de k, teintée de bleu."""
+    r, g, b = col
+    return (int(r * k * 0.82), int(g * k * 0.92), int(min(255, b * k * 1.12 + 14)))
+
+
 class KF:
     """Courbe par images-clés (interpolation douce entre deux clés)."""
 
@@ -214,36 +220,50 @@ class KF:
 
 
 # ------------------------------------------------------------------ le plan
-END = 64.07
-ISSUE = 61.45
-COUNT0 = 35.3                     # premier Bounce compté
-NEAR_F = 46.6                     # le « BOUNCE » qui suit la quasi-collision
+END = 63.85
+ISSUE = 60.90
+T_OFF, T_ON, T_CUP, T_DARK, T_LAST = 6.95, 10.00, 16.60, 22.30, 62.80
+T_POP_CAFE = 17.45
+T_CLOUD = 31.6
+T_RESET = 44.20                   # le « BOUNCE » trop fort : un œil s'ouvre, le compte retombe à zéro
+T_GROW = 45.45                    # la bulle grandit, le rythme accélère
+T_ZZZ = 49.95                     # le premier Z : il dort
+T_FAIL = 58.30                    # le dernier petit « bounce » : le Bounce rêvé ne passe plus la barrière
 # contacts durs : (t, genre, gain) ; F = pied du lit, L = lampe, C = anse de la tasse
 HARD = [
-    (0.12, "F", 1.05), (2.75, "F", 1.0), (4.60, "F", 1.15),
-    (7.90, "L", 1.1), (9.25, "L", 1.05), (10.15, "L", 1.0), (11.00, "L", 1.05), (11.85, "L", 1.0),
-    (13.60, "L", 1.25),
-    (15.60, "F", 0.95), (16.90, "F", 0.9), (18.10, "F", 0.85),
-    (20.20, "C", 1.1),
-    (21.90, "F", 1.0), (22.85, "F", 1.0), (23.80, "L", 1.1),
-    (25.05, "F", 1.05), (25.90, "F", 1.0), (27.00, "F", 1.05), (27.85, "F", 1.0),
-    (28.95, "F", 1.0), (30.20, "F", 0.95), (31.20, "F", 0.95), (32.45, "F", 0.95), (33.75, "F", 0.95),
-    (35.30, "F", 0.9), (36.60, "F", 0.85), (38.00, "F", 0.85), (39.30, "F", 0.85),
-    (41.20, "F", 0.9), (42.45, "F", 0.85), (43.80, "F", 0.85), (45.05, "F", 0.85),
-    (NEAR_F, "F", 0.9),
-    (49.00, "F", 0.85), (49.88, "F", 0.85), (50.90, "F", 0.85), (51.76, "F", 0.85), (52.86, "F", 0.85),
-    (53.74, "F", 0.85),
-    (54.95, "F", 0.9), (55.82, "F", 0.85), (56.86, "F", 0.85), (57.72, "F", 0.85), (58.70, "F", 0.85),
-    (59.60, "F", 0.9),
-    (63.30, "L", 1.15),
+    (0.18, "F", 1.3), (2.65, "F", 1.1), (4.70, "F", 0.9),
+    (T_OFF, "L", 1.15), (T_ON, "L", 1.25),
+    (11.85, "F", 1.0), (12.85, "F", 0.95), (13.85, "F", 0.9),
+    (T_CUP, "C", 1.15),
+    (18.60, "F", 1.0), (19.50, "F", 1.0), (20.40, "F", 1.0), (21.25, "F", 1.0),
+    (T_DARK, "L", 1.1),
+    (23.20, "F", 1.0), (24.10, "F", 1.0), (25.40, "F", 1.0), (26.25, "F", 1.0), (27.60, "F", 0.95),
+    (28.50, "F", 0.95), (29.90, "F", 0.95), (30.80, "F", 0.95),
+    (32.90, "F", 0.9), (34.05, "F", 0.9), (35.15, "F", 0.9), (36.05, "F", 0.95), (36.90, "F", 0.95),
+    (38.15, "F", 0.9),
+    (40.85, "F", 1.0), (41.95, "F", 0.9), (43.00, "F", 0.9), (T_RESET, "F", 1.45), (45.20, "F", 0.7),
+    (46.10, "F", 0.9), (47.00, "F", 0.9), (47.90, "F", 0.9), (48.75, "F", 0.9), (49.70, "F", 0.95),
+    (51.10, "F", 1.0), (52.50, "F", 1.0), (53.90, "F", 1.05),
+    (55.20, "F", 0.5), (56.25, "F", 0.33), (57.30, "F", 0.2), (T_FAIL, "F", 0.12),
+    (T_LAST, "L", 1.15),
 ]
-COUNTS = [t for (t, k, g) in HARD if COUNT0 - 1e-6 <= t <= 59.61 and k == "F"]
-LINES = [(5.60, "Insomnia.", "sigh"), (14.55, "Insomnia!", "annoy"), (21.15, "INSOMNIA!", "hyper"),
-         (47.55, "Insomniaaa...", "sleepy"), (62.40, "Insomnia", "dead")]
-LINE_GAIN = {"sigh": 0.95, "annoy": 1.05, "hyper": 1.1, "sleepy": 0.75, "dead": 1.0}
+# les grands rebonds vaniteux vers la lampe éteinte : (contact au pied du lit, marge sous l'abat-jour)
+SHOW = [(49.70, 70.0), (51.10, 36.0), (52.50, 14.0), (53.90, 3.0)]
+NEAR_T = 53.90
+COUNT0 = 32.90
+COUNTS = [t for (t, k, g) in HARD if COUNT0 - 1e-6 <= t <= T_FAIL + 1e-6 and k == "F"]
+# hauteur du saut du Bounce rêvé (en px monde) et genre de saut, par compte
+JUMP = {36.90: (70.0, "trip"), T_RESET: (330.0, "fly"), 55.20: (112.0, "n"), 56.25: (96.0, "n"),
+        57.30: (82.0, "n"), T_FAIL: (46.0, "fail")}
+for _t, _g in SHOW:
+    JUMP[_t] = ({70.0: 215.0, 36.0: 235.0, 14.0: 255.0, 3.0: 270.0}[_g], "bonk")
+LINES = [(3.75, "Insomnia.", "sigh"), (10.95, "Insomnia!", "annoy"), (17.95, "INSOMNIA!", "hyper"),
+         (61.85, "Insomnia", "dead")]
+LINE_GAIN = {"sigh": 0.95, "annoy": 1.05, "hyper": 1.1, "dead": 1.0}
 L_HITS = [t for (t, k, g) in HARD if k == "L"]
-POPS = [(0.12, 0.06, 8), (2.75, 0.18, 18), (4.60, 0.3, 28), (9.25, 0.2, 14), (11.0, 0.2, 14), (13.6, 0.35, 32),
-        (15.6, 0.06, 6), (16.9, 0.04, 4), (21.0, 0.4, 36), (ISSUE, 0.42, 34)]
+# sursauts : (t, gonflement des yeux, saut en px)
+POPS = [(0.18, 0.45, 78), (2.65, 0.3, 42), (T_ON, 0.3, 30), (11.85, 0.06, 6), (12.85, 0.03, 3),
+        (T_POP_CAFE, 0.45, 46), (T_RESET, 0.15, 14), (ISSUE, 0.45, 54)]
 
 
 def apex_time(y0, y1, apex):
@@ -262,15 +282,15 @@ class Lamp:
         n = int((END + 3) / self.dt)
         self.th = np.zeros(n)
         th, om = 0.0, 0.0
-        kicks = {}
-        for i, t in enumerate(L_HITS):
-            kicks[int(t / self.dt)] = (0.16 if i % 2 == 0 else -0.14)
-        kicks[int(46.15 / self.dt)] = 0.05            # le souffle de la quasi-collision
+        kicks = {int(T_OFF / self.dt): 0.62, int(T_ON / self.dt): -0.3, int(T_DARK / self.dt): 0.22,
+                 int(T_LAST / self.dt): 0.2}
+        for (tf, gap) in SHOW:
+            kicks[int((tf + 0.37) / self.dt)] = 0.012 + 0.05 * math.exp(-gap / 10.0)
         w2 = G / ROD
         for i in range(n):
             if i in kicks:
                 om += kicks[i]
-            om += (-w2 * th - 0.35 * om) * self.dt
+            om += (-w2 * th - 0.30 * om) * self.dt
             th += om * self.dt
             self.th[i] = th
 
@@ -292,10 +312,15 @@ def lit_at(t):
     return lerp(1.0 - state, state, k)
 
 
+def soft(t, x, dent=16.0, nofill_before=False):
+    return {"t": t, "x": x, "y": SOFT_Y + dent, "axis": "y", "soft": True, "gain": 0, "kind": "M", "dent": dent,
+            "nofill_before": nofill_before}
+
+
 class Plan:
     def __init__(self, lamp):
         cs = []
-        for i, (t, kind, g) in enumerate(HARD):
+        for (t, kind, g) in HARD:
             if kind == "F":
                 x, y, ax = F_POS[0], F_POS[1], "x"
             elif kind == "L":
@@ -303,61 +328,59 @@ class Plan:
                 x, y, ax = bx, by + R, "y"
             else:
                 x, y, ax = C_POS[0], C_POS[1], "y"
-            cs.append({"t": t, "x": x, "y": y, "axis": ax, "soft": False, "gain": g, "kind": kind})
-        # la quasi-collision : un rebond mou qui envoie Bounce juste sous l'abat-jour (8 px)
-        bx, by = lamp.bottom(46.1)
-        y_soft = SOFT_Y + 30
-        apex = by + R + 8
-        T = apex_time(y_soft, F_POS[1], apex)
-        r = math.sqrt(2 * G * (y_soft - apex)) / G / T
-        xs = (bx + 60 - F_POS[0] * r) / (1 - r)       # le sommet passe sous l'abat-jour, 60 px à droite du centre
-        self.near = (NEAR_F - T, NEAR_F, round(xs, 1))
-        cs.append({"t": NEAR_F - T, "x": xs, "y": y_soft, "axis": "y", "soft": True,
-                   "gain": 0, "kind": "M", "nofill": True, "dent": 30})
-        # la lampe se touche en montant et se quitte en descendant : un rebond mou à moins de 0,46 s de chaque côté
+            cs.append({"t": t, "x": x, "y": y, "axis": ax, "soft": False, "gain": g, "kind": kind,
+                       "nofill_after": any(abs(t - s) < 1e-6 for s, _g in SHOW)})
+        # les grands rebonds : du pied du lit, sommet juste sous l'abat-jour, puis un rebond mou
+        self.show = []
+        for (tf, gap) in SHOW:
+            bx, by = lamp.bottom(tf + 0.37)
+            y_soft = SOFT_Y + 28
+            apex = by + R + gap
+            v = math.sqrt(2 * G * (F_POS[1] - apex))
+            T = v / G + math.sqrt(2 * (y_soft - apex) / G)
+            ua = v / G
+            xa = bx + 25.0
+            vx = (xa - F_POS[0]) / ua
+            xs = F_POS[0] + vx * T
+            cs.append(soft(tf + T, xs, 28.0, nofill_before=True))
+            self.show.append((tf, round(tf + ua, 3), gap, round(xs, 1)))
+        # la lampe se touche en montant et se quitte en descendant
         ls_ = [c for c in cs if c["kind"] == "L"]
-        for c0, c1 in zip(ls_, ls_[1:]):
-            if c1["t"] - c0["t"] < 0.92:
-                cs.append({"t": (c0["t"] + c1["t"]) / 2, "x": 652.0, "y": SOFT_Y + 16, "axis": "y", "soft": True,
-                           "gain": 0, "kind": "M", "dent": 16})
         for c in ls_:
             for dtm in (-0.42, 0.42):
                 tt = c["t"] + dtm
                 if not any(abs(o["t"] - tt) < 0.3 or (o is not c and abs(o["t"] - c["t"]) < 0.47 and
                                                      (o["t"] - c["t"]) * dtm > 0) for o in cs):
-                    cs.append({"t": tt, "x": 652.0, "y": SOFT_Y + 16, "axis": "y", "soft": True, "gain": 0,
-                               "kind": "M", "dent": 16})
+                    cs.append(soft(tt, 615.0))
         cs.sort(key=lambda c: c["t"])
         # boucle : avant l'image 0, Bounce vient de la lampe (comme à la fin) ; après la fin, il va au pied du lit
+        t_loop = END + 0.03 + HARD[0][0]
         lb = lamp.bottom(0)
-        start = [{"t": -0.76, "x": lb[0], "y": lb[1] + R, "axis": "y", "soft": False, "kind": "L", "gain": 0},
-                 {"t": -0.34, "x": 655.0, "y": SOFT_Y + 16, "axis": "y", "soft": True, "kind": "M", "dent": 16}]
-        after = [{"t": END + 0.03 + 0.12 - 0.46, "x": 655.0, "y": SOFT_Y + 16, "axis": "y", "soft": True, "kind": "M",
-                  "dent": 16},
-                 {"t": END + 0.03 + 0.12, "x": F_POS[0], "y": F_POS[1], "axis": "x", "soft": False, "kind": "F",
-                  "gain": 0}]
+        d_end = t_loop - T_LAST
+        start = [{"t": HARD[0][0] - d_end, "x": lb[0], "y": lb[1] + R, "axis": "y", "soft": False, "kind": "L",
+                  "gain": 0}, soft(HARD[0][0] - d_end + 0.42, 615.0)]
+        after = [{"t": t_loop, "x": F_POS[0], "y": F_POS[1], "axis": "x", "soft": False, "kind": "F", "gain": 0}]
         full = list(start)
         prev = start[-1]
         k = 0
         for c in cs + after:
             gap = c["t"] - prev["t"]
-            if not prev.get("nofill") and not c.get("nofill"):
-                n = max(1, math.ceil(gap / 0.72))
+            if not prev.get("nofill_after") and not c.get("nofill_before"):
+                n = max(1, math.ceil(gap / 0.68))
                 for j in range(1, n):
                     tt = prev["t"] + gap * j / n
                     k += 1
-                    x = 640.0 + 28.0 * math.sin(k * 2.3)
-                    if 59.7 < tt < 63.2:          # la fin : petits rebonds au milieu du lit
-                        x = 630.0 + 14.0 * math.sin(k * 1.7)
-                    full.append({"t": tt, "x": x, "y": SOFT_Y + 16, "axis": "y", "soft": True, "gain": 0,
-                                 "kind": "M", "dent": 16})
+                    x = 619.0 + 12.0 * math.sin(k * 2.3)
+                    dent = 16.0
+                    if T_FAIL < tt < ISSUE + 0.3 or 38.2 < tt < 40.8:   # il se fait tout doux
+                        dent = 10.0
+                    full.append(soft(tt, x, dent))
             full.append(c)
             prev = c
         self.contacts = sorted(full, key=lambda c: c["t"])
         self.ts = [c["t"] for c in self.contacts]
         self.hits = [(c["t"], c["gain"], c["x"], c["y"], c["kind"]) for c in self.contacts
                      if not c["soft"] and 0 <= c["t"] <= END]
-        self.softs = [c for c in self.contacts if c["soft"]]
 
     def seg(self, t):
         i = bisect.bisect_right(self.ts, t)
@@ -379,7 +402,7 @@ class Plan:
             u = t - c["t"]
             if -0.06 <= u <= 0.14:
                 kk = clamp01(1 + u / 0.06) if u < 0 else clamp01(1 - u / 0.14)
-                amp = (0.08 + 0.004 * c.get("dent", 16)) if c["soft"] else 0.17
+                amp = (0.08 + 0.004 * c.get("dent", 16)) if c["soft"] else 0.1 + 0.07 * min(1.4, c["gain"])
                 if c["axis"] == "y":
                     sy *= 1 - amp * kk; sx *= 1 + 0.8 * amp * kk
                 else:
@@ -387,7 +410,6 @@ class Plan:
         return sx, sy
 
     def dent(self, t):
-        """Le creux de la couverture sous Bounce (x, profondeur)."""
         best = None
         i = bisect.bisect_left(self.ts, t - 0.2)
         for c in self.contacts[i:i + 4]:
@@ -403,61 +425,60 @@ class Plan:
 
 
 # ------------------------------------------------------------------ Insomnia : paupières, yeux, regard
+VALS = [0.40, 0.45, 0.50, 0.54, 0.58, 0.62, 0.60, 0.66, 0.70, 0.50, 0.58, 0.66, 0.74, 0.80, 0.86, 0.90, 0.93,
+        0.95, 0.96, 0.965, 0.97, 0.975, 0.975]
+
+
 def _lid_keys():
-    k = [(0.0, 0.0), (0.45, 0.0), (2.70, 0.68), (2.75, 0.68), (2.80, 0.0), (3.15, 0.0), (4.56, 0.82),
-         (4.60, 0.82), (4.65, 0.0), (5.55, 0.0), (6.45, 0.38), (7.88, 0.5),
-         (9.20, 0.76), (9.25, 0.76), (9.30, 0.0), (10.15, 0.05), (10.95, 0.46), (11.0, 0.46), (11.05, 0.0),
-         (11.9, 0.05), (13.55, 0.95), (13.6, 0.95), (13.65, 0.0), (15.25, 0.0), (15.55, 0.62), (15.6, 0.62),
-         (15.66, 0.30), (16.85, 0.75), (16.9, 0.75), (16.96, 0.55), (18.05, 0.86), (18.1, 0.86), (18.16, 0.76),
-         (18.85, 0.95), (19.1, 1.0), (21.0, 1.0), (21.04, 0.0), (29.4, 0.0), (33.0, 0.25), (35.3, 0.3)]
-    vals = [0.36, 0.42, 0.48, 0.53, 0.56, 0.61, 0.66, 0.70, 0.72, 0.80, 0.83, 0.86, 0.88, 0.90, 0.915, 0.93,
-            0.94, 0.95, 0.955, 0.96, 0.965]
-    prev = 0.3
+    k = [(0.0, 0.9), (0.18, 0.9), (0.21, 0.0), (0.7, 0.0), (2.6, 0.78), (2.65, 0.78), (2.68, 0.0), (3.05, 0.0),
+         (3.5, 0.38), (4.68, 0.38), (4.72, 0.18), (4.95, 0.38), (5.4, 0.4), (6.9, 0.82), (7.6, 0.96),
+         (9.98, 0.96), (10.02, 0.0), (10.55, 0.0), (10.8, 0.42), (11.8, 0.42), (11.88, 0.22), (12.8, 0.66),
+         (12.88, 0.46), (13.8, 0.8), (13.9, 0.78), (14.4, 0.98), (14.6, 1.0), (T_POP_CAFE - 0.02, 1.0),
+         (T_POP_CAFE + 0.03, 0.0), (26.3, 0.0), (28.8, 0.28), (32.85, 0.35)]
+    prev = 0.35
     for i, tc in enumerate(COUNTS):
-        v = vals[min(i, len(vals) - 1)]
-        if abs(tc - 41.2) < 0.01:              # l'omission du milieu : les yeux se sont rouverts
-            k += [(39.9, prev), (41.15, 0.34), (41.2, 0.34)]
-            prev = 0.34
-        if abs(tc - NEAR_F) < 0.01:            # la quasi-collision : les paupières remontent à moitié
-            k += [(45.9, prev), (46.2, 0.45), (46.55, 0.45)]
-            prev = 0.45
-        if abs(tc - 49.0) < 0.01:              # « Insomniaaa… » : il pique du nez
-            k += [(47.5, prev), (48.9, 0.77)]
-            prev = 0.77
+        v = VALS[min(i, len(VALS) - 1)]
+        if abs(tc - 40.85) < 0.01:            # omission du milieu : les yeux se rouvrent
+            k += [(38.9, prev), (40.8, 0.36)]
+            prev = 0.36
+        if abs(tc - T_RESET) < 0.01:          # trop fort : il rouvre un œil (voir lid_at) et retombe
+            k += [(tc + 0.02, prev), (tc + 0.1, 0.45), (tc + 1.0, v)]
+            prev = v
+            continue
+        if abs(tc - T_FAIL) < 0.01:
+            break
         k += [(tc + 0.02, prev), (tc + 0.35, v)]
         prev = v
-    k += [(60.3, 0.975), (61.42, 0.98), (61.48, 0.0)]
+    k += [(T_FAIL + 0.6, 0.975), (59.6, 0.8), (60.4, 0.6), (ISSUE - 0.03, 0.55), (ISSUE + 0.02, 0.0),
+          (T_LAST + 0.25, 0.0), (END + 0.05, 0.86)]
     return k
 
 
 LID = KF(_lid_keys())
-# le presque dans le noir : l'œil gauche se ferme, le droit reste une fente
-LID_L_OVR = KF([(11.9, 0.05), (13.2, 1.0), (13.6, 1.0)])
-LID_R_OVR = KF([(11.9, 0.05), (13.4, 0.88), (13.6, 0.88)])
-# la paupière droite tressaille juste avant l'issue
-TWITCH = KF([(0, 0.0), (60.95, 0.0), (61.05, 0.16), (61.2, 0.02), (61.3, 0.12), (61.42, 0.0)])
+# le presque-réveil : l'œil gauche s'ouvre grand, puis se referme
+RESET_EYE = KF([(0, 0.0), (T_RESET, 0.0), (T_RESET + 0.06, 1.0), (T_RESET + 0.8, 1.0), (T_RESET + 1.5, 0.0)])
 
 
 def lid_at(t, side):
-    if 11.9 <= t < 13.6:
-        return (LID_L_OVR if side < 0 else LID_R_OVR)(t)
     v = LID(t)
-    if 27.9 <= t < 28.85:                      # clignements en rafale (les phares clignotent)
-        ph = (t - 27.9) / 0.19
+    if 7.0 < t < 9.98 and side > 0:           # dans le noir il est bien : un œil s'entrouvre pour vérifier
+        v -= 0.25 * smooth((t - 8.6) / 0.2) * (1 - smooth((t - 9.2) / 0.2))
+    if 24.9 <= t < 25.75:                      # survolté : il cligne en rafale (les phares clignotent)
+        ph = (t - 24.9) / 0.17
         v = 1.0 if (ph % 1.0) < 0.45 else 0.0
-    if side > 0:
-        v = max(0.0, v - TWITCH(t))
-    return v
+    if side < 0:
+        v = lerp(v, 0.0, RESET_EYE(t))
+    return clamp01(v)
 
 
 def eye_base(t):
-    if t < 21.0:
-        return 1.1
-    if t < 35.3:
+    if t < T_POP_CAFE:
+        return 1.15
+    if t < 35.0:
         return 1.5
     if t < ISSUE:
-        return lerp(1.5, 1.22, clamp01((t - 35.3) / 12.0))
-    return 1.4
+        return lerp(1.5, 1.25, clamp01((t - 35.0) / 12.0))
+    return 1.45
 
 
 def eye_scale(t):
@@ -465,7 +486,7 @@ def eye_scale(t):
     for (tp, amp, _j) in POPS:
         u = t - tp
         if 0 <= u < 2.0:
-            e += amp * math.exp(-u / 0.35) * clamp01(u / 0.04)
+            e += amp * math.exp(-u / 0.4) * clamp01(u / 0.04)
     return min(e, 1.62)
 
 
@@ -473,21 +494,21 @@ def jolt(t):
     y = 0.0
     for (tp, _a, j) in POPS:
         u = t - tp
-        if 0 <= u <= 0.32:
-            y += j * math.sin(math.pi * u / 0.32)
+        d = 0.32 + j / 260.0
+        if 0 <= u <= d:
+            y += j * math.sin(math.pi * u / d)
     return y
 
 
-JIT = KF([(0, 0.0), (20.95, 0.0), (21.05, 7.5), (23.8, 6.0), (29.0, 5.0), (33.0, 2.5), (35.3, 2.2), (39.3, 0.8),
-          (40.4, 1.6), (41.2, 1.4), (45.0, 0.0), (99, 0.0)])
+JIT = KF([(0, 0.0), (T_POP_CAFE - 0.05, 0.0), (T_POP_CAFE + 0.05, 8.0), (T_DARK, 6.0), (28.0, 4.0), (32.0, 2.5),
+          (36.0, 1.2), (38.6, 0.6), (40.6, 2.0), (41.5, 1.0), (45.0, 0.0), (99, 0.0)])
 
 
 def pupil_kind(t):
-    if 21.0 <= t < 23.2:
+    if T_POP_CAFE <= t < T_POP_CAFE + 1.9:
         return "spiral"
-    for tp in (9.25, 11.0, 13.6):
-        if 0 <= t - tp < 0.55:
-            return "pin"
+    if 0 <= t - T_ON < 0.8:
+        return "pin"
     return "dot"
 
 
@@ -512,6 +533,11 @@ def rot(pts, cx, cy, a):
     return [(cx + (x - cx) * ca - (y - cy) * sa, cy + (x - cx) * sa + (y - cy) * ca) for x, y in pts]
 
 
+def bez(p0, p1, p2, u):
+    return ((1 - u) ** 2 * p0[0] + 2 * (1 - u) * u * p1[0] + u * u * p2[0],
+            (1 - u) ** 2 * p0[1] + 2 * (1 - u) * u * p1[1] + u * u * p2[1])
+
+
 # ------------------------------------------------------------------ simulation
 class Sim:
     scene_top = 0.26
@@ -528,7 +554,6 @@ class Sim:
         self.lines = list(LINES)
         self.replies = []
         self.talk = []
-        self.zs = [54.95 + 1.15 * i for i in range(6)]
 
     def set_narr(self, narr):
         self.talk = [(n["start"], n["end"], n["key"]) for n in narr]
@@ -555,8 +580,10 @@ class Sim:
 
     # ---------------------------------------------------------- l'expression de Bounce
     def expr_at(self, t):
-        for (a, b, e) in [(21.0, 21.9, "shock"), (23.8, 24.5, "shock"), (45.85, 46.6, "shock"),
-                          (54.95, ISSUE, "win"), (ISSUE, 62.3, "shock"), (62.3, 99.0, "lose")]:
+        for (a, b, e) in [(3.6, 4.7, "lose"), (10.8, 11.85, "lose"), (T_CUP, T_POP_CAFE + 0.6, "shock"),
+                          (T_DARK, T_DARK + 1.2, "shock"), (T_RESET, T_RESET + 0.95, "shock"),
+                          (T_ZZZ - 0.3, NEAR_T + 0.3, "win"), (NEAR_T + 0.3, 55.1, "shock"),
+                          (55.1, ISSUE, "lose"), (ISSUE, 61.8, "shock"), (61.8, 99.0, "lose")]:
             if a <= t < b:
                 return e
         for (th, g, _x, _y, _k) in self.P.hits:
@@ -568,7 +595,7 @@ class Sim:
     def draw(self, dr, snap, t, S):
         t = float(t)
         Sc0 = S * self.cfg["width"] / W
-        Sc = Sc0 * K                                # le monde est zoomé (K), puis recadré
+        Sc = Sc0 * K
         img = Image.new("RGB", (int(W * Sc) + 2, int(H * Sc) + 2), BG)
         d = ImageDraw.Draw(img)
         self.L = lit_at(t)
@@ -577,12 +604,13 @@ class Sim:
         self.draw_room(d, t, Sc)
         self.draw_window(d, t, Sc)
         self.draw_photo(d, t, Sc)
+        img = self.draw_moon(img, t, Sc)
+        d = ImageDraw.Draw(img)
         self.draw_lamp(d, t, Sc)
         self.draw_bed_back(d, t, Sc)
         self.draw_insomnia(d, t, Sc)
         self.draw_bed_front(d, t, Sc)
         self.draw_cup(d, t, Sc)
-        self.draw_under(d, t, Sc)
         img = self.draw_beams(img, t, Sc)
         d = ImageDraw.Draw(img)
         self.draw_rings(d, t, Sc)
@@ -597,16 +625,15 @@ class Sim:
         base.HERO["pos"] = ((bx * K - OX) * Sc0, (by * K - OY) * Sc0)
         dr._image.paste(img, (int(round(-OX * Sc0)), int(round(-OY * Sc0))))
 
-    def c(self, col, k=0.8):
-        """Couleur d'un objet de la chambre selon la lumière."""
-        return mix(mix(col, NIGHT, k), col, self.L)
+    def c(self, col, k=0.52):
+        """Couleur d'un objet selon la lumière (lampe, ou clair de lune)."""
+        return mix(night(col, k), col, self.L)
 
     def ci(self, col):
-        """Insomnia et la lampe restent lisibles dans le noir."""
-        return self.c(col, 0.58)
+        """Les personnages restent au moins à ~80 % au clair de lune."""
+        return self.c(col, 0.84)
 
     def draw_ball(self, img, x, y, rx, ry, S):
-        r = max(rx, ry)
         size = int(2 * R * 1.7 * S) + 4
         layer = Image.new("RGBA", (size, size), (0, 0, 0, 0))
         ld = ImageDraw.Draw(layer)
@@ -619,46 +646,55 @@ class Sim:
     def draw_room(self, d, t, S):
         rect(d, 0, 0, W, 1262, self.c(WALL), S)
         rect(d, 0, 0, W, 120, self.c(WALL_D), S)
-        for k in range(9):                              # papier peint : rayures discrètes
+        for k in range(9):
             x = 60 + k * 120
             rect(d, x, 120, x + 8, 1262, self.c(mix(WALL, WALL_D, 0.5)), S)
         rect(d, 0, 1262, W, H, self.c(FLOOR), S)
-        for k in range(8):
-            y = 1300 + k * 80
+        for k in range(6):
+            y = 1290 + k * 60
             d.line([0, y * S, W * S, y * S], fill=self.c(FLOOR_L), width=max(1, int(4 * S)))
-        ell(d, 540, 1470, 470, 120, self.c(RUG), S)
-        ell(d, 540, 1470, 400, 92, self.c(mix(RUG, (130, 100, 160), 0.5)), S)
-        # par terre : les tasses vides de toutes ses nuits blanches
-        for (mx, my, a) in [(250, 1395, 0.0), (330, 1440, 1.57), (430, 1405, 0.0), (610, 1452, -1.57), (700, 1400, 0.0),
-                            (790, 1446, 0.3), (520, 1500, 1.4), (180, 1470, 0.0), (880, 1395, 0.0)]:
-            body = rot([(mx - 28, my - 34), (mx + 28, my - 34), (mx + 25, my + 34), (mx - 25, my + 34)], mx, my, a)
-            hnd = rot([(mx + 26, my - 18), (mx + 48, my - 14), (mx + 48, my + 14), (mx + 26, my + 18)], mx, my, a)
-            d.line(P(hnd, S), fill=self.c((206, 206, 214)), width=max(1, int(8 * S)), joint="curve")
-            d.polygon(P(body, S), fill=self.c((206, 206, 214)))
+        ell(d, 470, 1380, 360, 70, self.c(RUG), S)
+        ell(d, 470, 1380, 300, 52, self.c(mix(RUG, (130, 100, 160), 0.5)), S)
+        # ses chaussons
+        for (x, a) in ((300, -0.15), (372, 0.1)):
+            pts = rot([(x - 34, 1300), (x + 34, 1300), (x + 34, 1326), (x - 34, 1326)], x, 1313, a)
+            d.polygon(P(pts, S), fill=self.c((170, 220, 140)))
+            ell(d, x - 20, 1308, 12, 9, self.c((210, 240, 190)), S)
 
     def draw_window(self, d, t, S):
         x0, y0, x1, y1 = WINDOW
         rect(d, x0 - 12, y0 - 12, x1 + 12, y1 + 12, self.c(WOOD_D), S)
         rect(d, x0, y0, x1, y1, SKY, S)
-        ell(d, x1 - 52, y0 + 56, 30, 30, MOON, S)
-        ell(d, x1 - 40, y0 + 46, 26, 26, SKY, S)
-        for (sx, sy) in ((x0 + 40, y0 + 60), (x0 + 90, y0 + 150), (x0 + 30, y1 - 40), (x1 - 40, y1 - 60)):
+        ell(d, x1 - 46, y0 + 50, 28, 28, MOON, S)
+        ell(d, x1 - 35, y0 + 41, 24, 24, SKY, S)
+        for (sx, sy) in ((x0 + 34, y0 + 56), (x0 + 80, y0 + 140), (x0 + 28, y1 - 34), (x1 - 34, y1 - 52)):
             ell(d, sx, sy, 4, 4, (200, 200, 230), S)
         d.line([(x0 + x1) / 2 * S, y0 * S, (x0 + x1) / 2 * S, y1 * S], fill=self.c(WOOD_D), width=int(10 * S))
         d.line([x0 * S, (y0 + y1) / 2 * S, x1 * S, (y0 + y1) / 2 * S], fill=self.c(WOOD_D), width=int(10 * S))
 
+    def draw_moon(self, img, t, S):
+        """Clair de lune : une nappe bleutée de la fenêtre au lit, quand la lampe est éteinte."""
+        k = 1.0 - self.L
+        if k < 0.02:
+            return img
+        ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        od = ImageDraw.Draw(ov)
+        x0, y0, x1, y1 = WINDOW
+        od.polygon(P([(x0, y0), (x1, y0), (x1 - 60, 1100), (x0 - 520, 1100)], S), fill=(150, 170, 255, int(26 * k)))
+        return Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
+
     def photo_light(self, t):
-        """Les phares d'Insomnia éclairent le cadre de Snooze (29,4 → 33 s)."""
-        return smooth((t - 29.6) / 0.5) * smooth((33.0 - t) / 0.5)
+        return smooth((t - 26.4) / 0.5) * smooth((28.8 - t) / 0.5)
 
     def draw_photo(self, d, t, S):
         x0, y0, x1, y1 = PHOTO
         k = max(self.L, self.photo_light(t))
+
         def cc(col):
-            return mix(mix(col, NIGHT, 0.8), col, k)
+            return mix(night(col, 0.52), col, k)
         rect(d, x0, y0, x1, y1, cc(WOOD), S, r=6)
         rect(d, x0 + 12, y0 + 12, x1 - 12, y1 - 12, cc((70, 60, 100)), S)
-        sx_, sy_, r = (x0 + x1) / 2, (y0 + y1) / 2 + 8, 44.0
+        sx_, sy_, r = (x0 + x1) / 2, (y0 + y1) / 2 + 6, 40.0
         ell(d, sx_, sy_, 1.6 * r, 1.6 * r, cc(base.dim(SNOOZE, 0.35)), S)
         ell(d, sx_, sy_, r, r, cc(SNOOZE), S)
         for ex in (-0.37, 0.37):
@@ -667,140 +703,150 @@ class Sim:
                     (sy_ - 0.2 * r) * S], fill=cc((40, 40, 40)), width=max(1, int(4 * S)))
         d.line([(sx_ - 0.3 * r) * S, (sy_ + 0.42 * r) * S, (sx_ + 0.3 * r) * S, (sy_ + 0.42 * r) * S],
                fill=cc((70, 70, 70)), width=max(1, int(5 * S)))
-        # Snooze dort en photo : quand le faisceau l'éclaire, des Z en sortent
         pl = self.photo_light(t)
         if pl > 0.02:
             for i in range(4):
-                ph = ((t - 29.6) * 0.9 + i * 0.25) % 1.0
-                zx = x1 - 30 + 40 * ph + 6 * math.sin(i + t * 3)
+                ph = ((t - 26.4) * 0.9 + i * 0.25) % 1.0
+                zx = x1 - 26 + 40 * ph + 6 * math.sin(i + t * 3)
                 zy = y0 + 10 - 120 * ph
                 a = pl * clamp01(ph / 0.15) * clamp01((1 - ph) / 0.3)
-                d.text((zx * S, zy * S), "z", fill=mix(NIGHT, ZCOL, a), anchor="mm", font=font((30 + 30 * ph) * S))
+                d.text((zx * S, zy * S), "z", fill=mix(self.c(WALL), ZCOL, a), anchor="mm", font=font((34 + 30 * ph) * S))
 
     def draw_lamp(self, d, t, S):
         a = self.lamp.theta(t)
         bx, by = self.lamp.bottom(t)
         tx, ty = PIVOT[0] + (ROD - SHADE_H) * math.sin(a), PIVOT[1] + (ROD - SHADE_H) * math.cos(a)
-        d.line([PIVOT[0] * S, PIVOT[1] * S, tx * S, ty * S], fill=self.ci((90, 90, 104)), width=max(1, int(6 * S)))
+        d.line([PIVOT[0] * S, PIVOT[1] * S, tx * S, ty * S], fill=self.c((110, 110, 124), 0.8), width=max(1, int(6 * S)))
         shade = [(-50, -SHADE_H), (50, -SHADE_H), (100, 0), (-100, 0)]
         pts = [(bx + u * math.cos(a) + v * math.sin(a), by - u * math.sin(a) + v * math.cos(a)) for (u, v) in shade]
         on = self.L
         if on > 0.02:
             ell(d, bx, by + 10, 34, 22, mix(LAMP_OFF, (255, 246, 210), on), S)
-        d.polygon(P(pts, S), fill=mix(self.ci(LAMP_OFF), LAMP, on))
-        d.line(P(pts + [pts[0]], S), fill=mix((120, 110, 90), WOOD_D, on), width=max(1, int(5 * S)))
-
-    def draw_lamp_light(self, img, t, S):
-        if self.L < 0.02:
-            return img
-        bx, by = self.lamp.bottom(t)
-        a = self.lamp.theta(t)
-        ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
-        od = ImageDraw.Draw(ov)
-        dx = 520 * math.sin(a)
-        cone = [(bx - 95, by), (bx + 95, by), (bx + dx + 430, 1180), (bx + dx - 430, 1180)]
-        od.polygon(P(cone, S), fill=(255, 226, 160, int(34 * self.L)))
-        img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
-        return img
+        d.polygon(P(pts, S), fill=mix(night(LAMP_OFF, 0.9), LAMP, on))
+        d.line(P(pts + [pts[0]], S), fill=mix((150, 140, 120), WOOD_D, on), width=max(1, int(5 * S)))
 
     def draw_bed_back(self, d, t, S):
-        rect(d, 115, 768, 155, 1180, self.c(WOOD), S)
-        ell(d, 135, 760, 22, 22, self.c(WOOD), S)
-        rect(d, 150, 880, 340, 1000, self.c(PILLOW), S, r=40)
+        rect(d, 95, 768, 130, 1180, self.c(WOOD), S)
+        ell(d, 112, 760, 22, 22, self.c(WOOD), S)
+        rect(d, 125, 880, 300, 1000, self.c(PILLOW), S, r=40)
 
     def draw_bed_front(self, d, t, S):
-        rect(d, 130, BED_TOP + 6, 870, 1132, self.c(MATT), S, r=10)
-        # la couverture, creusée là où Bounce atterrit
+        rect(d, 110, BED_TOP + 6, 790, 1132, self.c(MATT), S, r=10)
         dent = self.P.dent(t)
         top = []
         for i in range(81):
-            x = lerp(172, 846, i / 80)
+            x = lerp(150, 770, i / 80)
             y = BED_TOP + 3 * math.sin(x / 47)
-            if x < IX + 150:                       # elle remonte sur Insomnia
-                k = smooth((IX + 150 - x) / 120)
-                y = lerp(y, IY + 82 + 4 * math.sin(x / 30), k)
+            if x < IX + 145:
+                k = smooth((IX + 145 - x) / 115)
+                y = lerp(y, IY + 80 + 4 * math.sin(x / 30), k)
             if dent is not None:
                 y += dent[1] * math.exp(-((x - dent[0]) / 95) ** 2)
             top.append((x, y))
-        poly = top + [(846, 1140), (172, 1140)]
+        poly = top + [(770, 1140), (150, 1140)]
         d.polygon(P(poly, S), fill=self.c(BLANKET))
         d.line(P(top, S), fill=self.c(BLANKET_D), width=max(1, int(6 * S)), joint="curve")
-        d.line(P([(300, 1112), (846, 1112)], S), fill=self.c(BLANKET_D), width=max(1, int(5 * S)))
-        rect(d, 115, 1132, 875, 1182, self.c(WOOD), S)
-        for x in (125, 845):
+        d.line(P([(280, 1112), (770, 1112)], S), fill=self.c(BLANKET_D), width=max(1, int(5 * S)))
+        rect(d, 95, 1132, 795, 1182, self.c(WOOD), S)
+        for x in (105, 765):
             rect(d, x, 1182, x + 26, 1262, self.c(WOOD_D), S)
-        # pied de lit (il tremble quand Bounce le tape)
         sh = 0.0
         for (th, g, _x, _y, k) in self.P.hits:
             u = t - th
-            if k == "F" and 0 <= u < 0.25:
-                sh += 6 * math.sin(u * 70) * (1 - u / 0.25)
+            if k == "F" and 0 <= u < 0.3:
+                sh += (5 + 9 * max(0.0, g - 0.9)) * math.sin(u * 70) * (1 - u / 0.3)
         rect(d, FOOT_X + sh, 800, FOOT_X + 35 + sh, 1182, self.c(WOOD), S)
         ell(d, FOOT_X + 17 + sh, 792, 22, 22, self.c(WOOD), S)
         d.line([(FOOT_X + 6 + sh) * S, 840 * S, (FOOT_X + 6 + sh) * S, 1120 * S], fill=self.c(WOOD_D),
                width=max(1, int(4 * S)))
 
-    def draw_under(self, d, t, S):
-        """Sous le lit : la pile de tasses vides d'Insomnia."""
-        for (x, y) in [(300, 1224), (372, 1224), (444, 1224), (516, 1224)]:
-            rect(d, x - 26, y - 32, x + 26, y + 32, self.c((200, 200, 208)), S, r=6)
-            d.arc([(x + 18) * S, (y - 16) * S, (x + 44) * S, (y + 14) * S], -90, 90, fill=self.c((200, 200, 208)),
-                  width=max(1, int(6 * S)))
-
-    # -------- la tasse
-    def cup_angle(self, t):
-        if t < 20.2:
-            return 0.0
-        return -0.62 * smooth((t - 20.2) / 0.16) + 0.06 * math.sin((t - 20.2) * 18) * math.exp(-(t - 20.36) * 5) * (t > 20.36)
+    # -------- la tasse : sur le plateau, puis catapultée, puis chapeau, puis de retour
+    def cup_state(self, t):
+        """(cx, cy, angle, plein) : centre de la tasse, rotation (0 = debout), café dedans ?"""
+        x0, y0, x1, y1 = CUP
+        rest = ((x0 + x1) / 2, (y0 + y1) / 2)
+        ix, iy = self.ins_pos(t)
+        hat = (ix + 4, iy - RI - (y1 - y0) / 2 + 14)
+        hop = 0.0
+        for (tp, h) in ((0.18, 26.0), (2.65, 40.0)):
+            u = t - tp
+            if 0 <= u < 0.34:
+                hop = h * math.sin(math.pi * u / 0.34)
+        if t < T_CUP:
+            return rest[0], rest[1] - hop, 0.0, True
+        u = (t - T_CUP) / 0.62
+        if u < 1.0:                               # vol : elle se retourne au-dessus de sa tête
+            p = bez(rest, (rest[0] - 30, 640.0), hat, smooth(u) * 0.9 + 0.1 * u)
+            return p[0], p[1], -math.pi * smooth(u), u < 0.75
+        if t < ISSUE:                             # chapeau, qui tremble avec lui
+            return hat[0], hat[1], -math.pi + 0.06 * math.sin(t * 40) * (JIT(t) > 1), False
+        u = (t - ISSUE) / 0.6
+        if u < 1.0:                               # le sursaut final la renvoie sur le plateau
+            p = bez(hat, (330.0, 700.0), rest, smooth(u))
+            return p[0], p[1], -math.pi + math.pi * smooth(u) - 2 * math.pi * smooth(u), False
+        return rest[0], rest[1], 0.0, False
 
     def draw_cup(self, d, t, S):
         x0, y0, x1, y1 = CUP
-        a = self.cup_angle(t)
-        jump = 0.0
-        u = t - 4.6
-        if 0 <= u < 0.3:
-            jump = 22 * math.sin(math.pi * u / 0.3)
-        cx, cy = x0, y1                         # elle bascule autour de son coin bas gauche
-        body = rot([(x0, y0 - jump), (x1, y0 - jump), (x1 - 4, y1 - jump), (x0 + 4, y1 - jump)], cx, cy, a)
-        handle = rot([(x1 - 2, y0 + 14 - jump), (x1 + 20, y0 + 18 - jump), (x1 + 20, y0 + 46 - jump),
-                      (x1 - 2, y0 + 50 - jump)], cx, cy, a)
-        col = self.c(CUPC)
-        d.line(P(handle, S), fill=col, width=max(1, int(9 * S)), joint="curve")
+        w, h = (x1 - x0), (y1 - y0)
+        cx, cy, a, full = self.cup_state(t)
+        body = rot([(cx - w / 2, cy - h / 2), (cx + w / 2, cy - h / 2), (cx + w / 2 - 5, cy + h / 2),
+                    (cx - w / 2 + 5, cy + h / 2)], cx, cy, a)
+        handle = rot([(cx + w / 2 - 2, cy - h / 2 + 14), (cx + w / 2 + 24, cy - h / 2 + 18),
+                      (cx + w / 2 + 24, cy + h / 2 - 18), (cx + w / 2 - 2, cy + h / 2 - 14)], cx, cy, a)
+        col = self.ci(CUPC)
+        d.line(P(handle, S), fill=col, width=max(1, int(10 * S)), joint="curve")
         d.polygon(P(body, S), fill=col)
-        if t < 20.2:
-            rim = [(x0 + 4, y0 + 6 - jump), (x1 - 4, y0 + 6 - jump)]
-            d.line(P(rim, S), fill=self.c(COFFEE), width=max(1, int(8 * S)))
-            # la vapeur
+        if full and t < T_CUP:
+            rim = rot([(cx - w / 2 + 5, cy - h / 2 + 7), (cx + w / 2 - 5, cy - h / 2 + 7)], cx, cy, a)
+            d.line(P(rim, S), fill=self.c(COFFEE), width=max(1, int(9 * S)))
             for i in range(3):
                 pts = []
                 for j in range(9):
-                    yy = y0 - 14 - j * 9
-                    xx = x0 + 16 + i * 16 + 5 * math.sin(j * 0.9 + t * 4 + i)
-                    pts.append((xx, yy - jump))
-                d.line(P(pts, S), fill=self.c(mix(WALL, (220, 220, 230), 0.5)), width=max(1, int(4 * S)))
-        # 4,6 s : le café gicle et retombe dans la tasse
-        if 0 <= u < 0.45:
-            h = 70 * math.sin(math.pi * u / 0.45)
-            ell(d, (x0 + x1) / 2, y0 - h, 14, 10, self.c(COFFEE), S)
-        # 20,2 s : le café vole jusque dans la bouche ouverte
-        v = (t - 20.22) / 0.42
-        if 0 <= v <= 1:
-            p0, p2 = (446.0, 998.0), (IX, IY + 0.47 * RI)
-            x = lerp(p0[0], p2[0], v)
-            y = lerp(p0[1], p2[1], v) - 150 * 4 * v * (1 - v)
-            for j in range(5):
-                vv = max(0.0, v - j * 0.05)
-                xx = lerp(p0[0], p2[0], vv)
-                yy = lerp(p0[1], p2[1], vv) - 150 * 4 * vv * (1 - vv)
-                ell(d, xx, yy, 26 - 4 * j, 19 - 3 * j, (128, 76, 44), S)
+                    yy = cy - h / 2 - 14 - j * 10
+                    xx = cx - 18 + i * 18 + 5 * math.sin(j * 0.9 + t * 4 + i)
+                    pts.append((xx, yy))
+                d.line(P(pts, S), fill=self.c(mix(WALL, (220, 220, 230), 0.55)), width=max(1, int(4 * S)))
+        # 2,65 s : le café gicle et retombe dans la tasse
+        u = t - 2.65
+        if 0 <= u < 0.5:
+            hh = 90 * math.sin(math.pi * u / 0.5)
+            ell(d, cx, cy - h / 2 - hh, 18, 13, self.c(COFFEE), S)
+            ell(d, cx - 16, cy - h / 2 - hh * 0.7, 9, 7, self.c(COFFEE), S)
+        # le jet de café : de la tasse en vol jusque dans la bouche ouverte
+        if T_CUP + 0.08 <= t < T_CUP + 0.62:
+            mx, my = self.mouth_pos(t)
+            mouth_top = (mx, my - 10)
+            k = (t - T_CUP - 0.08) / 0.54
+            src = rot([(cx, cy - h / 2)], cx, cy, a)[0]
+            n = 9
+            for j in range(n):
+                v = clamp01(k * 1.6 - j / n * 0.8)
+                if v <= 0:
+                    continue
+                p = bez(src, ((src[0] + mouth_top[0]) / 2, min(src[1], mouth_top[1]) - 40), mouth_top, v)
+                rr = 19 - j * 1.2
+                ell(d, p[0], p[1], rr, rr * 0.85, COFFEE, S)
+        # glouglou : une grosse goutte avalée
+        if T_CUP + 0.62 <= t < T_CUP + 0.8:
+            mx, my = self.mouth_pos(t)
+            ell(d, mx, my, 16, 12, COFFEE, S)
+        # la vapeur sort sous la tasse-chapeau (comme une bouilloire)
+        u = t - T_POP_CAFE
+        if 0 <= u < 2.2:
+            for i in range(6):
+                ph = (u * 1.5 + i * 0.17) % 1.0
+                aa = clamp01(1 - u / 2.2) * clamp01(ph / 0.1) * (1 - ph)
+                side = -1 if i % 2 else 1
+                ell(d, cx + side * (40 + 70 * ph), cy + h / 2 - 10 - 60 * ph, 16 + 18 * ph, 12 + 14 * ph,
+                    mix(self.c(WALL), (240, 240, 245), aa), S)
 
     # -------- Insomnia
     def mouth(self, t):
-        """(largeur, hauteur) de la bouche en fractions de RI."""
         w, h = 0.105, 0.105
-        yawn = smooth((t - 18.9) / 0.6) * (1 - smooth((t - 20.62) / 0.08))
+        yawn = smooth((t - 14.5) / 0.6) * (1 - smooth((t - (T_CUP + 0.62)) / 0.08))
         if yawn > 0:
-            w, h = lerp(w, 0.30, yawn), lerp(h, 0.34, yawn)
+            w, h = lerp(w, 0.32, yawn), lerp(h, 0.36, yawn)
         for (a, b, key) in self.talk:
             if a <= t <= b:
                 ph = math.sin(math.pi * (t - a) / max(0.1, b - a))
@@ -811,6 +857,13 @@ class Sim:
                 w += 0.3 * o
         return w, h
 
+    def smiling(self, t):
+        if 7.4 <= t < T_ON:
+            return smooth((t - 7.4) / 0.4)
+        if T_ZZZ <= t < T_FAIL + 0.4:
+            return smooth((t - T_ZZZ) / 0.5)
+        return 0.0
+
     def ins_pos(self, t):
         x, y = IX, IY
         y -= jolt(t)
@@ -818,22 +871,27 @@ class Sim:
         if j > 0:
             x += j * math.sin(t * 97.0)
             y += 0.6 * j * math.sin(t * 83.0 + 1.0)
-        if 14.55 <= t <= 15.3:
+        if 10.95 <= t <= 11.7:
             x += 5 * math.sin(t * 60)
-        # il pique du nez en s'endormant
+        if 0 <= t - T_ON < 0.5:
+            x -= 14 * math.sin(math.pi * (t - T_ON) / 0.5)
         y += 16 * clamp01((LID(t) - 0.5) / 0.5) if 35.0 < t < ISSUE else 0.0
         return x, y
 
+    def mouth_pos(self, t):
+        x, y = self.ins_pos(t)
+        return x, y + 0.47 * RI
+
     def gaze(self, t):
         bx, by = self.bpos
-        if 9.25 <= t < 13.6:
+        if T_ON <= t < 11.8:
             lx, ly = self.lamp.bottom(t)
             return lx, ly + 20
-        if 29.4 <= t < 33.0:
-            k = smooth((t - 29.4) / 0.6) * (1 - smooth((t - 32.4) / 0.6))
+        if 26.3 <= t < 28.8:
+            k = smooth((t - 26.3) / 0.5) * (1 - smooth((t - 28.3) / 0.5))
             px, py = (PHOTO[0] + PHOTO[2]) / 2, (PHOTO[1] + PHOTO[3]) / 2
             return lerp(bx, px, k), lerp(by, py, k)
-        if 21.9 <= t < 27.9:                        # survolté : le regard fouette avec un dépassement
+        if T_POP_CAFE + 0.5 <= t < 24.9:
             ov = 0.0
             for (th, g, _x, _y, _k) in self.P.hits:
                 u = t - th
@@ -851,31 +909,31 @@ class Sim:
 
     def draw_insomnia(self, d, t, S):
         x, y = self.ins_pos(t)
-        squ = 1.0
         cI = self.ci
-        if 5.6 <= t <= 6.6:                         # le soupir : il s'affaisse
-            squ = 1.0 - 0.05 * math.sin(math.pi * (t - 5.6) / 1.0)
-        if 20.62 <= t <= 21.0:                       # glouglou : il gonfle
-            squ = 1.0 + 0.06 * math.sin(math.pi * (t - 20.62) / 0.38)
+        squ = 1.0
+        jy = jolt(t)
+        if jy > 0:
+            squ = 1.0 + 0.08 * min(1.0, jy / 60)       # étiré quand il décolle
+        if 3.75 <= t <= 4.6:
+            squ = 1.0 - 0.05 * math.sin(math.pi * (t - 3.75) / 0.85)
+        if T_CUP + 0.62 <= t <= T_POP_CAFE:
+            squ = 1.0 + 0.07 * math.sin(math.pi * (t - T_CUP - 0.62) / (T_POP_CAFE - T_CUP - 0.62))
         rx, ry = RI * (2 - squ), RI * squ
-        ell(d, x, y + RI - ry, 1.6 * rx, 1.6 * ry, cI(base.dim(I_BODY, 0.22)), S)
-        ell(d, x, y + RI - ry, rx, ry, cI(I_RING), S)
-        ell(d, x, y + RI - ry, rx - 0.13 * RI, ry - 0.13 * RI, cI(I_BODY), S)
         cy = y + RI - ry
+        ell(d, x, cy, 1.6 * rx, 1.6 * ry, cI(base.dim(I_BODY, 0.22)), S)
+        ell(d, x, cy, rx, ry, cI(I_RING), S)
+        ell(d, x, cy, rx - 0.13 * RI, ry - 0.13 * RI, cI(I_BODY), S)
         dark = 1.0 - self.L
         tgt = self.gaze(t)
         kind = pupil_kind(t)
         for (side, ex, ey, er) in self.eyes(t):
             ey = ey + (cy - y)
             lid = lid_at(t, side)
-            # cernes
             ell(d, ex, ey + er * 0.95, er * 1.0, er * 0.32, cI(I_BAG), S)
-            # le blanc de l'œil (il brille dans le noir)
             glow = mix(cI(I_EYE), (250, 250, 240), dark)
-            if dark > 0.05 and lid < 0.98:
+            if dark > 0.05 and lid < 0.98 and t >= T_DARK:
                 ell(d, ex, ey, er * 1.22, er * 1.22, mix(cI(I_BODY), (255, 244, 170), 0.45 * dark), S)
             ell(d, ex, ey, er, er, glow, S)
-            # veines (de plus en plus nombreuses)
             nv = 2 + sum(1 for (tp, _a, _j) in POPS if tp <= t)
             rng = np.random.default_rng(7 + (side > 0))
             for i in range(min(nv, 10)):
@@ -886,30 +944,27 @@ class Sim:
                 pts.append((ex + er * (0.95 - l1 * 0.6) * math.cos(a1), ey + er * (0.95 - l1 * 0.6) * math.sin(a1)))
                 pts.append((ex + er * (0.95 - l1) * math.cos(a1 + 0.3), ey + er * (0.95 - l1) * math.sin(a1 + 0.3)))
                 d.line(P(pts, S), fill=mix(VEIN, glow, 0.25), width=max(1, int(3 * S)))
-            # pupille
             vx, vy = tgt[0] - ex, tgt[1] - ey
             n = math.hypot(vx, vy) + 1e-6
             off = min(er * 0.48, n * 0.12)
             px, py = ex + vx / n * off, ey + vy / n * off
             pr = 0.36 * er / max(1.0, eye_scale(t) ** 0.5)
             if kind == "pin":
-                pr *= 0.42
+                pr *= 0.4
             if kind == "spiral":
                 pts = []
                 rot0 = t * 14 * side
-                for j in range(40):
+                for j in range(44):
                     a = rot0 + j * 0.42
-                    rr = er * 0.06 + er * 0.62 * j / 40
+                    rr = er * 0.06 + er * 0.66 * j / 44
                     pts.append((ex + rr * math.cos(a), ey + rr * math.sin(a)))
-                d.line(P(pts, S), fill=INK, width=max(1, int(6 * S)), joint="curve")
+                d.line(P(pts, S), fill=INK, width=max(1, int(7 * S)), joint="curve")
             else:
                 ell(d, px, py, pr, pr, INK, S)
                 ell(d, px - pr * 0.3, py - pr * 0.3, pr * 0.32, pr * 0.32, (250, 250, 250), S)
-            # paupière (couleur du corps) : une corde qui descend
             if lid > 0.01:
                 cut = ey - er + 2 * er * min(1.0, lid)
-                dd = (cut - ey) / er
-                dd = max(-1.0, min(1.0, dd))
+                dd = max(-1.0, min(1.0, (cut - ey) / er))
                 th0 = math.degrees(math.asin(dd))
                 lidcol = cI(mix(I_BODY, I_RING, 0.25))
                 if lid >= 0.999:
@@ -921,33 +976,30 @@ class Sim:
                 d.line([(ex - hw) * S, cut * S, (ex + hw) * S, cut * S], fill=cI(I_EDGE), width=max(1, int(5 * S)))
             d.ellipse([(ex - er) * S, (ey - er) * S, (ex + er) * S, (ey + er) * S], outline=cI(I_EDGE),
                       width=max(1, int(0.05 * RI * S)))
-        # bouche
         mw, mh = self.mouth(t)
         mx, my = x, cy + 0.47 * RI
-        ell(d, mx, my, mw * RI, mh * RI, INK, S)
-        inner = max(0.0, mh - 0.055)
-        if mh < 0.2:
-            ell(d, mx, my, max(0.0, mw - 0.055) * RI, inner * RI, cI(I_BODY), S)
+        sm = self.smiling(t)
+        if sm > 0.5 and mh < 0.13:
+            pts = [(mx - 0.2 * RI + 0.4 * RI * k / 10, my - 0.02 * RI + 0.09 * RI * math.sin(math.pi * k / 10))
+                   for k in range(11)]
+            d.line(P(pts, S), fill=INK, width=max(1, int(7 * S)), joint="curve")
         else:
-            ell(d, mx, my + mh * RI * 0.45, mw * RI * 0.6, mh * RI * 0.4, self.c((200, 90, 100)), S)
-        # 21 s : la vapeur sort de sa tête
-        u = t - 21.0
-        if 0 <= u < 1.6:
-            for i in range(5):
-                ph = (u * 1.4 + i * 0.2) % 1.0
-                a = clamp01(1 - u / 1.6) * clamp01(ph / 0.1) * (1 - ph)
-                ell(d, x - 50 + 25 * i + 10 * math.sin(i + u * 6), cy - RI - 20 - 120 * ph, 18 + 20 * ph, 14 + 16 * ph,
-                    mix(self.c(WALL), (235, 235, 240), a), S)
+            ell(d, mx, my, mw * RI, mh * RI, INK, S)
+            inner = max(0.0, mh - 0.055)
+            if mh < 0.2:
+                ell(d, mx, my, max(0.0, mw - 0.055) * RI, inner * RI, cI(I_BODY), S)
+            else:
+                ell(d, mx, my + mh * RI * 0.45, mw * RI * 0.6, mh * RI * 0.4, cI((200, 90, 100)), S)
 
-    # -------- les phares (ses yeux éclairent la chambre)
+    # -------- les phares
     def draw_beams(self, img, t, S):
-        k = (1.0 - self.L) * (1.0 if t >= 23.8 else 0.0)
+        k = (1.0 - self.L) * (1.0 if t >= T_DARK else 0.0)
         if k < 0.02:
             return img
         ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
         od = ImageDraw.Draw(ov)
         tgt = self.gaze(t)
-        flare = 1.0 + 0.6 * math.exp(-(t - ISSUE) / 0.4) * (t >= ISSUE)
+        flare = 1.0 + 0.7 * math.exp(-(t - ISSUE) / 0.5) * (t >= ISSUE)
         for (side, ex, ey, er) in self.eyes(t):
             lid = lid_at(t, side)
             open_k = 1.0 - lid
@@ -962,18 +1014,16 @@ class Sim:
             p2 = (ex + L * (ux * math.cos(-half) - uy * math.sin(-half)), ey + L * (ux * math.sin(-half) + uy * math.cos(-half)))
             a = int(min(170, 92 * k * (0.5 + 0.5 * open_k) * flare))
             od.polygon(P([(ex, ey), p1, p2], S), fill=(255, 238, 150, a))
-            # la tache de lumière là où ça tombe
             dist = min(n, 900)
             cx, cy = ex + ux * dist, ey + uy * dist
             rr = dist * math.tan(half) * 0.9
             od.ellipse([(cx - rr) * S, (cy - rr) * S, (cx + rr) * S, (cy + rr) * S], fill=(255, 244, 180, int(a * 0.8)))
         return Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
 
-    # -------- l'équivalent visible des chocs
     def draw_rings(self, d, t, S):
         for (th, g, x, y, k) in self.P.hits:
             u = t - th
-            if not (0 <= u < 0.26):
+            if not (0 <= u < 0.28):
                 continue
             if k == "F":
                 cx, cy = FOOT_X, y
@@ -981,8 +1031,9 @@ class Sim:
                 cx, cy = x, y - R
             else:
                 cx, cy = x - 30, y + R
-            rr = 26 + 120 * u / 0.26
-            col = mix((255, 255, 255), self.c(WALL), u / 0.26)
+            big = 0.6 + 0.5 * min(1.4, g)
+            rr = (26 + 120 * u / 0.28) * big
+            col = mix((255, 255, 255), self.c(WALL), u / 0.28)
             d.ellipse([(cx - rr) * S, (cy - rr) * S, (cx + rr) * S, (cy + rr) * S], outline=col, width=max(1, int(7 * S)))
             for j in range(6):
                 a = j * math.pi / 3 + 0.3
@@ -994,110 +1045,267 @@ class Sim:
     def draw_zs(self, d, t, S):
         x, y = self.ins_pos(t)
         out = []
-        if 12.9 <= t < 13.75:                       # le petit z du presque, qui éclate au rallumage
-            u = t - 12.9
-            if t < 13.6:
-                out.append((x + 110 + 10 * u, y - RI - 10 - 40 * u, 34 + 20 * u, clamp01(u / 0.2)))
-            else:
-                k = (t - 13.6) / 0.15
-                out.append((x + 118, y - RI - 40, 54 * (1 + k), 1 - k))
-        for (i, tz) in enumerate(self.zs):
-            u = t - tz
-            if u < 0 or t > ISSUE + 0.18:
+        groups = [(-2.0, 0.18, 0.0), (7.9, T_ON, 7.9)]
+        for (a, b, t0) in groups:
+            if not (a <= t < b + 0.2):
                 continue
-            life = 3.0
-            if u > life:
-                continue
-            fs = 40 + 34 * (u / life) + 8 * i
-            a = clamp01(u / 0.25) * clamp01((life - u) / 0.6)
-            zx = x + 100 + 60 * (u / life) + 8 * math.sin(u * 2 + i)
-            zy = y - RI - 10 - 190 * (u / life)
-            if t >= ISSUE:
-                k = (t - ISSUE) / 0.18
-                fs *= 1 + 0.8 * k
-                a *= 1 - k
-            out.append((zx, zy, fs, a))
+            for i in range(3):
+                ts = t0 + i * 0.7 - (2.1 if a < 0 else 0)
+                u = t - ts
+                if u < 0:
+                    continue
+                life = 2.1
+                ph = (u % life) / life if a < 0 else min(1.0, u / life)
+                fs = 40 + 34 * ph
+                al = clamp01(ph / 0.15) * clamp01((1 - ph) / 0.3)
+                zx, zy = x + 95 + 50 * ph, y - RI - 20 - 150 * ph
+                if t >= b:
+                    kk = (t - b) / 0.2
+                    fs *= 1 + kk
+                    al *= 1 - kk
+                out.append((zx, zy, fs, al))
+        if T_ZZZ <= t < ISSUE + 0.2:
+            for i in range(12):
+                ts = T_ZZZ + i * 0.85
+                u = t - ts
+                if u < 0 or u > 2.6 or ts > T_FAIL + 0.3:
+                    continue
+                ph = u / 2.6
+                fs = 46 + 40 * ph
+                al = clamp01(ph / 0.12) * clamp01((1 - ph) / 0.3)
+                zx, zy = x + 100 + 70 * ph, y - RI - 30 - 200 * ph
+                if t >= ISSUE:
+                    kk = (t - ISSUE) / 0.2
+                    fs *= 1 + kk
+                    al *= 1 - kk
+                out.append((zx, zy, fs, al))
         for (zx, zy, fs, a) in out:
             if a > 0.02:
                 d.text((zx * S, zy * S), "Z", fill=mix(self.c(WALL), ZCOL, a), anchor="mm", font=font(fs * S))
 
     # -------- la bulle de pensée : il compte les Bounce
-    def cloud_k(self, t):
-        if t < 34.6:
+    def cloud_scale(self, t):
+        if t < T_CLOUD:
             return 0.0
-        if t < ISSUE:
-            return smooth((t - 34.6) / 0.5)
-        return 1.0
+        k = smooth((t - T_CLOUD) / 0.5)
+        return k * lerp(0.86, 1.0, smooth((t - T_GROW) / 0.5))
 
     def draw_cloud(self, d, t, S):
         x, y = self.ins_pos(t)
-        puffs = [(33.8, (x + 92, y - RI - 2, 14)), (34.1, (x + 92, y - RI - 62, 22)),
-                 (34.4, (x + 82, y - RI - 140, 30))]
-        burst = clamp01((t - ISSUE) / 0.12) if t >= ISSUE else 0.0
-        if burst >= 1.0 or t < 33.8:
+        if t < T_CLOUD - 0.6:
             return
-        fade = 1 - burst
         bgc = self.c(WALL)
+        if t >= ISSUE:                            # la bulle éclate en petits nuages qui s'envolent
+            u = (t - ISSUE) / 0.4
+            if u >= 1.0:
+                return
+            sc0 = self.cloud_scale(ISSUE - 0.01)
+            for i in range(10):
+                a = i * 2 * math.pi / 10 + 0.3
+                rr = (60 + 260 * u) * sc0
+                px, py = CLOUD_C[0] + rr * math.cos(a) * 1.3, CLOUD_C[1] + rr * math.sin(a) * 0.7
+                pr = 46 * (1 - u) * sc0
+                ell(d, px, py, pr, pr, mix(bgc, CLOUDC, 1 - u), S)
+            return
+        burst = 0.0
+        fade = 1.0
+        puffs = [(T_CLOUD - 0.6, (x + 88, y - RI - 2, 14)), (T_CLOUD - 0.35, (x + 92, y - RI - 60, 22)),
+                 (T_CLOUD - 0.1, (x + 92, y - RI - 135, 30))]
         for (tp, (px, py, pr)) in puffs:
             if t >= tp:
                 k = smooth((t - tp) / 0.2) * fade
                 ell(d, px, py, (pr + 4) * k, (pr + 4) * k, mix(bgc, CLOUD_E, fade), S)
                 ell(d, px, py, pr * k, pr * k, mix(bgc, CLOUDC, fade), S)
-        k = self.cloud_k(t)
-        if k <= 0.01:
+        sc = self.cloud_scale(t) * (1 + 0.3 * burst)
+        if sc <= 0.01:
             return
-        sc = CS * k * (1 + 0.3 * burst)
-        cx, cy = CLOUD_C
+        shake = 0.0
+        u = t - T_RESET
+        if 0 <= u < 0.6:
+            shake = 10 * math.sin(u * 60) * (1 - u / 0.6)
+        cx, cy = CLOUD_C[0] + shake, CLOUD_C[1]
+        top_y = cy - 174 * sc
         blobs = [(-180, 10, 82), (-95, -50, 96), (10, -70, 104), (115, -45, 94), (190, 12, 80), (110, 55, 86),
                  (0, 62, 92), (-110, 55, 86)]
+        dent = 0.0
+        for (tc, gap) in SHOW:                    # le Bounce rêvé cogne le plafond de la bulle
+            uu = t - (tc + 0.3)
+            if 0 <= uu < 0.35:
+                dent = max(dent, (30 - gap / 3) * math.sin(math.pi * uu / 0.35))
         for (bx, by, br) in blobs:
-            ell(d, cx + bx * sc, cy + by * sc, (br + 6) * sc, (br + 6) * sc, mix(bgc, CLOUD_E, fade), S)
+            yy = cy + by * sc - (dent if by < -40 else 0)
+            ell(d, cx + bx * sc, yy, (br + 6) * sc, (br + 6) * sc, mix(bgc, CLOUD_E, fade), S)
         for (bx, by, br) in blobs:
-            ell(d, cx + bx * sc, cy + by * sc, br * sc, br * sc, mix(bgc, CLOUDC, fade), S)
-        if burst > 0 or k < 0.6:
+            yy = cy + by * sc - (dent if by < -40 else 0)
+            ell(d, cx + bx * sc, yy, br * sc, br * sc, mix(bgc, CLOUDC, fade), S)
+        if burst > 0 or self.cloud_scale(t) < 0.6:
             return
-        # l'herbe et la barrière
-        d.line(P([(cx - 200, GROUND_Y), (cx + 200, GROUND_Y)], S), fill=GRASS, width=max(1, int(8 * S)))
+        g = cy + (GROUND_Y - CLOUD_C[1]) * sc / 0.86
+        fx = cx + (FENCE_X - CLOUD_C[0])
+        d.line(P([(cx - 200 * sc, g), (cx + 200 * sc, g)], S), fill=GRASS, width=max(1, int(8 * S)))
         fc = (150, 104, 70)
-        for fx in (FENCE_X - 30, FENCE_X + 30):
-            rect(d, fx - 6, GROUND_Y - 74, fx + 6, GROUND_Y, fc, S)
-        for fy in (GROUND_Y - 58, GROUND_Y - 30):
-            rect(d, FENCE_X - 46, fy - 5, FENCE_X + 46, fy + 5, fc, S)
-        # les petits Bounce : un qui attend à gauche, et ceux qui sautent
+        for px_ in (fx - 28, fx + 28):
+            rect(d, px_ - 6, g - FENCE_H, px_ + 6, g, fc, S)
+        for fy in (g - 58, g - 30):
+            rect(d, fx - 44, fy - 5, fx + 44, fy + 5, fc, S)
+        self.draw_tally(d, t, S, cx - 150 * sc, cy - 95 * sc)
         pos = base.HERO.get("pos")
-        last = [tc for tc in COUNTS if tc <= t]
-        jump_d = 0.62
-        JX = 108
-        for tc in last[-2:]:
-            u = t - tc
-            if u < 0 or u > jump_d + 0.45:
-                continue
-            if u <= jump_d:
-                v = u / jump_d
-                mxp = lerp(FENCE_X - JX, FENCE_X + JX, v)
-                myp = GROUND_Y - MINI_R - 120 * 4 * v * (1 - v)
-                al = 1.0
-            else:
-                v = (u - jump_d) / 0.45
-                mxp = FENCE_X + JX + 70 * v
-                myp = GROUND_Y - MINI_R - 30 * math.sin(math.pi * v)
-                al = 1 - v
-            if al > 0.05:
-                base.ball(d, mxp * S, myp * S, MINI_R * S * (0.6 + 0.4 * al))
-        # celui qui attend son tour (il apparaît après chaque saut ; il piétine pendant les silences)
-        appear = (last[-1] + 0.2) if last else 34.9
-        if t >= appear:
-            a = smooth((t - appear) / 0.25)
-            gap = t - (last[-1] if last else 35.3)
-            tap = 1.0 if gap > 1.4 else 0.4
-            hop = abs(math.sin(t * (9 if gap > 1.4 else 5))) * 14 * tap
-            base.ball(d, (FENCE_X - JX) * S, (GROUND_Y - MINI_R - hop) * S, MINI_R * S * (0.5 + 0.5 * a))
+        self.draw_minis(d, t, S, fx, g, top_y)
         base.HERO["pos"] = pos
+
+    def counted(self, t):
+        """Nombre de Bounce comptés depuis la dernière remise à zéro."""
+        n = 0
+        for tc in COUNTS:
+            if tc > t:
+                break
+            if abs(tc - T_RESET) < 1e-6:
+                n = 0
+                continue
+            if abs(tc - T_FAIL) < 1e-6:
+                continue
+            n += 1
+        return n
+
+    def draw_tally(self, d, t, S, x0, y0):
+        n = self.counted(t)
+        col = (90, 80, 140)
+        u = t - T_RESET
+        if 0 <= u < 0.5:                         # les bâtons s'envolent : le compte retombe à zéro
+            n_before = self.counted(T_RESET - 0.01)
+            for i in range(n_before):
+                gx = x0 + (i // 5) * 70 + (i % 5) * 11 + 60 * u * math.sin(i * 1.7)
+                gy = y0 - 140 * u * (0.5 + 0.5 * math.cos(i))
+                al = 1 - u / 0.5
+                d.line([gx * S, gy * S, gx * S, (gy + 36) * S], fill=mix(CLOUDC, col, al), width=max(1, int(6 * S)))
+            return
+        for i in range(n):
+            grp, j = i // 5, i % 5
+            gx = x0 + grp * 70
+            if j < 4:
+                d.line([(gx + j * 11) * S, y0 * S, (gx + j * 11) * S, (y0 + 36) * S], fill=col, width=max(1, int(6 * S)))
+            else:
+                d.line([(gx - 6) * S, (y0 + 30) * S, (gx + 40) * S, (y0 + 6) * S], fill=col, width=max(1, int(6 * S)))
+
+    def draw_minis(self, d, t, S, fx, g, top_y):
+        mr = MINI_R
+        xl, xr = fx - 118, fx + 118
+        done = [tc for tc in COUNTS if tc <= t]
+        last = done[-1] if done else None
+        # la pyramide des Bounce déjà comptés (elle s'écroule à la remise à zéro)
+        n = self.counted(t)
+        settled = [tc for tc in COUNTS if tc + (0.62 if tc < T_GROW else 0.5) + 0.9 <= t
+                   and tc > (T_RESET if t >= T_RESET else -1) and abs(tc - T_FAIL) > 1e-6]
+        u = t - T_RESET
+        if 0 <= u < 0.7:
+            pre = [tc for tc in COUNTS if tc < T_RESET - 0.9]
+            for i, _ in enumerate(pre[:len(PILE)]):
+                px, row = PILE[i]
+                vx = (i - 2.5) * 140
+                xx = px + (fx - FENCE_X) + vx * u
+                yy = g - mr * 0.8 - row * 1.5 * mr - 260 * u + 900 * u * u
+                if yy < g + 40:
+                    base.ball(d, xx * S, yy * S, mr * S * 0.9)
+        else:
+            for i, _ in enumerate(settled[:len(PILE)]):
+                px, row = PILE[i]
+                base.ball(d, (px + (fx - FENCE_X)) * S, (g - mr * 0.8 - row * 1.5 * mr) * S, mr * S * 0.8)
+        # les sauts en cours
+        for tc in done[-3:]:
+            uu = t - tc
+            hgt, kind = JUMP.get(round(tc, 2), (120.0, "n"))
+            jd = 0.62 if tc < T_GROW else 0.5
+            if kind == "fail":
+                if uu <= 0.5:                     # trop faible : il ne passe pas, il retombe de son côté
+                    v = uu / 0.5
+                    xx = lerp(xl, fx - 46 - mr, min(1.0, v * 1.6))
+                    yy = g - mr - hgt * 4 * v * (1 - v)
+                    base.ball(d, xx * S, yy * S, mr * S)
+                continue
+            if uu > jd + 0.9:
+                continue
+            if uu <= jd:
+                v = uu / jd
+                xx = lerp(xl, xr, v)
+                yy = g - mr - hgt * 4 * v * (1 - v)
+                if kind == "bonk":
+                    yy = max(yy, top_y + mr + 6)
+                if kind == "fly":
+                    yy = g - mr - hgt * v * 1.8
+                if kind == "trip" and v > 0.5:      # il accroche la barrière et s'étale de l'autre côté
+                    w2 = (v - 0.5) / 0.5
+                    xx = lerp(fx + 10, xr - 30, w2)
+                    yy = lerp(g - FENCE_H - mr, g - mr * 0.5, w2 * w2)
+                if kind == "fly" and yy < top_y - 2 * mr:
+                    continue
+                if kind == "trip" and v > 0.5:
+                    self.mini_squashed(d, xx, yy, mr, S, 1.0 - 0.45 * (v - 0.5) / 0.5)
+                else:
+                    base.ball(d, xx * S, yy * S, mr * S)
+            else:                                 # il roule vers la pyramide
+                if kind == "fly":
+                    continue
+                w2 = smooth((uu - jd) / 0.9)
+                idx = min(len(PILE) - 1, max(0, self.counted(tc) - 1))
+                px, row = PILE[idx] if self.counted(tc) <= len(PILE) else (fx + 240, 0)
+                xx = lerp(xr, px + (fx - FENCE_X), w2)
+                yy = lerp(g - mr, g - mr * 0.8 - row * 1.5 * mr, w2)
+                if self.counted(tc) > len(PILE):
+                    yy = g - mr
+                    if xx > fx + 220:
+                        continue
+                if kind == "trip":
+                    self.mini_squashed(d, xx, yy, mr, S, 0.55 + 0.45 * w2)
+                else:
+                    base.ball(d, xx * S, yy * S, mr * S * (1 - 0.1 * w2))
+        # celui qui attend son tour
+        nxt = [tc for tc in COUNTS if tc > t]
+        if t >= T_FAIL:
+            # le Bounce rêvé est resté devant la barrière : il attend le prochain « BOUNCE », qui ne vient pas
+            uu = t - T_FAIL
+            if uu > 0.5:
+                hop = abs(math.sin(t * 7)) * 8
+                base.ball(d, (fx - 46 - mr) * S, (g - mr - hop) * S, mr * S)
+                q = smooth((uu - 0.6) / 0.5)
+                if q > 0:
+                    fsz = (60 + 50 * clamp01((uu - 1.0) / 1.5)) * q
+                    d.text(((fx - 46 - mr) * S, (g - 2.2 * mr - fsz * 0.55) * S), "?", fill=(250, 200, 60),
+                           anchor="mm", font=font(fsz * S), stroke_width=max(1, int(4 * S)), stroke_fill=(90, 60, 20))
+            return
+        if not nxt:
+            return
+        appear = (last + 0.25) if last is not None else T_CLOUD + 0.4
+        if t < appear:
+            return
+        a = smooth((t - appear) / 0.25)
+        gap = t - (last if last is not None else T_CLOUD)
+        waiting = 38.9 <= t < 40.85
+        hop = abs(math.sin(t * (9 if waiting else 5))) * (12 if waiting else 6)
+        wx = xl + (12 * math.sin(t * 3) if waiting else 0.0)
+        base.ball(d, wx * S, (g - mr - hop) * S, mr * S * (0.5 + 0.5 * a))
+        if waiting:
+            q = smooth((t - 39.4) / 0.4)
+            fsz = 64 * q
+            if fsz > 2:
+                d.text((wx * S, (g - 2.2 * mr - fsz * 0.55) * S), "?", fill=(250, 200, 60), anchor="mm",
+                       font=font(fsz * S), stroke_width=max(1, int(4 * S)), stroke_fill=(90, 60, 20))
+
+    def mini_squashed(self, d, x, y, r, S, k):
+        """Un Bounce rêvé qui s'étale (il a trébuché)."""
+        size = int(2 * r * 1.7 * S) + 4
+        layer = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        ld = ImageDraw.Draw(layer)
+        pos = base.HERO.get("pos")
+        base.ball(ld, size / 2, size / 2, r * S)
+        base.HERO["pos"] = pos
+        nw, nh = max(2, int(size / max(0.3, k) ** 0.5)), max(2, int(size * k))
+        layer = layer.resize((nw, nh), Image.BILINEAR)
+        d._image.paste(layer, (int(x * S - nw / 2), int((y + r * (1 - k)) * S - nh / 2)), layer)
 
 
 # ------------------------------------------------------------------ audio, rendu
 DEFAULTS = {
-    "hook_text_s": 8.4, "hook_top": 0.125, "hook_font_size": 88, "hook_speed": 1.1,
+    "hook_text_s": 12.4, "hook_top": 0.125, "hook_font_size": 88, "hook_speed": 1.1,
     "narrator_voice": "am_puck", "narrator_length": 1.0, "narr_gap_s": 0.3,
     "sub_y": 1.5, "sub_font_size": 10,
     "watermark_y": 0.94, "end_hold_s": 0.02, "narr_tail_s": 0.0,
@@ -1162,7 +1370,7 @@ def run(argv=None):
     if hv is not None:
         summary["contacts_sous_l_accroche"] = [round(e[0], 2) for e in ev
                                                if e[0] + len(name) / SR > HOOK_T - 0.05 and e[0] < HOOK_T + len(hv) / SR + 0.05]
-    summary["near_miss"] = [round(x, 3) for x in sim.P.near]
+    summary["show"] = sim.P.show
     if "--simulate" in argv:
         print(json.dumps(summary, ensure_ascii=False))
         return 0
