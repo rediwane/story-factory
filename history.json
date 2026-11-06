@@ -219,12 +219,12 @@
    "exclusion_reason": "prototype d'un nouveau concept (Bounce réveille 1, 10, 100 puis 1000 chats), cherché et fait seul par Claude le 02/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
    "stats": {
     "views_24h": 62375,
-    "views_48h": null,
-    "views": 62375,
-    "likes": 1706,
-    "comments": 27,
-    "shares": 52,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views_48h": 68965,
+    "views": 68965,
+    "likes": 1878,
+    "comments": 31,
+    "shares": 55,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/cats.py (branche proto-cats)"
   },
@@ -253,12 +253,12 @@
    "exclusion_reason": "prototype d'un nouveau concept (idée du propriétaire (tuto maquillage de Bounce)), fait en session ; pas une liste : hors médiane des listes",
    "stats": {
     "views_24h": 56857,
-    "views_48h": null,
-    "views": 56857,
-    "likes": 2352,
-    "comments": 51,
-    "shares": 135,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views_48h": 62125,
+    "views": 62125,
+    "likes": 2517,
+    "comments": 55,
+    "shares": 141,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/makeup.py (branche proto-makeup)"
   },
@@ -287,12 +287,12 @@
    "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (entretien d'embauche)), fait en session ; pas une liste : hors médiane des listes",
    "stats": {
     "views_24h": 128821,
-    "views_48h": null,
-    "views": 128821,
-    "likes": 7951,
-    "comments": 60,
-    "shares": 239,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views_48h": 144988,
+    "views": 144988,
+    "likes": 8898,
+    "comments": 62,
+    "shares": 256,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/interview.py (branche proto-interview)"
   },
@@ -320,13 +320,13 @@
    "excluded": true,
    "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (Bounce teste les matières)), fait en session ; pas une liste : hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 19515,
     "views_48h": null,
-    "views": 11002,
-    "likes": 404,
-    "comments": 12,
-    "shares": 13,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 19515,
+    "likes": 722,
+    "comments": 15,
+    "shares": 19,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/matter.py (branche proto-matter)"
   },
@@ -354,13 +354,13 @@
    "excluded": true,
    "exclusion_reason": "prototype d'un nouveau concept (la vie de Bounce en une minute, proposé par Claude au propriétaire), fait en session ; pas une liste : hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 57766,
     "views_48h": null,
-    "views": 24360,
-    "likes": 1314,
-    "comments": 27,
-    "shares": 24,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 57766,
+    "likes": 3513,
+    "comments": 65,
+    "shares": 81,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/life.py (branche proto-life)"
   },
@@ -388,13 +388,13 @@
    "excluded": true,
    "exclusion_reason": "idée du propriétaire faite en session (le narrateur insulte Bounce pendant une minute, gros mots bipés à sa demande) ; pas une liste : hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 49948,
     "views_48h": null,
-    "views": 31417,
-    "likes": 1562,
-    "comments": 59,
-    "shares": 135,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 49948,
+    "likes": 2351,
+    "comments": 83,
+    "shares": 203,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/roast.py (branche proto-roast)"
   },
@@ -467,13 +467,13 @@
    "excluded": true,
    "exclusion_reason": "test du juge de la rétention : découpage validé par lui (PASSE, 38 % prédits à la fin), vidéo finie recalée ; hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 242234,
     "views_48h": null,
-    "views": 171140,
-    "likes": 5386,
-    "comments": 107,
-    "shares": 185,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 242234,
+    "likes": 7888,
+    "comments": 138,
+    "shares": 297,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/surprise.py (branche proto-surprise)",
    "retention_predite": {
@@ -523,12 +523,12 @@
    "exclusion_reason": "publiée à la main par le propriétaire, en réponse au commentaire d'un fan dont le personnage (Float) est l'invitée ; 6e vidéo du jour par décision du propriétaire ; objectif : communauté, pas les vues",
    "stats": {
     "views_24h": 58903,
-    "views_48h": null,
-    "views": 58903,
-    "likes": 2266,
-    "comments": 54,
-    "shares": 71,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views_48h": 68995,
+    "views": 68995,
+    "likes": 2630,
+    "comments": 61,
+    "shares": 82,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/floatbath.py (branche proto-floatbath)"
   },
@@ -556,13 +556,13 @@
    "excluded": true,
    "exclusion_reason": "vidéo de session, hors créneau (6e vidéo du jour, décision du propriétaire) : le perso d'un fan présenté sans nom, le narrateur demande de le nommer ; hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 174045,
     "views_48h": null,
-    "views": 100405,
-    "likes": 3211,
-    "comments": 758,
-    "shares": 62,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 174045,
+    "likes": 5464,
+    "comments": 1146,
+    "shares": 107,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/nameoc.py (branche proto-nameoc)"
   },
@@ -585,13 +585,13 @@
    "excluded": true,
    "exclusion_reason": "vidéo de session publiée à la main par le propriétaire le 04/11, en réponse au fan qui a créé Snooze ; hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 95484,
     "views_48h": null,
-    "views": 53839,
-    "likes": 1290,
-    "comments": 52,
-    "shares": 37,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 95484,
+    "likes": 2334,
+    "comments": 75,
+    "shares": 72,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/snooze.py (branche proto-snooze)"
   },
@@ -619,13 +619,13 @@
    "excluded": true,
    "exclusion_reason": "clip musical décidé par le propriétaire (Bounce, Float, Snooze, Still ; chanson Suno du propriétaire), hors créneau ; hors médiane des listes",
    "stats": {
-    "views_24h": null,
+    "views_24h": 15207,
     "views_48h": null,
-    "views": 8497,
-    "likes": 185,
-    "comments": 23,
-    "shares": 11,
-    "measured_at": "2026-11-05T02:50+01:00"
+    "views": 15207,
+    "likes": 284,
+    "comments": 37,
+    "shares": 14,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/clip4.py (branche proto-clip4)"
   },
@@ -648,18 +648,18 @@
    "scheduled_time": "2026-11-05T08:00:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-5841441629716996576.mp4",
    "metricool_post_id": 416861391,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704579356617706774",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 34441,
+    "likes": 1475,
+    "comments": 19,
+    "shares": 37,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/doctor.py (branche proto-doctor)"
   },
@@ -682,18 +682,18 @@
    "scheduled_time": "2026-11-05T11:30:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-11987835155965746215.mp4",
    "metricool_post_id": 416863434,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704633214664527126",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 7160,
+    "likes": 121,
+    "comments": 24,
+    "shares": 5,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/beam.py (branche proto-beamfall)"
   },
@@ -716,18 +716,18 @@
    "scheduled_time": "2026-11-05T14:30:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-9443995233338169902.mp4",
    "metricool_post_id": 416861469,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704679527338806550",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 84166,
+    "likes": 2255,
+    "comments": 92,
+    "shares": 81,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/sneak.py (branche proto-sneak)"
   },
@@ -750,18 +750,18 @@
    "scheduled_time": "2026-11-05T18:00:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-15264744102489739314.mp4",
    "metricool_post_id": 416861510,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704736151885614358",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 92516,
+    "likes": 5299,
+    "comments": 125,
+    "shares": 167,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/date.py (branche proto-date)"
   },
@@ -784,18 +784,18 @@
    "scheduled_time": "2026-11-05T21:00:00+01:00",
    "media_url": "https://static.metricool.com/planner/202611/7069324-file-9554979085790377788.mp4",
    "metricool_post_id": 416863492,
-   "post_url": null,
-   "status": "scheduled",
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704779951949499670",
+   "status": "published",
    "excluded": true,
    "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
    "stats": {
     "views_24h": null,
     "views_48h": null,
-    "views": null,
-    "likes": null,
-    "comments": null,
-    "shares": null,
-    "measured_at": null
+    "views": 6457,
+    "likes": 183,
+    "comments": 23,
+    "shares": 4,
+    "measured_at": "2026-11-06T02:50+01:00"
    },
    "script": "src/stories/fall.py (branche proto-beamfall)"
   },
@@ -1385,8 +1385,13 @@
   },
   {
    "date": "2026-11-04",
-   "views": 400660,
+   "views": 654199,
    "followers": 12587
+  },
+  {
+   "date": "2026-11-05",
+   "views": 224740,
+   "followers": 13419
   }
  ],
  "veille": {
@@ -1460,6 +1465,10 @@
   {
    "date": "2026-11-05T02:50+01:00",
    "note": "Run du 05/11 : le jour est déjà pris (doctor_proto 08h00, beam_proto 11h30, sneak_proto 14h30, date_proto 18h00, fall_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : matter_proto, life_proto, roast_proto, surprise_proto, nameoc_proto, clip4_proto (04/11) PUBLISHED → published. Mesure : stats mises à jour ; snooze_proto (publiée à la main, sans heure programmée) rattachée à la ligne Metricool du 04/11 16:11 UTC (61 s), seule ligne du jour sans entrée et de durée compatible. bottle_proto (04/11 08h00, PUBLISHED, vidéo 7704208175217691907) n'a aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides, à revoir au prochain run. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 03/11 mis à jour avec la valeur complète du jour, 04/11 ajouté. coherence.py : numpy absent de l'environnement au démarrage ; sans conséquence aujourd'hui puisque rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 05/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  },
+  {
+   "date": "2026-11-06T02:55+01:00",
+   "note": "Run du 06/11 : le jour est déjà pris (crush_proto 08h00, rollcall_proto 11h30, detonate_proto 14h30, grounded_proto 18h00, blub_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : doctor_proto, beam_proto, sneak_proto, date_proto, fall_proto (05/11) PUBLISHED → published, publicUrl dans post_url. Mesure : stats mises à jour par identifiant de vidéo ; views_48h écrites pour cats, makeup, interview, floatbath ; views_24h pour matter, life, roast, surprise, nameoc, snooze, clip4. bottle_proto (vidéo 7704208175217691907) n'a toujours aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 04/11 mis à jour avec la valeur complète du jour, 05/11 ajouté. ../bouncefactory non clonable dans cette session (accès GitHub limité à story-factory) : sans conséquence aujourd'hui, rien n'est écrit. coherence.py : numpy absent de l'environnement ; sans conséquence, rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 06/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
   }
  ]
 }
