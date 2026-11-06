@@ -1,0 +1,7 @@
+{
+ "name": "insomnia_apercu",
+ "theme": "insomnia",
+ "seed": 1,
+ "hook_text": "Think he can sleep?",
+ "width": 540, "height": 960, "fps": 30, "supersample": 1
+}
