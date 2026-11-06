@@ -151,7 +151,7 @@ LAND_DX = -15.0                          # les paliers sont dessinés pour 440�
 PAN = (150.0, 360.0, 630.0, 1420.0)      # le tableau, deux colonnes (boutons de 100 px)
 PX = PAN[1] + R
 BTN_R = 50.0
-STRIP = (150.0, 452.0, 930.0, 598.0)     # le bandeau de la cabine : étage (gauche), année (droite)
+STRIP = (150.0, 466.0, 930.0, 598.0)     # le bandeau de la cabine : étage (gauche), année (droite)
 STEEL_X = 620.0                          # sol nu (métal), à côté de l'homme
 BRIEF_X = 503.0                          # Bounce contre la mallette-bouclier (centre)
 RUG = (360.0, 560.0)
@@ -980,7 +980,7 @@ class Sim:
             u = (1 - fl) / 0.65
             cxp, cyp = (545 + x1) / 2 + 320 * u, (y0 + y1) / 2 + 30 * u
             hw, hh = (x1 - 545) / 2 * (1 - 0.5 * u), (y1 - y0 - 30) / 2 * (1 - 0.5 * u)
-            pts = [rot(cxp + qx, cyp + qy, cxp, cyp, 0.9 * u) for (qx, qy) in
+            pts = [rot(cxp + qx, cyp + qy, cxp, cyp, 0.4 * u) for (qx, qy) in
                    ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))]
             dr.polygon(poly(pts, k), fill=mix((248, 246, 240), (120, 120, 130), u))
 
@@ -1425,7 +1425,7 @@ class Sim:
 
 # ------------------------------------------------------------------ audio, rendu
 DEFAULTS = {
-    "hook_text_s": 99.0, "hook_top": 0.125, "hook_font_size": 100, "hook_speed": 1.05, "hook_max_s": 0.95,
+    "hook_text_s": 99.0, "hook_top": 0.125, "hook_font_size": 84, "hook_width": 0.8, "hook_speed": 1.05, "hook_max_s": 0.95,
     "narrator_voice": "am_michael", "narrator_length": 1.0, "narr_gap_s": 0.3,
     "sub_y": 1.5, "sub_font_size": 10,
     "watermark_y": 0.95, "watermark_alpha": 0.4, "end_hold_s": 0.02, "narr_tail_s": 0.0,
