@@ -1,1658 +1,1658 @@
 {
-  "_schema": "videos : une entrée par vidéo produite. themes : une entrée par thème (une forme d'histoire décrite en une phrase), jamais supprimée. daily : métriques de compte par jour. veille : dernière veille hebdomadaire. notes : journal daté, une entrée par décision ou incident. era_start : date de la première vidéo publiée, vide tant que rien n'est publié.",
-  "era_start": "2026-10-31",
-  "videos": [
-    {
-      "name": "six_jobs_20261031",
-      "date": "2026-10-31",
-      "theme": "six_jobs",
-      "config": "configs/six_jobs_20261031.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Keep A Job?",
-      "duration_s": 61.15,
-      "hashtags": [
-        "#bouncingball",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/six_jobs_20261031.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-10-31T21:00:00+01:00",
-      "media_url": "https://h.uguu.se/yECsUvDU.mp4",
-      "metricool_post_id": 412415155,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702925099485203734",
-      "status": "published",
-      "stats": {
-        "views_24h": 29401,
-        "views_48h": 31578,
-        "views": 32936,
-        "likes": 1705,
-        "comments": 24,
-        "shares": 37,
-        "measured_at": "2026-11-04T02:45+01:00"
-      }
-    },
-    {
-      "name": "halloween_20261031",
-      "date": "2026-10-31",
-      "theme": "halloween",
-      "config": "configs/halloween_20261031.json",
-      "role": "owner",
-      "hook_text": "It Only Says One Word",
-      "duration_s": 69.5,
-      "hashtags": [
-        "#halloween",
-        "#horror",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/halloween_20261031.md",
-      "slot": "22:35",
-      "scheduled_time": "2026-10-31T22:35:00+01:00",
-      "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
-      "metricool_post_id": 412482253,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702948850977312022",
-      "status": "published",
-      "stats": {
-        "views_24h": 3344,
-        "views_48h": 3710,
-        "views": 4023,
-        "likes": 138,
-        "comments": 12,
-        "shares": 11,
-        "measured_at": "2026-11-04T02:45+01:00"
-      }
-    },
-    {
-      "name": "six_sports_20261101",
-      "date": "2026-11-01",
-      "theme": "six_sports",
-      "config": "configs/six_sports_20261101.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Win At Anything?",
-      "duration_s": 61.72,
-      "hashtags": [
-        "#bouncingball",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/six_sports_20261101.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-01T14:30:00+01:00",
-      "media_url": "https://n.uguu.se/KtpNKcTg.mp4",
-      "metricool_post_id": 412898560,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703195092684705046",
-      "status": "published",
-      "stats": {
-        "views_24h": 23960,
-        "views_48h": 25281,
-        "views": 26411,
-        "likes": 920,
-        "comments": 10,
-        "shares": 34,
-        "measured_at": "2026-11-05T02:50+01:00"
-      }
-    },
-    {
-      "name": "six_hobbies_20261102",
-      "date": "2026-11-02",
-      "theme": "six_hobbies",
-      "config": "configs/six_hobbies_20261102.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Find A Hobby?",
-      "duration_s": 62.98,
-      "hashtags": [
-        "#bouncingball",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/six_hobbies_20261102.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-02T18:00:00+01:00",
-      "media_url": "https://h.uguu.se/kHqxazac.mp4",
-      "metricool_post_id": 413003770,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703621734066326806",
-      "status": "published",
-      "stats": {
-        "views_24h": 20990,
-        "views_48h": 24916,
-        "views": 26241,
-        "likes": 1454,
-        "comments": 18,
-        "shares": 75,
-        "measured_at": "2026-11-07T02:50+01:00"
-      }
-    },
-    {
-      "name": "doubling_proto",
-      "date": "2026-11-02",
-      "theme": "doubling",
-      "config": "configs/doubling_proto.json",
-      "role": "owner",
-      "hook_text": "How Many Bounces To The Sun?",
-      "duration_s": 64.67,
-      "hashtags": [
-        "#space",
-        "#science",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/doubling_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-02T08:00:00+01:00",
-      "media_url": "https://n.uguu.se/BQqPuFVn.mp4",
-      "metricool_post_id": 413295647,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703466334486531350",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype du troisième concept (culture G), pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 12058,
-        "views_48h": 13648,
-        "views": 14459,
-        "likes": 342,
-        "comments": 16,
-        "shares": 23,
-        "measured_at": "2026-11-07T02:50+01:00"
-      },
-      "script": "src/stories/doubling.py (branche proto-doubling)"
-    },
-    {
-      "name": "machine_proto",
-      "date": "2026-11-02",
-      "theme": "machine",
-      "config": "configs/machine_proto.json",
-      "role": "owner",
-      "hook_text": "Will Bounce's Machine Work?",
-      "duration_s": 61.78,
-      "hashtags": [
-        "#rubegoldberg",
-        "#chainreaction",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/machine_proto.md",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-02T11:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-15602535638271660673.mp4",
-      "metricool_post_id": 413582183,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703519863934946582",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (la machine de Bounce), cherché et fait seul par Claude la nuit du 01/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 7813,
-        "views_48h": 9384,
-        "views": 9978,
-        "likes": 414,
-        "comments": 13,
-        "shares": 12,
-        "measured_at": "2026-11-07T02:50+01:00"
-      },
-      "script": "src/stories/machine.py (branche proto-machine)"
-    },
-    {
-      "name": "cats_proto",
-      "date": "2026-11-03",
-      "theme": "cats",
-      "config": "configs/cats_proto.json",
-      "role": "owner",
-      "hook_text": "Will Bounce Wake 1000 Cats?",
-      "duration_s": 64.03,
-      "hashtags": [
-        "#catsoftiktok",
-        "#cats",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/cats_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-03T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-11737630764517771814.mp4",
-      "metricool_post_id": 414251495,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703994221878971670",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (Bounce réveille 1, 10, 100 puis 1000 chats), cherché et fait seul par Claude le 02/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 62375,
-        "views_48h": 68965,
-        "views": 68965,
-        "likes": 1878,
-        "comments": 31,
-        "shares": 55,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/cats.py (branche proto-cats)"
-    },
-    {
-      "name": "makeup_proto",
-      "date": "2026-11-03",
-      "theme": "makeup",
-      "config": "configs/makeup_proto.json",
-      "role": "owner",
-      "hook_text": "Can Anyone Do Bounce's Makeup?",
-      "duration_s": 64.22,
-      "hashtags": [
-        "#makeuptutorial",
-        "#makeup",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/makeup_proto.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-03T21:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-7348777032151364722.mp4",
-      "metricool_post_id": 414552817,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704038212871785750",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (idée du propriétaire (tuto maquillage de Bounce)), fait en session ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 56857,
-        "views_48h": 62125,
-        "views": 62125,
-        "likes": 2517,
-        "comments": 55,
-        "shares": 141,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/makeup.py (branche proto-makeup)"
-    },
-    {
-      "name": "interview_proto",
-      "date": "2026-11-03",
-      "theme": "interview",
-      "config": "configs/interview_proto.json",
-      "role": "owner",
-      "hook_text": "Will Bounce Get Hired?",
-      "duration_s": 64.88,
-      "hashtags": [
-        "#jobinterview",
-        "#corporatehumor",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/interview_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-03T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-2627749308248800353.mp4",
-      "metricool_post_id": 414653885,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703937256452672790",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (entretien d'embauche)), fait en session ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 128821,
-        "views_48h": 144988,
-        "views": 144988,
-        "likes": 8898,
-        "comments": 62,
-        "shares": 256,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/interview.py (branche proto-interview)"
-    },
-    {
-      "name": "matter_proto",
-      "date": "2026-11-04",
-      "theme": "matter",
-      "config": "configs/matter_proto.json",
-      "role": "owner",
-      "hook_text": "Best Floor For Bouncing?",
-      "duration_s": 64.37,
-      "hashtags": [
-        "#satisfying",
-        "#physics",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/matter_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-04T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-14710310873688873017.mp4",
-      "metricool_post_id": 414909751,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704364341897874710",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (Bounce teste les matières)), fait en session ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 19515,
-        "views_48h": null,
-        "views": 19515,
-        "likes": 722,
-        "comments": 15,
-        "shares": 19,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/matter.py (branche proto-matter)"
-    },
-    {
-      "name": "life_proto",
-      "date": "2026-11-04",
-      "theme": "life",
-      "config": "configs/life_proto.json",
-      "role": "owner",
-      "hook_text": "Will Bounce Ever Sit Still?",
-      "duration_s": 62.85,
-      "hashtags": [
-        "#lifestory",
-        "#animation",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/life_proto.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-04T21:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-9153872046635338311.mp4",
-      "metricool_post_id": 414947077,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704408796063452438",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "prototype d'un nouveau concept (la vie de Bounce en une minute, proposé par Claude au propriétaire), fait en session ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 57766,
-        "views_48h": null,
-        "views": 57766,
-        "likes": 3513,
-        "comments": 65,
-        "shares": 81,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/life.py (branche proto-life)"
-    },
-    {
-      "name": "roast_proto",
-      "date": "2026-11-04",
-      "theme": "roast",
-      "config": "configs/roast_proto.json",
-      "role": "owner",
-      "hook_text": "Look at this f*cking purple ball.",
-      "duration_s": 64.0,
-      "hashtags": [
-        "#bounce",
-        "#roast",
-        "#satisfying",
-        "#animation"
-      ],
-      "caption": "captions/roast_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-04T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-18069828700367869227.mp4",
-      "metricool_post_id": 415394414,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704308456844430614",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "idée du propriétaire faite en session (le narrateur insulte Bounce pendant une minute, gros mots bipés à sa demande) ; pas une liste : hors médiane des listes",
-      "stats": {
-        "views_24h": 49948,
-        "views_48h": null,
-        "views": 49948,
-        "likes": 2351,
-        "comments": 83,
-        "shares": 203,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/roast.py (branche proto-roast)"
-    },
-    {
-      "name": "bottle_proto",
-      "date": "2026-11-04",
-      "theme": "bottle",
-      "config": "configs/bottle_proto.json",
-      "role": "owner",
-      "hook_text": "Can Bounce Get Out?",
-      "duration_s": 61.48,
-      "hashtags": [
-        "#bounce",
-        "#physics",
-        "#satisfying",
-        "#fyp"
-      ],
-      "caption": "captions/bottle_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-04T08:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-13416341064506873411.mp4",
-      "metricool_post_id": 415587524,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704208175217691907",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "concept écrit avec la méthode (juge de la rétention), fait en session ; hors médiane des listes ; passée en privé par le propriétaire le 04/11 : Bounce sans son contour violet (bottle.py dessine le corps sans le halo de base.ball)",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/bottle.py (branche proto-bottle)",
-      "retention_predite": {
-        "decoupage_v2": "36 % à la fin",
-        "mp4_v1": {
-          "1s": 72,
-          "3s": 48,
-          "10s": 27,
-          "30s": 13,
-          "45s": 9,
-          "fin": 6
-        }
-      }
-    },
-    {
-      "name": "surprise_proto",
-      "date": "2026-11-04",
-      "theme": "surprise",
-      "config": "configs/surprise_proto.json",
-      "role": "owner",
-      "hook_text": "Will He Ruin The Surprise?",
-      "duration_s": 61.5,
-      "hashtags": [
-        "#surprise",
-        "#birthday",
-        "#bounce",
-        "#animation"
-      ],
-      "caption": "captions/surprise_proto.md",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-04T11:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-13718526359723359711.mp4",
-      "metricool_post_id": 415586227,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704262021419732246",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "test du juge de la rétention : découpage validé par lui (PASSE, 38 % prédits à la fin), vidéo finie recalée ; hors médiane des listes",
-      "stats": {
-        "views_24h": 242234,
-        "views_48h": null,
-        "views": 242234,
-        "likes": 7888,
-        "comments": 138,
-        "shares": 297,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/surprise.py (branche proto-surprise)",
-      "retention_predite": {
-        "decoupage_v5": {
-          "1s": 90,
-          "3s": 75,
-          "10s": 62,
-          "30s": 48,
-          "45s": 43,
-          "fin": 38
-        },
-        "mp4_v1": {
-          "1s": 74,
-          "3s": 50,
-          "10s": 32,
-          "30s": 17,
-          "45s": 10,
-          "fin": 7
-        },
-        "mp4_v2": {
-          "1s": 72,
-          "3s": 45,
-          "10s": 24,
-          "30s": 12,
-          "45s": 9,
-          "fin": 5
-        }
-      }
-    },
-    {
-      "name": "floatbath_proto",
-      "date": "2026-11-03",
-      "theme": "floatbath",
-      "config": "configs/floatbath_proto.json",
-      "role": "owner",
-      "hook_text": "Can Float finish her bath?",
-      "duration_s": 63.3,
-      "hashtags": [],
-      "caption": null,
-      "slot": null,
-      "scheduled_time": null,
-      "media_url": null,
-      "metricool_post_id": null,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704009646767476001",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "publiée à la main par le propriétaire, en réponse au commentaire d'un fan dont le personnage (Float) est l'invitée ; 6e vidéo du jour par décision du propriétaire ; objectif : communauté, pas les vues",
-      "stats": {
-        "views_24h": 58903,
-        "views_48h": 68995,
-        "views": 68995,
-        "likes": 2630,
-        "comments": 61,
-        "shares": 82,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/floatbath.py (branche proto-floatbath)"
-    },
-    {
-      "name": "nameoc_proto",
-      "date": "2026-11-04",
-      "theme": "nameoc",
-      "config": "configs/nameoc_proto.json",
-      "role": "owner",
-      "hook_text": "What's her name?",
-      "duration_s": 14.9,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/nameoc_proto.md",
-      "slot": "16:10",
-      "scheduled_time": "2026-11-04T16:10:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-13403096481768863455.mp4",
-      "metricool_post_id": 416617133,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704334211909455126",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session, hors créneau (6e vidéo du jour, décision du propriétaire) : le perso d'un fan présenté sans nom, le narrateur demande de le nommer ; hors médiane des listes",
-      "stats": {
-        "views_24h": 174045,
-        "views_48h": null,
-        "views": 174045,
-        "likes": 5464,
-        "comments": 1146,
-        "shares": 107,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/nameoc.py (branche proto-nameoc)"
-    },
-    {
-      "name": "snooze_proto",
-      "date": "2026-11-04",
-      "theme": "snooze",
-      "config": "configs/snooze_proto.json",
-      "role": "owner",
-      "hook_text": "Can Bounce wake him up?",
-      "duration_s": 61.82,
-      "hashtags": [],
-      "caption": null,
-      "slot": null,
-      "scheduled_time": null,
-      "media_url": null,
-      "metricool_post_id": null,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704349707480468769",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session publiée à la main par le propriétaire le 04/11, en réponse au fan qui a créé Snooze ; hors médiane des listes",
-      "stats": {
-        "views_24h": 95484,
-        "views_48h": null,
-        "views": 95484,
-        "likes": 2334,
-        "comments": 75,
-        "shares": 72,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/snooze.py (branche proto-snooze)"
-    },
-    {
-      "name": "clip4_proto",
-      "date": "2026-11-04",
-      "theme": "clip4",
-      "config": "configs/clip4_proto.json",
-      "role": "owner",
-      "hook_text": "Can anyone stop Bounce?",
-      "duration_s": 106.8,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/clip4_proto.md",
-      "slot": "18:25",
-      "scheduled_time": "2026-11-04T18:25:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-13222998911216023768.mp4",
-      "metricool_post_id": 416786489,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704368911323532546",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "clip musical décidé par le propriétaire (Bounce, Float, Snooze, Still ; chanson Suno du propriétaire), hors créneau ; hors médiane des listes",
-      "stats": {
-        "views_24h": 15207,
-        "views_48h": null,
-        "views": 15207,
-        "likes": 284,
-        "comments": 37,
-        "shares": 14,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/clip4.py (branche proto-clip4)"
-    },
-    {
-      "name": "doctor_proto",
-      "date": "2026-11-05",
-      "theme": "doctor",
-      "config": "configs/doctor_proto.json",
-      "role": "owner",
-      "hook_text": "Can the doctor cure Bounce?",
-      "duration_s": 63.15,
-      "hashtags": [
-        "#bounce",
-        "#doctor",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/doctor_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-05T08:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-5841441629716996576.mp4",
-      "metricool_post_id": 416861391,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704579356617706774",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": 34441,
-        "likes": 1475,
-        "comments": 19,
-        "shares": 37,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/doctor.py (branche proto-doctor)"
-    },
-    {
-      "name": "beam_proto",
-      "date": "2026-11-05",
-      "theme": "beam",
-      "config": "configs/beam_proto.json",
-      "role": "owner",
-      "hook_text": "Will Beam sneeze?",
-      "duration_s": 61.42,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/beam_proto.md",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-05T11:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-11987835155965746215.mp4",
-      "metricool_post_id": 416863434,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704633214664527126",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": 7160,
-        "likes": 121,
-        "comments": 24,
-        "shares": 5,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/beam.py (branche proto-beamfall)"
-    },
-    {
-      "name": "sneak_proto",
-      "date": "2026-11-05",
-      "theme": "sneak",
-      "config": "configs/sneak_proto.json",
-      "role": "owner",
-      "hook_text": "Can Bounce sneak past Snooze?",
-      "duration_s": 61.32,
-      "hashtags": [
-        "#bounce",
-        "#snooze",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/sneak_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-05T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-9443995233338169902.mp4",
-      "metricool_post_id": 416861469,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704679527338806550",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": 84166,
-        "likes": 2255,
-        "comments": 92,
-        "shares": 81,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/sneak.py (branche proto-sneak)"
-    },
-    {
-      "name": "date_proto",
-      "date": "2026-11-05",
-      "theme": "date",
-      "config": "configs/date_proto.json",
-      "role": "owner",
-      "hook_text": "Will Still say yes?",
-      "duration_s": 63.42,
-      "hashtags": [
-        "#bounce",
-        "#still",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/date_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-05T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-15264744102489739314.mp4",
-      "metricool_post_id": 416861510,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704736151885614358",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": 92516,
-        "likes": 5299,
-        "comments": 125,
-        "shares": 167,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/date.py (branche proto-date)"
-    },
-    {
-      "name": "fall_proto",
-      "date": "2026-11-05",
-      "theme": "fall",
-      "config": "configs/fall_proto.json",
-      "role": "owner",
-      "hook_text": "Can Bounce fall?",
-      "duration_s": 61.72,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#autumn",
-        "#fyp"
-      ],
-      "caption": "captions/fall_proto.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-05T21:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-9554979085790377788.mp4",
-      "metricool_post_id": 416863492,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704779951949499670",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": 6457,
-        "likes": 183,
-        "comments": 23,
-        "shares": 4,
-        "measured_at": "2026-11-06T02:50+01:00"
-      },
-      "script": "src/stories/fall.py (branche proto-beamfall)"
-    },
-    {
-      "name": "crush_proto",
-      "date": "2026-11-06",
-      "theme": "crush",
-      "config": "configs/crush_proto.json",
-      "role": "owner",
-      "hook_text": "Can Crush bounce?",
-      "duration_s": 61.82,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/crush_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-06T08:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-10662837228087625372.mp4",
-      "metricool_post_id": 417050856,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704950307519728918",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/crush.py (branche proto-blubcrush)"
-    },
-    {
-      "name": "blub_proto",
-      "date": "2026-11-06",
-      "theme": "blub",
-      "config": "configs/blub_proto.json",
-      "role": "owner",
-      "hook_text": "Can Bounce save Blub?",
-      "duration_s": 61.82,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/blub_proto.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-06T21:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-12257148474253042965.mp4",
-      "metricool_post_id": 417033480,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705151126907129090",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/blub.py (branche proto-blubcrush)"
-    },
-    {
-      "name": "rollcall_proto",
-      "date": "2026-11-06",
-      "theme": "rollcall",
-      "config": "configs/rollcall_v3.json",
-      "role": "owner",
-      "hook_text": "How many blocks, you think?",
-      "duration_s": 65.92,
-      "hashtags": [
-        "#bounce",
-        "#gamenight",
-        "#oc",
-        "#animation"
-      ],
-      "caption": "captions/rollcall_proto.md",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-06T11:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-757744355008001432.mp4",
-      "metricool_post_id": 418107314,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705004077893324055",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/rollcall_v3.py (branche proto-rollcall)",
-      "methode": "S3·A3·2e·R2·C2·P3·F1·E2·O1·T1·Z2·N3·Q2·L2",
-      "outcome": "soirée jeu : chaque coup de Bounce sur la table fait tomber des blocs de la tour sur la tête de Still qui ne bouge jamais ; fausse fin à 46 s, puis le petit coup de 61,5 s fait tout basculer sur Bounce, enseveli"
-    },
-    {
-      "name": "detonate_proto",
-      "date": "2026-11-06",
-      "theme": "detonate",
-      "config": "configs/detonate_v3.json",
-      "role": "owner",
-      "hook_text": "Which bounce sets him off?",
-      "duration_s": 62.63,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#trampoline",
-        "#animation"
-      ],
-      "caption": "captions/detonate_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-06T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-8414464324822548939.mp4",
-      "metricool_post_id": 418107354,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705050597728275734",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/detonate_v3.py (branche proto-detonate)",
-      "methode": "S2·A2·3e·R1·C3·P2·F2·E1·O2·T2·Z1·N2·Q1·L0",
-      "outcome": "sur un trampoline, chaque « Bounce » coûte un morceau de coque à Detonate ; coque vide sans explosion à 43 s, puis il gonfle à chaque rebond ; après un silence, un dernier « Bounce » le fait éclater en confettis sur Bounce"
-    },
-    {
-      "name": "grounded_proto",
-      "date": "2026-11-06",
-      "theme": "grounded",
-      "config": "configs/grounded_v3.json",
-      "role": "owner",
-      "hook_text": "How do you ground Bounce?",
-      "duration_s": 63.87,
-      "hashtags": [
-        "#bounce",
-        "#grounded",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "caption": "captions/grounded_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-06T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-3019708314640476817.mp4",
-      "metricool_post_id": 418113805,
-      "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705107015948979478",
-      "status": "published",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/grounded_v3.py (branche proto-rollgrounded)",
-      "methode": "S1·A4·2e·R1·C1·P3·F3·E1·O2·T3·Z0·N2·Q2·L1",
-      "outcome": "Grounded lâche sur Bounce des charges de plus en plus lourdes (livre, pile, panier, briques, 1 TON, lui-même) pendant que la peine monte ; à 61,8 s la pile bascule, le panier frôle Bounce et retombe sur Grounded"
-    },
-    {
-      "name": "roll_proto",
-      "date": "2026-11-07",
-      "theme": "roll",
-      "config": "configs/roll_v3.json",
-      "role": "owner",
-      "hook_text": "Will they fall?",
-      "duration_s": 62.27,
-      "hashtags": [
-        "#bounce",
-        "#circus",
-        "#tightrope",
-        "#animation"
-      ],
-      "caption": "captions/roll_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-07T08:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-6297014532890917061.mp4",
-      "metricool_post_id": 418108080,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/roll_v3.py (branche proto-roll3)",
-      "methode": "S1·A1·3e·R1·C3·P2·F4·E2·O1·T1·Z0·N3·Q1·L0",
-      "outcome": "funambule : chaque « Bounce » sur Roll fait claquer un des six fils du point faible de la corde ; le dernier fil tient et fait fronde à 59,3 s, renvoyant les deux balles au départ"
-    },
-    {
-      "name": "slo_proto",
-      "date": "2026-11-07",
-      "theme": "slo",
-      "config": "configs/slo_v3.json",
-      "role": "owner",
-      "hook_text": "Bounces till he's out?",
-      "duration_s": 63.93,
-      "hashtags": [
-        "#bounce",
-        "#oc",
-        "#garage",
-        "#animation"
-      ],
-      "caption": "captions/slo_proto.md",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-07T21:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-6757341034023334297.mp4",
-      "metricool_post_id": 418107492,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/slo_v3.py (branche proto-slo)",
-      "methode": "S3·A3·3e·R2·C3·P3·F1·E2·O2·T2·Z0·N3·Q1·L2",
-      "outcome": "garage : chaque « Bounce » sur Slo gonfle sa bulle de ralenti ; Bounce tape lui-même le bouton de la porte à 6 s ; fausse fin devant la porte à 53 s, son « Bounce » sur le seuil réveille Slo et la porte se ferme à 60 s"
-    },
-    {
-      "name": "wedding_proto",
-      "date": "2026-11-07",
-      "theme": "wedding",
-      "config": "configs/wedding_v3.json",
-      "role": "owner",
-      "hook_text": "When would you object?",
-      "duration_s": 61.97,
-      "hashtags": [
-        "#bounce",
-        "#wedding",
-        "#weddingtiktok",
-        "#animation"
-      ],
-      "caption": "captions/wedding_proto.md",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-07T11:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-10124897616626656899.mp4",
-      "metricool_post_id": 418107394,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/wedding_v3.py (branche proto-wedding)",
-      "methode": "S3·A2·2e·R1·C1·P3·F4·E1·O2·T3·Z1·N2·Q1·L1",
-      "outcome": "on glisse du mou sous Bounce pour le faire taire pendant la cérémonie, il le perd à chaque fois ; objection à 38 s, la mariée part à 45 s (fausse fin) ; « …husband… and… » puis 2 s de silence et « BOUNCE. » à 60 s"
-    },
-    {
-      "name": "hideseek_proto",
-      "date": "2026-11-08",
-      "theme": "hideseek",
-      "config": "configs/hideseek_v3.json",
-      "role": "owner",
-      "hook_text": "How do you find Bounce?",
-      "duration_s": 63.82,
-      "hashtags": [
-        "#bounce",
-        "#hideandseek",
-        "#animation",
-        "#oc"
-      ],
-      "caption": "captions/hideseek_proto.md",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-08T08:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-7222441857123566762.mp4",
-      "metricool_post_id": 418107523,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/hideseek_v3.py (branche proto-hideseek)",
-      "methode": "S2·A4·2e·R3·C1·P2·F2·E1·O2·T1·Z1·N3·Q1·L1",
-      "outcome": "chaque « Bounce » envoie un anneau et Crush bondit vers le bruit ; Bounce finit sur la tête de Crush à 42 s ; Crush abandonne, mais Bounce heurte la poutre de la porte à 61,7 s et se fait trouver"
-    },
-    {
-      "name": "baby_proto",
-      "date": "2026-11-07",
-      "theme": "baby",
-      "config": "configs/baby_v8.json",
-      "role": "owner",
-      "hook_text": "How will Mom react?",
-      "duration_s": 61.48,
-      "hashtags": [
-        "#bounce",
-        "#baby",
-        "#firstword",
-        "#animation"
-      ],
-      "caption": "captions/baby_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-07T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-2232250149315486973.mp4",
-      "metricool_post_id": 418295325,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/baby_v8.py (branche proto-baby)",
-      "methode": "S1·A4·3e·R1·C2·P1·F3·E1·O1·T3·Z2·N2·Q2·L0",
-      "outcome": "Bounce fait tomber la pancarte sur le bébé, qui se met à rebondir avec lui ; trois visites de Maman, trois faux sommeils différents ; à 36 s « Who woke you up? » → « BOUNCE! », sa colère fond : « His first word! » à 40 s ; relance « Say... Mama! » → « BOUNCE! » ; elle finit par rebondir avec eux"
-    },
-    {
-      "name": "yoga_proto",
-      "date": "2026-11-08",
-      "theme": "yoga",
-      "config": "configs/yoga_v3.json",
-      "role": "owner",
-      "hook_text": "Will Bounce calm down?",
-      "duration_s": 62.55,
-      "hashtags": [
-        "#bounce",
-        "#yoga",
-        "#namaste",
-        "#animation"
-      ],
-      "caption": "captions/yoga_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-08T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-16546802198253627405.mp4",
-      "metricool_post_id": 418107590,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/yoga_v3.py (branche proto-yoga)",
-      "methode": "S1·A1·3e·R2·C2·P1·F1·E2·O1·T1·Z0·N2·Q2·L0",
-      "outcome": "chaque « Bounce » sur le parquet casse une posture ; la prof tombe à 48 s ; à 58,7 s Bounce se coince dans le hublot devant la lune, la classe joint les mains : « Namaste »"
-    },
-    {
-      "name": "firstday_proto",
-      "date": "2026-11-07",
-      "theme": "firstday",
-      "config": "configs/firstday_v3.json",
-      "role": "owner",
-      "hook_text": "Fired for bouncing?",
-      "duration_s": 62.93,
-      "hashtags": [
-        "#bounce",
-        "#officehumor",
-        "#animation",
-        "#fyp"
-      ],
-      "caption": "captions/firstday_proto.md",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-07T14:30:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-4884396052471637417.mp4",
-      "metricool_post_id": 418107432,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/firstday_v3.py (branche proto-firstday)",
-      "methode": "S2·A1·3e·R3·C2·P1·F2·E2·O1·T3·Z2·N3·Q2·L2",
-      "outcome": "au bureau, chaque « Bounce » compte comme une main levée et lui donne une tâche ; Kevin prend PITCH à 40 s ; à l'appel sur FIRED il est sur son coussin, muet, mais un dernier petit rebond frôle le bureau à 59,6 s"
-    },
-    {
-      "name": "exam_proto",
-      "date": "2026-11-08",
-      "theme": "exam",
-      "config": "configs/exam_v3.json",
-      "role": "owner",
-      "hook_text": "When do cheaters get caught?",
-      "duration_s": 62.62,
-      "hashtags": [
-        "#bounce",
-        "#exam",
-        "#school",
-        "#fyp"
-      ],
-      "caption": "captions/exam_proto.md",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-08T18:00:00+01:00",
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-17581839434114746867.mp4",
-      "metricool_post_id": 418110256,
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "script": "src/stories/exam_v3.py (branche proto-exam)",
-      "methode": "S3·A2·3e·R3·C3·P3·F4·E1·O2·T3·Z1·N3·Q1·L1",
-      "outcome": "la salle recopie les ronds roses de Bounce ; 0 à 42 s, puis les copies identiques prennent −19 chacune ; Bounce est premier avec zéro"
-    },
-    {
-      "name": "camping_v3",
-      "date": "2026-11-08",
-      "theme": "camping",
-      "role": "owner",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-08T11:30:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "How many bears?",
-      "duration_s": 63.67,
-      "hashtags": [
-        "#bounce",
-        "#bears",
-        "#camping",
-        "#fyp"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-2480853591098976715.mp4",
-      "metricool_post_id": 418114073,
-      "methode": "S2·A3·3e·R1·C1·P3·F3·E2·O1·T2·Z2·N2·Q2·L2",
-      "outcome": "chaque « Bounce » attire un ours de plus dans la tente ; une ourse géante à 47 s écrase tout ; Bounce s'échappe de justesse par l'aération et tombe sur le rocher, qui était un ours",
-      "script": "src/stories/camping_v3.py (branche proto-camping)",
-      "config": "configs/camping_v3.json",
-      "caption": "captions/camping_v3.md"
-    },
-    {
-      "name": "cinema_v3",
-      "date": "2026-11-08",
-      "theme": "cinema",
-      "role": "owner",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-08T21:00:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "How many get kicked out?",
-      "duration_s": 63.57,
-      "hashtags": [
-        "#bounce",
-        "#movietheater",
-        "#bouncingball",
-        "#fyp"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-18331253928044804194.mp4",
-      "metricool_post_id": 418114100,
-      "methode": "S2·A3·3e·R1·C1·P2·F4·E2·O2·T3·Z0·N2·Q1·L2",
-      "outcome": "tout ce que la lampe de l'ouvreur éclaire est mis dehors, jamais Bounce ; la salle se vide, Bounce envoie la lampe sur l'écran et le personnage du film est expulsé ; la lampe finit braquée sur la caméra",
-      "script": "src/stories/cinema_v3.py (branche proto-cinema)",
-      "config": "configs/cinema_v3.json",
-      "caption": "captions/cinema_v3.md"
-    },
-    {
-      "name": "barber_proto",
-      "date": "2026-11-09",
-      "theme": "barber",
-      "role": "owner",
-      "slot": "14:30",
-      "scheduled_time": "2026-11-09T14:30:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "Whose head gets his hair?",
-      "duration_s": 61.78,
-      "hashtags": [
-        "#bounce",
-        "#barber",
-        "#haircut",
-        "#animation"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-13145052461639420086.mp4",
-      "metricool_post_id": 418749593,
-      "methode": "S2·A43e·R3·C2·P1·F1·E1·O1·T2·Z1·N2·Q2·L1",
-      "outcome": "chaque rebond de Bounce dans le fauteuil envoie une touffe de sa tignasse sur le voisin ; chauve, il reprend l'afro du voisin, qui finit sur le crâne chauve du barbier ; « Perfect! » au miroir, la barbe s'envole à 54 s ; au dernier « Bounce » la coiffure du barbier retombe de travers sur Bounce",
-      "script": "src/stories/barber_v4.py (branche proto-barber)",
-      "config": "configs/barber_v4.json",
-      "caption": "captions/barber_proto.md"
-    },
-    {
-      "name": "stick_proto",
-      "date": "2026-11-09",
-      "theme": "stick",
-      "role": "owner",
-      "slot": "18:00",
-      "scheduled_time": "2026-11-09T18:00:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "When will the librarian snap?",
-      "duration_s": 62.33,
-      "hashtags": [
-        "#bounce",
-        "#library",
-        "#stick",
-        "#animation"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-11714334772112553625.mp4",
-      "metricool_post_id": 418756014,
-      "methode": "S3·A23e·R1·C3·P3·F3·E1·O2·T3·Z0·N2·Q1·L2",
-      "outcome": "Bounce emporte Stick (perso de fan, vert) contre tout dans une bibliothèque : livres, panneau QUIET, la bibliothécaire, un lecteur dans son fauteuil ; sa colère monte par paliers, faux calme « Finally. » à 45 s ; l'étagère penche à chaque rebond et la bibliothécaire hurle « QUIET! » à 58 s : l'étagère enferme Bounce, Stick se colle sur sa tête",
-      "script": "src/stories/stick_v3.py (branche proto-stick)",
-      "config": "configs/stick_v3.json",
-      "caption": "captions/stick_proto.md"
-    },
-    {
-      "name": "elevator_proto",
-      "date": "2026-11-09",
-      "theme": "elevator",
-      "role": "owner",
-      "slot": "21:00",
-      "scheduled_time": "2026-11-09T21:00:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "How late will he be?",
-      "duration_s": 64.23,
-      "hashtags": [
-        "#bounce",
-        "#elevator",
-        "#officelife",
-        "#animation"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-16092849119953908794.mp4",
-      "metricool_post_id": 418759586,
-      "methode": "S2·A32e·R2·C1·P3·F4·E2·O2·T2·Z1·N3·Q1·L1",
-      "outcome": "Bounce allume tous les boutons ; à chaque étage des années passent (2026 → 2079), l'homme pressé vieillit ; au 9 à 40 s Bounce ferme la porte ; vieillard, il garde le tableau à la canne, arrive au 9 en 2079 sur son pot de départ en retraite (« I just got here. ») ; Bounce referme les portes et l'ascenseur redescend",
-      "script": "src/stories/elevator_v4.py (branche proto-elevator)",
-      "config": "configs/elevator_v4.json",
-      "caption": "captions/elevator_proto.md"
-    },
-    {
-      "name": "insomnia_proto",
-      "date": "2026-11-09",
-      "theme": "insomnia",
-      "role": "owner",
-      "slot": "08:00",
-      "scheduled_time": "2026-11-09T08:00:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "Can he sleep through Bounce?",
-      "duration_s": 64.03,
-      "hashtags": [
-        "#bounce",
-        "#insomnia",
-        "#cantsleep",
-        "#animation"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-8072889342416729881.mp4",
-      "metricool_post_id": 418761544,
-      "methode": "S1·A12e·R2·C1·P2·F2·E2·O1·T1·Z2·N3·Q2·L0",
-      "outcome": "Insomnia (perso de fan, frère de Snooze) est réveillé à chaque « Bounce » : oreiller soufflé, lampe, café catapulté dans sa bouche ; il compte des Bounce rêvés qui ratent la barrière et débordent dans la chambre ; à 58 s le plus gros « BOUNCE » fait éclater le rêve ; il s'endort enfin au lever du jour, Bounce rebondissant tout doux",
-      "script": "src/stories/insomnia.py (branche proto-insomnia, config v4)",
-      "config": "configs/insomnia_v4.json",
-      "caption": "captions/insomnia_proto.md"
-    },
-    {
-      "name": "magic_proto",
-      "date": "2026-11-09",
-      "theme": "magic",
-      "role": "owner",
-      "slot": "11:30",
-      "scheduled_time": "2026-11-09T11:30:00+01:00",
-      "post_url": null,
-      "status": "scheduled",
-      "excluded": true,
-      "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
-      "stats": {
-        "views_24h": null,
-        "views_48h": null,
-        "views": null,
-        "likes": null,
-        "comments": null,
-        "shares": null,
-        "measured_at": null
-      },
-      "hook_text": "Can you spot the rabbit?",
-      "duration_s": 61.33,
-      "hashtags": [
-        "#bounce",
-        "#magic",
-        "#magictrick",
-        "#animation"
-      ],
-      "media_url": "https://static.metricool.com/planner/202611/7069324-file-7898417002536295389.mp4",
-      "metricool_post_id": 418769540,
-      "methode": "S1·A12e·R1·C2·P2·F4·E1·O2·T1·Z2·N2·Q1·L2",
-      "outcome": "Bounce sort du chapeau à la place du lapin et gâche chaque tour ; le sort ricoche et rétrécit le magicien, la cage se referme sur lui, les colombes envoient Bounce au plafond ; le lapin apparaît partout sans que le magicien le voie ; Bounce saute seul dans le chapeau-piège, le magicien le présente comme son lapin, un dernier « Bounce » étouffé fait sauter le chapeau pendant le salut",
-      "script": "src/stories/magic_v4.py (branche proto-magic)",
-      "config": "configs/magic_v4.json",
-      "caption": "captions/magic_proto.md"
-    }
-  ],
-  "themes": [
-    {
-      "name": "six_jobs",
-      "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
-      "state": "actif",
-      "created": "2026-10-31"
-    },
-    {
-      "name": "halloween",
-      "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
-      "state": "actif",
-      "created": "2026-10-31"
-    },
-    {
-      "name": "six_sports",
-      "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
-      "state": "actif",
-      "created": "2026-11-01"
-    },
-    {
-      "name": "six_hobbies",
-      "description": "Liste à sketches : les six loisirs que Bounce a essayés, un décor et une mécanique de chute par loisir, le sixième (peinture) retourne la série.",
-      "state": "actif",
-      "created": "2026-11-01"
-    }
-  ],
-  "daily": [
-    {
-      "date": "2026-10-31",
-      "views": 71044,
-      "followers": 11156
-    },
-    {
-      "date": "2026-11-01",
-      "views": 51200,
-      "followers": 11236
-    },
-    {
-      "date": "2026-11-02",
-      "views": 39869,
-      "followers": 11308
-    },
-    {
-      "date": "2026-11-03",
-      "views": 346262,
-      "followers": 11681
-    },
-    {
-      "date": "2026-11-04",
-      "views": 654199,
-      "followers": 12587
-    },
-    {
-      "date": "2026-11-05",
-      "views": 224740,
-      "followers": 13419
-    }
-  ],
-  "veille": {
-    "last_check": null,
-    "hashtags": [],
-    "formats_satures": "",
-    "sources": [],
-    "confiance": ""
+ "_schema": "videos : une entrée par vidéo produite. themes : une entrée par thème (une forme d'histoire décrite en une phrase), jamais supprimée. daily : métriques de compte par jour. veille : dernière veille hebdomadaire. notes : journal daté, une entrée par décision ou incident. era_start : date de la première vidéo publiée, vide tant que rien n'est publié.",
+ "era_start": "2026-10-31",
+ "videos": [
+  {
+   "name": "six_jobs_20261031",
+   "date": "2026-10-31",
+   "theme": "six_jobs",
+   "config": "configs/six_jobs_20261031.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Keep A Job?",
+   "duration_s": 61.15,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_jobs_20261031.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-10-31T21:00:00+01:00",
+   "media_url": "https://h.uguu.se/yECsUvDU.mp4",
+   "metricool_post_id": 412415155,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702925099485203734",
+   "status": "published",
+   "stats": {
+    "views_24h": 29401,
+    "views_48h": 31578,
+    "views": 32936,
+    "likes": 1705,
+    "comments": 24,
+    "shares": 37,
+    "measured_at": "2026-11-04T02:45+01:00"
+   }
   },
-  "notes": [
-    {
-      "date": "2026-10-28",
-      "note": "Phase 0 : dépôt créé, moteur de rendu écrit et testé (tests/rendu_test.json), règles et skills en place. Genre décidé par le propriétaire : histoires racontées par une voix de synthèse sur des dessins simples animés. Identité, langue, voix, nom du compte, marque Metricool et protocole du test restent à trancher (CLAUDE.md, état du projet)."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
-    },
-    {
-      "date": "2026-10-31",
-      "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
-    },
-    {
-      "date": "2026-11-01",
-      "note": "Deuxième liste, six_sports_20261101, programmée le 02/11 à 14h30 (post 412887374). Trois relectures : v1 recalée (golf de jour, tampons hors cadre), v2 recalée (étang et mur hors cadre, barre qui traverse le montant, carton sur Bounce, Bounce dans un joueur), v3 recalée (barre fantôme : il la traversait six fois avant la chute scriptée), v4 PASSE (vraie collision, joueurs écartés, golf à moitié dans l'eau). Leçon pour la skill d'écriture : chaque objet que Bounce peut toucher doit avoir une collision réelle dès le début, jamais seulement au moment de la chute. Moteur : stamp_y par chapitre, tampon qui tient dans la largeur. Signal : six_jobs a reçu l'Additional Reward de TikTok (RPM 1,95 $, environ dix fois le reste du compte)."
-    },
-    {
-      "date": "2026-11-01T16:25+01:00",
-      "note": "six_hobbies_20261102, première liste passée par le circuit industriel (skills ecrire et juger, controle.py) : 6 versions. v1 recalée par le contrôle automatique (image figée, ouverture lente, flash) ; v2 recalée par les trois juges (wagons téléportés, pièces sous l'interface, oiseaux invisibles, tirage-logo, voix superposées, fin coupée) ; v3 et v4 recalées par le juge de la facture (locomotive dans la table, oiseaux qui disparaissent ; cartes et wagons qui se traversent) ; v5 : deux juges PASSE, le troisième recalait sur la réaction finale « Yes! » (identité de base.py, consigne du juge corrigée) ; v6 : deux mineurs visibles corrigés (carte en équilibre, wagons debout), dernière relecture PASSE. Chaque défaut est devenu une vérification de controle.py ou une règle des skills. Le propriétaire a validé (« Elle est top ») et choisi le 02/11 à 18h00 (post Metricool 413003770). Règle d'arrêt écrite dans juger : un passage, au plus un rerendu, les mineurs deviennent des règles pour la vidéo suivante."
-    },
-    {
-      "date": "2026-11-01T17:10+01:00",
-      "note": "Décision du propriétaire : routine quotidienne vers 3h (Opus 5.5), une liste par jour sur un créneau tiré au hasard parmi les libres ; le run de bouncefactory produit une vidéo de moins. Premier run : nuit du 02 au 03/11 (le 02/11 est déjà pris par six_hobbies, programmée en session)."
-    },
-    {
-      "date": "2026-11-01T22:30+01:00",
-      "note": "Prototype du troisième concept (culture G, idée du propriétaire) : doubling_proto, « How Many Bounces To The Sun? », 64,7 s, script sur la branche proto-doubling (pas sur main : ce n'est pas une liste). Trois versions : v1 jugée trop simpliste par le propriétaire ; v2 recalée par le juge (compteur décalé de la voix, fin contradictoire) ; v3 PASSE (pauses au sommet des jalons, deuxième question après le Soleil). Publiée telle quelle sur décision du propriétaire le 02/11 à 8h00 (post 413295647). Mineurs pour la version suivante : objets qui surgissent au lieu d'entrer, deux passages calmes (36–41 s, 53–58 s), textes petits, « the nearest star » (le Soleil l'est) et « another galaxy » dit après le Grand Nuage de Magellan."
-    },
-    {
-      "date": "2026-11-02T02:50+01:00",
-      "note": "Premier run de la routine (nuit du 01 au 02/11). Nettoyage : halloween_20261031 et six_sports_20261101 rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 29 401 vues (24 h), halloween 3 344 (24 h), six_sports 19 859 (12 h) ; daily 31/10 et 01/11. Le 02/11 est déjà pris (six_hobbies à 18h00, faite en session ; doubling_proto à 8h00) : arrêt à l'étape 2, aucune liste produite. Environnement : python3 (3.11) et pip (3.13) ne pointent pas sur le même interpréteur ; installer avec « python3 -m pip install -r requirements.txt » (et --ignore-installed pillow, le PIL système n'a pas _imaging). Veille non faite : réservée aux nuits où une liste est publiée."
-    },
-    {
-      "date": "2026-11-03T02:55+01:00",
-      "note": "Run de la routine (nuit du 02 au 03/11). Nettoyage : six_hobbies_20261102, doubling_proto et machine_proto rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 31 578 vues (48 h), halloween 3 710 (48 h), six_sports 23 960 (24 h, mesurée à 36 h), six_hobbies 13 238 (9 h), doubling_proto 9 417 (19 h), machine_proto 5 300 (15 h) ; daily 02/11. Le 03/11 est déjà pris : outre cats_proto (18h00), Metricool porte deux vidéos narrées de Bounce au format liste, faites en session et absentes de history.json : « Can Anyone Do Bounce's Makeup? » (post 414552817, 21h00, 64,2 s, créé le 02/11 à 22h33) et « Will Bounce Get Hired? » (post 414653885, 14h30, 64,9 s, créé le 03/11 à 00h33). Arrêt à l'étape 2, aucune liste produite ; les deux posts ne sont pas inventés dans videos[] : à consigner par la session qui les a faits (config, script, caption). Créneaux libres restants (8h00, 11h30) laissés au run de bouncefactory. Environnement : rediwane/bouncefactory n'est pas accessible à cette session (clone refusé, dépôt hors périmètre GitHub de la routine) ; controle.py ne pourrait donc pas faire le test de nouveauté contre ses thèmes et accroches : à ajouter aux dépôts de la routine avant le prochain run qui écrit une liste."
-    },
-    {
-      "date": "2026-11-03T10:50+01:00",
-      "note": "Session owner : roast_proto programmée le 04/11 à 14h30 (post 415033420). Idée du propriétaire : le narrateur insulte Bounce pendant une minute ; première réplique « Look at this f*cking purple ball. » (6 mots, pas une question, et « purple » alors que Bounce est rose : choix du propriétaire). Les gros mots sont bipés (sinusoïde 1 kHz synthétisée par src/stories/roast.py, aucun fichier audio) et étoilés à l'écrit : décision explicite du propriétaire, exception à la règle « aucun son ajouté » pour cette vidéo seulement. Juges : muet PASSE ; son RECALÉ (bips 4 à 5 LU au-dessus de la voix), v2 bip −6 dB et crête −1,5 dBTP → PASSE."
-    },
-    {
-      "date": "2026-11-03T16:30+01:00",
-      "note": "Session owner : roast_proto remplacée dans le post du 04/11 14h30 (nouvel id 415394414). Voix du narrateur passée sur Chatterbox (voix plus énervée, validée à l'écoute par le propriétaire), bip qui laisse passer le début du mot, quelques répliques allongées ; 64,0 s. Juges : muet PASSE ; son RECALÉ (fins de mots audibles sur 3 répliques) → bips allongés → corrigé. Le propriétaire garde le faux mort de la fin."
-    },
-    {
-      "date": "2026-11-03T19:50+01:00",
-      "note": "Session owner : test du « juge de la rétention » (consigne dans le scratchpad de session, non versionnée). bottle_proto (04/11 08h00, post 415587524) et surprise_proto (04/11 11h30, post 415586227) portent dans retention_predite les courbes prédites par le juge : à comparer aux courbes réelles de TikTok Studio. Calibrage à l'aveugle sur 4 vidéos passées : le juge ne sépare pas un carton (118 k) des flops (3 k) ; ses pourcentages varient autant d'un juge à l'autre que d'une version à l'autre ; utile comme relecteur de défauts, pas comme prédicteur."
-    },
-    {
-      "date": "2026-11-03T20:15+01:00",
-      "note": "Session owner : floatbath_proto publiée à la main par le propriétaire le 03/11 au soir, en réponse vidéo au commentaire du fan qui a créé Float (personnage invité, non récurrent). 6e vidéo du jour, au-delà de la limite de 5, par décision du propriétaire. Voix de Float : Parler-TTS (Talia), banque hors dépôt."
-    },
-    {
-      "date": "2026-11-04T02:50+01:00",
-      "note": "Run du 04/11 : le jour est déjà pris (bottle_proto 08h00, surprise_proto 11h30, roast_proto 14h30, matter_proto 18h00, life_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : cats_proto, interview_proto, makeup_proto (03/11) PUBLISHED → published. Mesure : stats mises à jour ; floatbath_proto rattachée à la ligne Metricool du 03/11 18:12 UTC (63 s, publiée à la main). Ligne Metricool hors dépôt ignorée (anthill, bed : bouncefactory). Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 04/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
-    },
-    {
-      "date": "2026-11-05T02:50+01:00",
-      "note": "Run du 05/11 : le jour est déjà pris (doctor_proto 08h00, beam_proto 11h30, sneak_proto 14h30, date_proto 18h00, fall_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : matter_proto, life_proto, roast_proto, surprise_proto, nameoc_proto, clip4_proto (04/11) PUBLISHED → published. Mesure : stats mises à jour ; snooze_proto (publiée à la main, sans heure programmée) rattachée à la ligne Metricool du 04/11 16:11 UTC (61 s), seule ligne du jour sans entrée et de durée compatible. bottle_proto (04/11 08h00, PUBLISHED, vidéo 7704208175217691907) n'a aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides, à revoir au prochain run. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 03/11 mis à jour avec la valeur complète du jour, 04/11 ajouté. coherence.py : numpy absent de l'environnement au démarrage ; sans conséquence aujourd'hui puisque rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 05/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
-    },
-    {
-      "date": "2026-11-06T02:55+01:00",
-      "note": "Run du 06/11 : le jour est déjà pris (crush_proto 08h00, rollcall_proto 11h30, detonate_proto 14h30, grounded_proto 18h00, blub_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : doctor_proto, beam_proto, sneak_proto, date_proto, fall_proto (05/11) PUBLISHED → published, publicUrl dans post_url. Mesure : stats mises à jour par identifiant de vidéo ; views_48h écrites pour cats, makeup, interview, floatbath ; views_24h pour matter, life, roast, surprise, nameoc, snooze, clip4. bottle_proto (vidéo 7704208175217691907) n'a toujours aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 04/11 mis à jour avec la valeur complète du jour, 05/11 ajouté. ../bouncefactory non clonable dans cette session (accès GitHub limité à story-factory) : sans conséquence aujourd'hui, rien n'est écrit. coherence.py : numpy absent de l'environnement ; sans conséquence, rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 06/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
-    },
-    {
-      "date": "2026-11-07T02:50+01:00",
-      "note": "Run du 07/11 : le jour est déjà pris (roll_proto 08h00, wedding_proto 11h30, firstday_proto 14h30, baby_proto 18h00, slo_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : crush_proto, rollcall_proto, detonate_proto, grounded_proto, blub_proto (06/11) PUBLISHED → published, publicUrl dans post_url. Mesure : getAnalyticsDataByMetrics renvoie les mêmes valeurs qu'au run du 06/11 (aucune ligne pour les posts du 06/11, TKEV sans le 06/11 ni mise à jour du 05/11) : les données Metricool ne se sont pas rafraîchies depuis. Seul stats.views (et likes/comments/shares) mis à jour pour six_hobbies, doubling, machine, dont l'entrée datait du 05/11 ; aucune valeur views_24h/views_48h écrite, car la donnée date d'avant ces âges (on n'inscrit pas une vue de 30 h comme vue à 48 h). daily inchangé. bottle_proto : toujours aucune ligne. coherence.py : numpy non importable (2 KO moteur), sans conséquence, rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 07/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  {
+   "name": "halloween_20261031",
+   "date": "2026-10-31",
+   "theme": "halloween",
+   "config": "configs/halloween_20261031.json",
+   "role": "owner",
+   "hook_text": "It Only Says One Word",
+   "duration_s": 69.5,
+   "hashtags": [
+    "#halloween",
+    "#horror",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/halloween_20261031.md",
+   "slot": "22:35",
+   "scheduled_time": "2026-10-31T22:35:00+01:00",
+   "media_url": "https://n.uguu.se/LpTeeRvR.mp4",
+   "metricool_post_id": 412482253,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7702948850977312022",
+   "status": "published",
+   "stats": {
+    "views_24h": 3344,
+    "views_48h": 3710,
+    "views": 4023,
+    "likes": 138,
+    "comments": 12,
+    "shares": 11,
+    "measured_at": "2026-11-04T02:45+01:00"
+   }
+  },
+  {
+   "name": "six_sports_20261101",
+   "date": "2026-11-01",
+   "theme": "six_sports",
+   "config": "configs/six_sports_20261101.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Win At Anything?",
+   "duration_s": 61.72,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_sports_20261101.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-01T14:30:00+01:00",
+   "media_url": "https://n.uguu.se/KtpNKcTg.mp4",
+   "metricool_post_id": 412898560,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703195092684705046",
+   "status": "published",
+   "stats": {
+    "views_24h": 23960,
+    "views_48h": 25281,
+    "views": 26411,
+    "likes": 920,
+    "comments": 10,
+    "shares": 34,
+    "measured_at": "2026-11-05T02:50+01:00"
+   }
+  },
+  {
+   "name": "six_hobbies_20261102",
+   "date": "2026-11-02",
+   "theme": "six_hobbies",
+   "config": "configs/six_hobbies_20261102.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Find A Hobby?",
+   "duration_s": 62.98,
+   "hashtags": [
+    "#bouncingball",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/six_hobbies_20261102.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-02T18:00:00+01:00",
+   "media_url": "https://h.uguu.se/kHqxazac.mp4",
+   "metricool_post_id": 413003770,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703621734066326806",
+   "status": "published",
+   "stats": {
+    "views_24h": 20990,
+    "views_48h": 24916,
+    "views": 26241,
+    "likes": 1454,
+    "comments": 18,
+    "shares": 75,
+    "measured_at": "2026-11-07T02:50+01:00"
+   }
+  },
+  {
+   "name": "doubling_proto",
+   "date": "2026-11-02",
+   "theme": "doubling",
+   "config": "configs/doubling_proto.json",
+   "role": "owner",
+   "hook_text": "How Many Bounces To The Sun?",
+   "duration_s": 64.67,
+   "hashtags": [
+    "#space",
+    "#science",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/doubling_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-02T08:00:00+01:00",
+   "media_url": "https://n.uguu.se/BQqPuFVn.mp4",
+   "metricool_post_id": 413295647,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703466334486531350",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype du troisième concept (culture G), pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 12058,
+    "views_48h": 13648,
+    "views": 14459,
+    "likes": 342,
+    "comments": 16,
+    "shares": 23,
+    "measured_at": "2026-11-07T02:50+01:00"
+   },
+   "script": "src/stories/doubling.py (branche proto-doubling)"
+  },
+  {
+   "name": "machine_proto",
+   "date": "2026-11-02",
+   "theme": "machine",
+   "config": "configs/machine_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce's Machine Work?",
+   "duration_s": 61.78,
+   "hashtags": [
+    "#rubegoldberg",
+    "#chainreaction",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/machine_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-02T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15602535638271660673.mp4",
+   "metricool_post_id": 413582183,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703519863934946582",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (la machine de Bounce), cherché et fait seul par Claude la nuit du 01/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 7813,
+    "views_48h": 9384,
+    "views": 9978,
+    "likes": 414,
+    "comments": 13,
+    "shares": 12,
+    "measured_at": "2026-11-07T02:50+01:00"
+   },
+   "script": "src/stories/machine.py (branche proto-machine)"
+  },
+  {
+   "name": "cats_proto",
+   "date": "2026-11-03",
+   "theme": "cats",
+   "config": "configs/cats_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Wake 1000 Cats?",
+   "duration_s": 64.03,
+   "hashtags": [
+    "#catsoftiktok",
+    "#cats",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/cats_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-03T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-11737630764517771814.mp4",
+   "metricool_post_id": 414251495,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703994221878971670",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (Bounce réveille 1, 10, 100 puis 1000 chats), cherché et fait seul par Claude le 02/11 à la demande du propriétaire ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 62375,
+    "views_48h": 68965,
+    "views": 68965,
+    "likes": 1878,
+    "comments": 31,
+    "shares": 55,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/cats.py (branche proto-cats)"
+  },
+  {
+   "name": "makeup_proto",
+   "date": "2026-11-03",
+   "theme": "makeup",
+   "config": "configs/makeup_proto.json",
+   "role": "owner",
+   "hook_text": "Can Anyone Do Bounce's Makeup?",
+   "duration_s": 64.22,
+   "hashtags": [
+    "#makeuptutorial",
+    "#makeup",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/makeup_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-03T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-7348777032151364722.mp4",
+   "metricool_post_id": 414552817,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704038212871785750",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (idée du propriétaire (tuto maquillage de Bounce)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 56857,
+    "views_48h": 62125,
+    "views": 62125,
+    "likes": 2517,
+    "comments": 55,
+    "shares": 141,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/makeup.py (branche proto-makeup)"
+  },
+  {
+   "name": "interview_proto",
+   "date": "2026-11-03",
+   "theme": "interview",
+   "config": "configs/interview_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Get Hired?",
+   "duration_s": 64.88,
+   "hashtags": [
+    "#jobinterview",
+    "#corporatehumor",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/interview_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-03T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2627749308248800353.mp4",
+   "metricool_post_id": 414653885,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7703937256452672790",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (entretien d'embauche)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 128821,
+    "views_48h": 144988,
+    "views": 144988,
+    "likes": 8898,
+    "comments": 62,
+    "shares": 256,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/interview.py (branche proto-interview)"
+  },
+  {
+   "name": "matter_proto",
+   "date": "2026-11-04",
+   "theme": "matter",
+   "config": "configs/matter_proto.json",
+   "role": "owner",
+   "hook_text": "Best Floor For Bouncing?",
+   "duration_s": 64.37,
+   "hashtags": [
+    "#satisfying",
+    "#physics",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/matter_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-04T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-14710310873688873017.mp4",
+   "metricool_post_id": 414909751,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704364341897874710",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (concept proposé par Claude au propriétaire (Bounce teste les matières)), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 19515,
+    "views_48h": null,
+    "views": 19515,
+    "likes": 722,
+    "comments": 15,
+    "shares": 19,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/matter.py (branche proto-matter)"
+  },
+  {
+   "name": "life_proto",
+   "date": "2026-11-04",
+   "theme": "life",
+   "config": "configs/life_proto.json",
+   "role": "owner",
+   "hook_text": "Will Bounce Ever Sit Still?",
+   "duration_s": 62.85,
+   "hashtags": [
+    "#lifestory",
+    "#animation",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/life_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-04T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9153872046635338311.mp4",
+   "metricool_post_id": 414947077,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704408796063452438",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "prototype d'un nouveau concept (la vie de Bounce en une minute, proposé par Claude au propriétaire), fait en session ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 57766,
+    "views_48h": null,
+    "views": 57766,
+    "likes": 3513,
+    "comments": 65,
+    "shares": 81,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/life.py (branche proto-life)"
+  },
+  {
+   "name": "roast_proto",
+   "date": "2026-11-04",
+   "theme": "roast",
+   "config": "configs/roast_proto.json",
+   "role": "owner",
+   "hook_text": "Look at this f*cking purple ball.",
+   "duration_s": 64.0,
+   "hashtags": [
+    "#bounce",
+    "#roast",
+    "#satisfying",
+    "#animation"
+   ],
+   "caption": "captions/roast_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-04T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18069828700367869227.mp4",
+   "metricool_post_id": 415394414,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704308456844430614",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "idée du propriétaire faite en session (le narrateur insulte Bounce pendant une minute, gros mots bipés à sa demande) ; pas une liste : hors médiane des listes",
+   "stats": {
+    "views_24h": 49948,
+    "views_48h": null,
+    "views": 49948,
+    "likes": 2351,
+    "comments": 83,
+    "shares": 203,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/roast.py (branche proto-roast)"
+  },
+  {
+   "name": "bottle_proto",
+   "date": "2026-11-04",
+   "theme": "bottle",
+   "config": "configs/bottle_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce Get Out?",
+   "duration_s": 61.48,
+   "hashtags": [
+    "#bounce",
+    "#physics",
+    "#satisfying",
+    "#fyp"
+   ],
+   "caption": "captions/bottle_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-04T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13416341064506873411.mp4",
+   "metricool_post_id": 415587524,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704208175217691907",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "concept écrit avec la méthode (juge de la rétention), fait en session ; hors médiane des listes ; passée en privé par le propriétaire le 04/11 : Bounce sans son contour violet (bottle.py dessine le corps sans le halo de base.ball)",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/bottle.py (branche proto-bottle)",
+   "retention_predite": {
+    "decoupage_v2": "36 % à la fin",
+    "mp4_v1": {
+     "1s": 72,
+     "3s": 48,
+     "10s": 27,
+     "30s": 13,
+     "45s": 9,
+     "fin": 6
     }
-  ]
+   }
+  },
+  {
+   "name": "surprise_proto",
+   "date": "2026-11-04",
+   "theme": "surprise",
+   "config": "configs/surprise_proto.json",
+   "role": "owner",
+   "hook_text": "Will He Ruin The Surprise?",
+   "duration_s": 61.5,
+   "hashtags": [
+    "#surprise",
+    "#birthday",
+    "#bounce",
+    "#animation"
+   ],
+   "caption": "captions/surprise_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-04T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13718526359723359711.mp4",
+   "metricool_post_id": 415586227,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704262021419732246",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "test du juge de la rétention : découpage validé par lui (PASSE, 38 % prédits à la fin), vidéo finie recalée ; hors médiane des listes",
+   "stats": {
+    "views_24h": 242234,
+    "views_48h": null,
+    "views": 242234,
+    "likes": 7888,
+    "comments": 138,
+    "shares": 297,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/surprise.py (branche proto-surprise)",
+   "retention_predite": {
+    "decoupage_v5": {
+     "1s": 90,
+     "3s": 75,
+     "10s": 62,
+     "30s": 48,
+     "45s": 43,
+     "fin": 38
+    },
+    "mp4_v1": {
+     "1s": 74,
+     "3s": 50,
+     "10s": 32,
+     "30s": 17,
+     "45s": 10,
+     "fin": 7
+    },
+    "mp4_v2": {
+     "1s": 72,
+     "3s": 45,
+     "10s": 24,
+     "30s": 12,
+     "45s": 9,
+     "fin": 5
+    }
+   }
+  },
+  {
+   "name": "floatbath_proto",
+   "date": "2026-11-03",
+   "theme": "floatbath",
+   "config": "configs/floatbath_proto.json",
+   "role": "owner",
+   "hook_text": "Can Float finish her bath?",
+   "duration_s": 63.3,
+   "hashtags": [],
+   "caption": null,
+   "slot": null,
+   "scheduled_time": null,
+   "media_url": null,
+   "metricool_post_id": null,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704009646767476001",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "publiée à la main par le propriétaire, en réponse au commentaire d'un fan dont le personnage (Float) est l'invitée ; 6e vidéo du jour par décision du propriétaire ; objectif : communauté, pas les vues",
+   "stats": {
+    "views_24h": 58903,
+    "views_48h": 68995,
+    "views": 68995,
+    "likes": 2630,
+    "comments": 61,
+    "shares": 82,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/floatbath.py (branche proto-floatbath)"
+  },
+  {
+   "name": "nameoc_proto",
+   "date": "2026-11-04",
+   "theme": "nameoc",
+   "config": "configs/nameoc_proto.json",
+   "role": "owner",
+   "hook_text": "What's her name?",
+   "duration_s": 14.9,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/nameoc_proto.md",
+   "slot": "16:10",
+   "scheduled_time": "2026-11-04T16:10:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13403096481768863455.mp4",
+   "metricool_post_id": 416617133,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704334211909455126",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session, hors créneau (6e vidéo du jour, décision du propriétaire) : le perso d'un fan présenté sans nom, le narrateur demande de le nommer ; hors médiane des listes",
+   "stats": {
+    "views_24h": 174045,
+    "views_48h": null,
+    "views": 174045,
+    "likes": 5464,
+    "comments": 1146,
+    "shares": 107,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/nameoc.py (branche proto-nameoc)"
+  },
+  {
+   "name": "snooze_proto",
+   "date": "2026-11-04",
+   "theme": "snooze",
+   "config": "configs/snooze_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce wake him up?",
+   "duration_s": 61.82,
+   "hashtags": [],
+   "caption": null,
+   "slot": null,
+   "scheduled_time": null,
+   "media_url": null,
+   "metricool_post_id": null,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704349707480468769",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session publiée à la main par le propriétaire le 04/11, en réponse au fan qui a créé Snooze ; hors médiane des listes",
+   "stats": {
+    "views_24h": 95484,
+    "views_48h": null,
+    "views": 95484,
+    "likes": 2334,
+    "comments": 75,
+    "shares": 72,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/snooze.py (branche proto-snooze)"
+  },
+  {
+   "name": "clip4_proto",
+   "date": "2026-11-04",
+   "theme": "clip4",
+   "config": "configs/clip4_proto.json",
+   "role": "owner",
+   "hook_text": "Can anyone stop Bounce?",
+   "duration_s": 106.8,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/clip4_proto.md",
+   "slot": "18:25",
+   "scheduled_time": "2026-11-04T18:25:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13222998911216023768.mp4",
+   "metricool_post_id": 416786489,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704368911323532546",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "clip musical décidé par le propriétaire (Bounce, Float, Snooze, Still ; chanson Suno du propriétaire), hors créneau ; hors médiane des listes",
+   "stats": {
+    "views_24h": 15207,
+    "views_48h": null,
+    "views": 15207,
+    "likes": 284,
+    "comments": 37,
+    "shares": 14,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/clip4.py (branche proto-clip4)"
+  },
+  {
+   "name": "doctor_proto",
+   "date": "2026-11-05",
+   "theme": "doctor",
+   "config": "configs/doctor_proto.json",
+   "role": "owner",
+   "hook_text": "Can the doctor cure Bounce?",
+   "duration_s": 63.15,
+   "hashtags": [
+    "#bounce",
+    "#doctor",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/doctor_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-05T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-5841441629716996576.mp4",
+   "metricool_post_id": 416861391,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704579356617706774",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": 34441,
+    "likes": 1475,
+    "comments": 19,
+    "shares": 37,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/doctor.py (branche proto-doctor)"
+  },
+  {
+   "name": "beam_proto",
+   "date": "2026-11-05",
+   "theme": "beam",
+   "config": "configs/beam_proto.json",
+   "role": "owner",
+   "hook_text": "Will Beam sneeze?",
+   "duration_s": 61.42,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/beam_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-05T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-11987835155965746215.mp4",
+   "metricool_post_id": 416863434,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704633214664527126",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": 7160,
+    "likes": 121,
+    "comments": 24,
+    "shares": 5,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/beam.py (branche proto-beamfall)"
+  },
+  {
+   "name": "sneak_proto",
+   "date": "2026-11-05",
+   "theme": "sneak",
+   "config": "configs/sneak_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce sneak past Snooze?",
+   "duration_s": 61.32,
+   "hashtags": [
+    "#bounce",
+    "#snooze",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/sneak_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-05T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9443995233338169902.mp4",
+   "metricool_post_id": 416861469,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704679527338806550",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": 84166,
+    "likes": 2255,
+    "comments": 92,
+    "shares": 81,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/sneak.py (branche proto-sneak)"
+  },
+  {
+   "name": "date_proto",
+   "date": "2026-11-05",
+   "theme": "date",
+   "config": "configs/date_proto.json",
+   "role": "owner",
+   "hook_text": "Will Still say yes?",
+   "duration_s": 63.42,
+   "hashtags": [
+    "#bounce",
+    "#still",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/date_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-05T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-15264744102489739314.mp4",
+   "metricool_post_id": 416861510,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704736151885614358",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": 92516,
+    "likes": 5299,
+    "comments": 125,
+    "shares": 167,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/date.py (branche proto-date)"
+  },
+  {
+   "name": "fall_proto",
+   "date": "2026-11-05",
+   "theme": "fall",
+   "config": "configs/fall_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce fall?",
+   "duration_s": 61.72,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#autumn",
+    "#fyp"
+   ],
+   "caption": "captions/fall_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-05T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-9554979085790377788.mp4",
+   "metricool_post_id": 416863492,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704779951949499670",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée la veille sur décision du propriétaire (les 5 créneaux du 05/11, tirés au hasard, graine 1793816709) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": 6457,
+    "likes": 183,
+    "comments": 23,
+    "shares": 4,
+    "measured_at": "2026-11-06T02:50+01:00"
+   },
+   "script": "src/stories/fall.py (branche proto-beamfall)"
+  },
+  {
+   "name": "crush_proto",
+   "date": "2026-11-06",
+   "theme": "crush",
+   "config": "configs/crush_proto.json",
+   "role": "owner",
+   "hook_text": "Can Crush bounce?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/crush_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-06T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10662837228087625372.mp4",
+   "metricool_post_id": 417050856,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7704950307519728918",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/crush.py (branche proto-blubcrush)"
+  },
+  {
+   "name": "blub_proto",
+   "date": "2026-11-06",
+   "theme": "blub",
+   "config": "configs/blub_proto.json",
+   "role": "owner",
+   "hook_text": "Can Bounce save Blub?",
+   "duration_s": 61.82,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/blub_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-06T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-12257148474253042965.mp4",
+   "metricool_post_id": 417033480,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705151126907129090",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire (perso de fan) ; créneau tiré au hasard (graine 1793826909) ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/blub.py (branche proto-blubcrush)"
+  },
+  {
+   "name": "rollcall_proto",
+   "date": "2026-11-06",
+   "theme": "rollcall",
+   "config": "configs/rollcall_v3.json",
+   "role": "owner",
+   "hook_text": "How many blocks, you think?",
+   "duration_s": 65.92,
+   "hashtags": [
+    "#bounce",
+    "#gamenight",
+    "#oc",
+    "#animation"
+   ],
+   "caption": "captions/rollcall_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-06T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-757744355008001432.mp4",
+   "metricool_post_id": 418107314,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705004077893324055",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/rollcall_v3.py (branche proto-rollcall)",
+   "methode": "S3·A3·2e·R2·C2·P3·F1·E2·O1·T1·Z2·N3·Q2·L2",
+   "outcome": "soirée jeu : chaque coup de Bounce sur la table fait tomber des blocs de la tour sur la tête de Still qui ne bouge jamais ; fausse fin à 46 s, puis le petit coup de 61,5 s fait tout basculer sur Bounce, enseveli"
+  },
+  {
+   "name": "detonate_proto",
+   "date": "2026-11-06",
+   "theme": "detonate",
+   "config": "configs/detonate_v3.json",
+   "role": "owner",
+   "hook_text": "Which bounce sets him off?",
+   "duration_s": 62.63,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#trampoline",
+    "#animation"
+   ],
+   "caption": "captions/detonate_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-06T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-8414464324822548939.mp4",
+   "metricool_post_id": 418107354,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705050597728275734",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/detonate_v3.py (branche proto-detonate)",
+   "methode": "S2·A2·3e·R1·C3·P2·F2·E1·O2·T2·Z1·N2·Q1·L0",
+   "outcome": "sur un trampoline, chaque « Bounce » coûte un morceau de coque à Detonate ; coque vide sans explosion à 43 s, puis il gonfle à chaque rebond ; après un silence, un dernier « Bounce » le fait éclater en confettis sur Bounce"
+  },
+  {
+   "name": "grounded_proto",
+   "date": "2026-11-06",
+   "theme": "grounded",
+   "config": "configs/grounded_v3.json",
+   "role": "owner",
+   "hook_text": "How do you ground Bounce?",
+   "duration_s": 63.87,
+   "hashtags": [
+    "#bounce",
+    "#grounded",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "caption": "captions/grounded_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-06T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-3019708314640476817.mp4",
+   "metricool_post_id": 418113805,
+   "post_url": "https://www.tiktok.com/@bouncefactory0/video/7705107015948979478",
+   "status": "published",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/grounded_v3.py (branche proto-rollgrounded)",
+   "methode": "S1·A4·2e·R1·C1·P3·F3·E1·O2·T3·Z0·N2·Q2·L1",
+   "outcome": "Grounded lâche sur Bounce des charges de plus en plus lourdes (livre, pile, panier, briques, 1 TON, lui-même) pendant que la peine monte ; à 61,8 s la pile bascule, le panier frôle Bounce et retombe sur Grounded"
+  },
+  {
+   "name": "roll_proto",
+   "date": "2026-11-07",
+   "theme": "roll",
+   "config": "configs/roll_v3.json",
+   "role": "owner",
+   "hook_text": "Will they fall?",
+   "duration_s": 62.27,
+   "hashtags": [
+    "#bounce",
+    "#circus",
+    "#tightrope",
+    "#animation"
+   ],
+   "caption": "captions/roll_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-07T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-6297014532890917061.mp4",
+   "metricool_post_id": 418108080,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/roll_v3.py (branche proto-roll3)",
+   "methode": "S1·A1·3e·R1·C3·P2·F4·E2·O1·T1·Z0·N3·Q1·L0",
+   "outcome": "funambule : chaque « Bounce » sur Roll fait claquer un des six fils du point faible de la corde ; le dernier fil tient et fait fronde à 59,3 s, renvoyant les deux balles au départ"
+  },
+  {
+   "name": "slo_proto",
+   "date": "2026-11-07",
+   "theme": "slo",
+   "config": "configs/slo_v3.json",
+   "role": "owner",
+   "hook_text": "Bounces till he's out?",
+   "duration_s": 63.93,
+   "hashtags": [
+    "#bounce",
+    "#oc",
+    "#garage",
+    "#animation"
+   ],
+   "caption": "captions/slo_proto.md",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-07T21:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-6757341034023334297.mp4",
+   "metricool_post_id": 418107492,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/slo_v3.py (branche proto-slo)",
+   "methode": "S3·A3·3e·R2·C3·P3·F1·E2·O2·T2·Z0·N3·Q1·L2",
+   "outcome": "garage : chaque « Bounce » sur Slo gonfle sa bulle de ralenti ; Bounce tape lui-même le bouton de la porte à 6 s ; fausse fin devant la porte à 53 s, son « Bounce » sur le seuil réveille Slo et la porte se ferme à 60 s"
+  },
+  {
+   "name": "wedding_proto",
+   "date": "2026-11-07",
+   "theme": "wedding",
+   "config": "configs/wedding_v3.json",
+   "role": "owner",
+   "hook_text": "When would you object?",
+   "duration_s": 61.97,
+   "hashtags": [
+    "#bounce",
+    "#wedding",
+    "#weddingtiktok",
+    "#animation"
+   ],
+   "caption": "captions/wedding_proto.md",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-07T11:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-10124897616626656899.mp4",
+   "metricool_post_id": 418107394,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/wedding_v3.py (branche proto-wedding)",
+   "methode": "S3·A2·2e·R1·C1·P3·F4·E1·O2·T3·Z1·N2·Q1·L1",
+   "outcome": "on glisse du mou sous Bounce pour le faire taire pendant la cérémonie, il le perd à chaque fois ; objection à 38 s, la mariée part à 45 s (fausse fin) ; « …husband… and… » puis 2 s de silence et « BOUNCE. » à 60 s"
+  },
+  {
+   "name": "hideseek_proto",
+   "date": "2026-11-08",
+   "theme": "hideseek",
+   "config": "configs/hideseek_v3.json",
+   "role": "owner",
+   "hook_text": "How do you find Bounce?",
+   "duration_s": 63.82,
+   "hashtags": [
+    "#bounce",
+    "#hideandseek",
+    "#animation",
+    "#oc"
+   ],
+   "caption": "captions/hideseek_proto.md",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-08T08:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-7222441857123566762.mp4",
+   "metricool_post_id": 418107523,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/hideseek_v3.py (branche proto-hideseek)",
+   "methode": "S2·A4·2e·R3·C1·P2·F2·E1·O2·T1·Z1·N3·Q1·L1",
+   "outcome": "chaque « Bounce » envoie un anneau et Crush bondit vers le bruit ; Bounce finit sur la tête de Crush à 42 s ; Crush abandonne, mais Bounce heurte la poutre de la porte à 61,7 s et se fait trouver"
+  },
+  {
+   "name": "baby_proto",
+   "date": "2026-11-07",
+   "theme": "baby",
+   "config": "configs/baby_v8.json",
+   "role": "owner",
+   "hook_text": "How will Mom react?",
+   "duration_s": 61.48,
+   "hashtags": [
+    "#bounce",
+    "#baby",
+    "#firstword",
+    "#animation"
+   ],
+   "caption": "captions/baby_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-07T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2232250149315486973.mp4",
+   "metricool_post_id": 418295325,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/baby_v8.py (branche proto-baby)",
+   "methode": "S1·A4·3e·R1·C2·P1·F3·E1·O1·T3·Z2·N2·Q2·L0",
+   "outcome": "Bounce fait tomber la pancarte sur le bébé, qui se met à rebondir avec lui ; trois visites de Maman, trois faux sommeils différents ; à 36 s « Who woke you up? » → « BOUNCE! », sa colère fond : « His first word! » à 40 s ; relance « Say... Mama! » → « BOUNCE! » ; elle finit par rebondir avec eux"
+  },
+  {
+   "name": "yoga_proto",
+   "date": "2026-11-08",
+   "theme": "yoga",
+   "config": "configs/yoga_v3.json",
+   "role": "owner",
+   "hook_text": "Will Bounce calm down?",
+   "duration_s": 62.55,
+   "hashtags": [
+    "#bounce",
+    "#yoga",
+    "#namaste",
+    "#animation"
+   ],
+   "caption": "captions/yoga_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-08T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-16546802198253627405.mp4",
+   "metricool_post_id": 418107590,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/yoga_v3.py (branche proto-yoga)",
+   "methode": "S1·A1·3e·R2·C2·P1·F1·E2·O1·T1·Z0·N2·Q2·L0",
+   "outcome": "chaque « Bounce » sur le parquet casse une posture ; la prof tombe à 48 s ; à 58,7 s Bounce se coince dans le hublot devant la lune, la classe joint les mains : « Namaste »"
+  },
+  {
+   "name": "firstday_proto",
+   "date": "2026-11-07",
+   "theme": "firstday",
+   "config": "configs/firstday_v3.json",
+   "role": "owner",
+   "hook_text": "Fired for bouncing?",
+   "duration_s": 62.93,
+   "hashtags": [
+    "#bounce",
+    "#officehumor",
+    "#animation",
+    "#fyp"
+   ],
+   "caption": "captions/firstday_proto.md",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-07T14:30:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-4884396052471637417.mp4",
+   "metricool_post_id": 418107432,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/firstday_v3.py (branche proto-firstday)",
+   "methode": "S2·A1·3e·R3·C2·P1·F2·E2·O1·T3·Z2·N3·Q2·L2",
+   "outcome": "au bureau, chaque « Bounce » compte comme une main levée et lui donne une tâche ; Kevin prend PITCH à 40 s ; à l'appel sur FIRED il est sur son coussin, muet, mais un dernier petit rebond frôle le bureau à 59,6 s"
+  },
+  {
+   "name": "exam_proto",
+   "date": "2026-11-08",
+   "theme": "exam",
+   "config": "configs/exam_v3.json",
+   "role": "owner",
+   "hook_text": "When do cheaters get caught?",
+   "duration_s": 62.62,
+   "hashtags": [
+    "#bounce",
+    "#exam",
+    "#school",
+    "#fyp"
+   ],
+   "caption": "captions/exam_proto.md",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-08T18:00:00+01:00",
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-17581839434114746867.mp4",
+   "metricool_post_id": 418110256,
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire ; hors médiane des listes",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "script": "src/stories/exam_v3.py (branche proto-exam)",
+   "methode": "S3·A2·3e·R3·C3·P3·F4·E1·O2·T3·Z1·N3·Q1·L1",
+   "outcome": "la salle recopie les ronds roses de Bounce ; 0 à 42 s, puis les copies identiques prennent −19 chacune ; Bounce est premier avec zéro"
+  },
+  {
+   "name": "camping_v3",
+   "date": "2026-11-08",
+   "theme": "camping",
+   "role": "owner",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-08T11:30:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "How many bears?",
+   "duration_s": 63.67,
+   "hashtags": [
+    "#bounce",
+    "#bears",
+    "#camping",
+    "#fyp"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-2480853591098976715.mp4",
+   "metricool_post_id": 418114073,
+   "methode": "S2·A3·3e·R1·C1·P3·F3·E2·O1·T2·Z2·N2·Q2·L2",
+   "outcome": "chaque « Bounce » attire un ours de plus dans la tente ; une ourse géante à 47 s écrase tout ; Bounce s'échappe de justesse par l'aération et tombe sur le rocher, qui était un ours",
+   "script": "src/stories/camping_v3.py (branche proto-camping)",
+   "config": "configs/camping_v3.json",
+   "caption": "captions/camping_v3.md"
+  },
+  {
+   "name": "cinema_v3",
+   "date": "2026-11-08",
+   "theme": "cinema",
+   "role": "owner",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-08T21:00:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "How many get kicked out?",
+   "duration_s": 63.57,
+   "hashtags": [
+    "#bounce",
+    "#movietheater",
+    "#bouncingball",
+    "#fyp"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-18331253928044804194.mp4",
+   "metricool_post_id": 418114100,
+   "methode": "S2·A3·3e·R1·C1·P2·F4·E2·O2·T3·Z0·N2·Q1·L2",
+   "outcome": "tout ce que la lampe de l'ouvreur éclaire est mis dehors, jamais Bounce ; la salle se vide, Bounce envoie la lampe sur l'écran et le personnage du film est expulsé ; la lampe finit braquée sur la caméra",
+   "script": "src/stories/cinema_v3.py (branche proto-cinema)",
+   "config": "configs/cinema_v3.json",
+   "caption": "captions/cinema_v3.md"
+  },
+  {
+   "name": "barber_proto",
+   "date": "2026-11-09",
+   "theme": "barber",
+   "role": "owner",
+   "slot": "14:30",
+   "scheduled_time": "2026-11-09T14:30:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "Whose head gets his hair?",
+   "duration_s": 61.78,
+   "hashtags": [
+    "#bounce",
+    "#barber",
+    "#haircut",
+    "#animation"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-13145052461639420086.mp4",
+   "metricool_post_id": 418749593,
+   "methode": "S2·A43e·R3·C2·P1·F1·E1·O1·T2·Z1·N2·Q2·L1",
+   "outcome": "chaque rebond de Bounce dans le fauteuil envoie une touffe de sa tignasse sur le voisin ; chauve, il reprend l'afro du voisin, qui finit sur le crâne chauve du barbier ; « Perfect! » au miroir, la barbe s'envole à 54 s ; au dernier « Bounce » la coiffure du barbier retombe de travers sur Bounce",
+   "script": "src/stories/barber_v4.py (branche proto-barber)",
+   "config": "configs/barber_v4.json",
+   "caption": "captions/barber_proto.md"
+  },
+  {
+   "name": "stick_proto",
+   "date": "2026-11-09",
+   "theme": "stick",
+   "role": "owner",
+   "slot": "18:00",
+   "scheduled_time": "2026-11-09T18:00:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "When will the librarian snap?",
+   "duration_s": 62.33,
+   "hashtags": [
+    "#bounce",
+    "#library",
+    "#stick",
+    "#animation"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-11714334772112553625.mp4",
+   "metricool_post_id": 418756014,
+   "methode": "S3·A23e·R1·C3·P3·F3·E1·O2·T3·Z0·N2·Q1·L2",
+   "outcome": "Bounce emporte Stick (perso de fan, vert) contre tout dans une bibliothèque : livres, panneau QUIET, la bibliothécaire, un lecteur dans son fauteuil ; sa colère monte par paliers, faux calme « Finally. » à 45 s ; l'étagère penche à chaque rebond et la bibliothécaire hurle « QUIET! » à 58 s : l'étagère enferme Bounce, Stick se colle sur sa tête",
+   "script": "src/stories/stick_v3.py (branche proto-stick)",
+   "config": "configs/stick_v3.json",
+   "caption": "captions/stick_proto.md"
+  },
+  {
+   "name": "elevator_proto",
+   "date": "2026-11-09",
+   "theme": "elevator",
+   "role": "owner",
+   "slot": "21:00",
+   "scheduled_time": "2026-11-09T21:00:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "How late will he be?",
+   "duration_s": 64.23,
+   "hashtags": [
+    "#bounce",
+    "#elevator",
+    "#officelife",
+    "#animation"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-16092849119953908794.mp4",
+   "metricool_post_id": 418759586,
+   "methode": "S2·A32e·R2·C1·P3·F4·E2·O2·T2·Z1·N3·Q1·L1",
+   "outcome": "Bounce allume tous les boutons ; à chaque étage des années passent (2026 → 2079), l'homme pressé vieillit ; au 9 à 40 s Bounce ferme la porte ; vieillard, il garde le tableau à la canne, arrive au 9 en 2079 sur son pot de départ en retraite (« I just got here. ») ; Bounce referme les portes et l'ascenseur redescend",
+   "script": "src/stories/elevator_v4.py (branche proto-elevator)",
+   "config": "configs/elevator_v4.json",
+   "caption": "captions/elevator_proto.md"
+  },
+  {
+   "name": "insomnia_proto",
+   "date": "2026-11-09",
+   "theme": "insomnia",
+   "role": "owner",
+   "slot": "08:00",
+   "scheduled_time": "2026-11-09T08:00:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "Can he sleep through Bounce?",
+   "duration_s": 64.03,
+   "hashtags": [
+    "#bounce",
+    "#insomnia",
+    "#cantsleep",
+    "#animation"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-8072889342416729881.mp4",
+   "metricool_post_id": 418761544,
+   "methode": "S1·A12e·R2·C1·P2·F2·E2·O1·T1·Z2·N3·Q2·L0",
+   "outcome": "Insomnia (perso de fan, frère de Snooze) est réveillé à chaque « Bounce » : oreiller soufflé, lampe, café catapulté dans sa bouche ; il compte des Bounce rêvés qui ratent la barrière et débordent dans la chambre ; à 58 s le plus gros « BOUNCE » fait éclater le rêve ; il s'endort enfin au lever du jour, Bounce rebondissant tout doux",
+   "script": "src/stories/insomnia.py (branche proto-insomnia, config v4)",
+   "config": "configs/insomnia_v4.json",
+   "caption": "captions/insomnia_proto.md"
+  },
+  {
+   "name": "magic_proto",
+   "date": "2026-11-09",
+   "theme": "magic",
+   "role": "owner",
+   "slot": "11:30",
+   "scheduled_time": "2026-11-09T11:30:00+01:00",
+   "post_url": null,
+   "status": "scheduled",
+   "excluded": true,
+   "exclusion_reason": "vidéo de session préparée à l'avance sur décision du propriétaire : hors verdict et hors copie",
+   "stats": {
+    "views_24h": null,
+    "views_48h": null,
+    "views": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "measured_at": null
+   },
+   "hook_text": "Can you spot the rabbit?",
+   "duration_s": 61.33,
+   "hashtags": [
+    "#bounce",
+    "#magic",
+    "#magictrick",
+    "#animation"
+   ],
+   "media_url": "https://static.metricool.com/planner/202611/7069324-file-7898417002536295389.mp4",
+   "metricool_post_id": 418769540,
+   "methode": "S1·A12e·R1·C2·P2·F4·E1·O2·T1·Z2·N2·Q1·L2",
+   "outcome": "Bounce sort du chapeau à la place du lapin et gâche chaque tour ; le sort ricoche et rétrécit le magicien, la cage se referme sur lui, les colombes envoient Bounce au plafond ; le lapin apparaît partout sans que le magicien le voie ; Bounce saute seul dans le chapeau-piège, le magicien le présente comme son lapin, un dernier « Bounce » étouffé fait sauter le chapeau pendant le salut",
+   "script": "src/stories/magic_v4.py (branche proto-magic)",
+   "config": "configs/magic_v4.json",
+   "caption": "captions/magic_proto.md"
+  }
+ ],
+ "themes": [
+  {
+   "name": "six_jobs",
+   "description": "Liste à sketches : les six métiers que Bounce a essayés en une semaine, un lieu et une chute physique par métier, le sixième (testeur de matelas) retourne la série, un dimanche en épilogue.",
+   "state": "actif",
+   "created": "2026-10-31"
+  },
+  {
+   "name": "halloween",
+   "description": "One-off d'horreur : Bounce en menace vu par une famille, une maison la nuit, une chose qui n'avance que quand la lumière s'éteint, un sursaut au briquet, le petit matin.",
+   "state": "actif",
+   "created": "2026-10-31"
+  },
+  {
+   "name": "six_sports",
+   "description": "Liste à sketches : les six sports que Bounce a essayés, un terrain et une chute par sport, le sixième (trampoline) retourne la série.",
+   "state": "actif",
+   "created": "2026-11-01"
+  },
+  {
+   "name": "six_hobbies",
+   "description": "Liste à sketches : les six loisirs que Bounce a essayés, un décor et une mécanique de chute par loisir, le sixième (peinture) retourne la série.",
+   "state": "actif",
+   "created": "2026-11-01"
+  }
+ ],
+ "daily": [
+  {
+   "date": "2026-10-31",
+   "views": 71044,
+   "followers": 11156
+  },
+  {
+   "date": "2026-11-01",
+   "views": 51200,
+   "followers": 11236
+  },
+  {
+   "date": "2026-11-02",
+   "views": 39869,
+   "followers": 11308
+  },
+  {
+   "date": "2026-11-03",
+   "views": 346262,
+   "followers": 11681
+  },
+  {
+   "date": "2026-11-04",
+   "views": 654199,
+   "followers": 12587
+  },
+  {
+   "date": "2026-11-05",
+   "views": 224740,
+   "followers": 13419
+  }
+ ],
+ "veille": {
+  "last_check": null,
+  "hashtags": [],
+  "formats_satures": "",
+  "sources": [],
+  "confiance": ""
+ },
+ "notes": [
+  {
+   "date": "2026-10-28",
+   "note": "Phase 0 : dépôt créé, moteur de rendu écrit et testé (tests/rendu_test.json), règles et skills en place. Genre décidé par le propriétaire : histoires racontées par une voix de synthèse sur des dessins simples animés. Identité, langue, voix, nom du compte, marque Metricool et protocole du test restent à trancher (CLAUDE.md, état du projet)."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "Décision du propriétaire : le dépôt devient le format histoire de @bouncefactory0 (Bounce héros, voix off), en parallèle des simulations, pas de second compte. Narrateur : Kokoro am_fenrir (branché dans voice.py, repli piper puis espeak). Moteur étendu : élément bounce (dessin et voix repris de bouncefactory, sauts hops avec son nom à chaque retombée, say, expr), swing d'angle. Premier prototype lighthouse_20261031 (62 s, 12 scènes) rendu, passé au relecteur indépendant et montré au propriétaire ; non publié. Reste à trancher : ton du narrateur, monde, part des créneaux, protocole du test."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "Format décidé par le propriétaire : la liste à sketches (titre qui dit tout, présentation de Bounce en une phrase, six situations courtes en simulation réelle avec chacune sa chute, narrateur Kokoro am_fenrir, retournement sur la dernière, une minute). Moteur : src/sim (base de bouncefactory + narrateur calé sur les événements, sous-titres, silence de Bounce sous la narration) et src/sim/chapters.py (StorySim : chapitres enchaînés, coupes qui attendent la voix et la réplique de Bounce). Première vidéo six_jobs_20261031 publiée le 31/10 à 21h sur @bouncefactory0 (post 412415155), après trois prototypes rejetés par le propriétaire (diapositives, puis simulation commentée) et deux relectures (v1 recalée, v2 PASSE). Elle est consignée aussi dans bouncefactory (excluded : mesurée, sans verdict)."
+  },
+  {
+   "date": "2026-10-31",
+   "note": "One-off d'Halloween voulu par le propriétaire, carte blanche : DA d'horreur (noir, une source de lumière par plan, grain léger, vignette), narrateur Kokoro am_onyx ralenti, silhouettes, mot de Bounce lointain réverbéré, nappe sourde, sursaut au briquet. Moteur étendu pour ça : post-traitement image par le thème (sim.post), mots lointains (hit far:gain), sursaut (hit scare), nappe (drone_env), crf réglable. Premier rendu abandonné : le grain plein faisait un fichier de 300 Mo ; grain réduit à 3,2, crf 21. Publiée à 22h35 le 31/10 (post 412482253), sixième vidéo du jour par décision du propriétaire."
+  },
+  {
+   "date": "2026-11-01",
+   "note": "Deuxième liste, six_sports_20261101, programmée le 02/11 à 14h30 (post 412887374). Trois relectures : v1 recalée (golf de jour, tampons hors cadre), v2 recalée (étang et mur hors cadre, barre qui traverse le montant, carton sur Bounce, Bounce dans un joueur), v3 recalée (barre fantôme : il la traversait six fois avant la chute scriptée), v4 PASSE (vraie collision, joueurs écartés, golf à moitié dans l'eau). Leçon pour la skill d'écriture : chaque objet que Bounce peut toucher doit avoir une collision réelle dès le début, jamais seulement au moment de la chute. Moteur : stamp_y par chapitre, tampon qui tient dans la largeur. Signal : six_jobs a reçu l'Additional Reward de TikTok (RPM 1,95 $, environ dix fois le reste du compte)."
+  },
+  {
+   "date": "2026-11-01T16:25+01:00",
+   "note": "six_hobbies_20261102, première liste passée par le circuit industriel (skills ecrire et juger, controle.py) : 6 versions. v1 recalée par le contrôle automatique (image figée, ouverture lente, flash) ; v2 recalée par les trois juges (wagons téléportés, pièces sous l'interface, oiseaux invisibles, tirage-logo, voix superposées, fin coupée) ; v3 et v4 recalées par le juge de la facture (locomotive dans la table, oiseaux qui disparaissent ; cartes et wagons qui se traversent) ; v5 : deux juges PASSE, le troisième recalait sur la réaction finale « Yes! » (identité de base.py, consigne du juge corrigée) ; v6 : deux mineurs visibles corrigés (carte en équilibre, wagons debout), dernière relecture PASSE. Chaque défaut est devenu une vérification de controle.py ou une règle des skills. Le propriétaire a validé (« Elle est top ») et choisi le 02/11 à 18h00 (post Metricool 413003770). Règle d'arrêt écrite dans juger : un passage, au plus un rerendu, les mineurs deviennent des règles pour la vidéo suivante."
+  },
+  {
+   "date": "2026-11-01T17:10+01:00",
+   "note": "Décision du propriétaire : routine quotidienne vers 3h (Opus 5.5), une liste par jour sur un créneau tiré au hasard parmi les libres ; le run de bouncefactory produit une vidéo de moins. Premier run : nuit du 02 au 03/11 (le 02/11 est déjà pris par six_hobbies, programmée en session)."
+  },
+  {
+   "date": "2026-11-01T22:30+01:00",
+   "note": "Prototype du troisième concept (culture G, idée du propriétaire) : doubling_proto, « How Many Bounces To The Sun? », 64,7 s, script sur la branche proto-doubling (pas sur main : ce n'est pas une liste). Trois versions : v1 jugée trop simpliste par le propriétaire ; v2 recalée par le juge (compteur décalé de la voix, fin contradictoire) ; v3 PASSE (pauses au sommet des jalons, deuxième question après le Soleil). Publiée telle quelle sur décision du propriétaire le 02/11 à 8h00 (post 413295647). Mineurs pour la version suivante : objets qui surgissent au lieu d'entrer, deux passages calmes (36–41 s, 53–58 s), textes petits, « the nearest star » (le Soleil l'est) et « another galaxy » dit après le Grand Nuage de Magellan."
+  },
+  {
+   "date": "2026-11-02T02:50+01:00",
+   "note": "Premier run de la routine (nuit du 01 au 02/11). Nettoyage : halloween_20261031 et six_sports_20261101 rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 29 401 vues (24 h), halloween 3 344 (24 h), six_sports 19 859 (12 h) ; daily 31/10 et 01/11. Le 02/11 est déjà pris (six_hobbies à 18h00, faite en session ; doubling_proto à 8h00) : arrêt à l'étape 2, aucune liste produite. Environnement : python3 (3.11) et pip (3.13) ne pointent pas sur le même interpréteur ; installer avec « python3 -m pip install -r requirements.txt » (et --ignore-installed pillow, le PIL système n'a pas _imaging). Veille non faite : réservée aux nuits où une liste est publiée."
+  },
+  {
+   "date": "2026-11-03T02:55+01:00",
+   "note": "Run de la routine (nuit du 02 au 03/11). Nettoyage : six_hobbies_20261102, doubling_proto et machine_proto rapprochées de getScheduledPosts → published, post_url relevées. Mesure : six_jobs 31 578 vues (48 h), halloween 3 710 (48 h), six_sports 23 960 (24 h, mesurée à 36 h), six_hobbies 13 238 (9 h), doubling_proto 9 417 (19 h), machine_proto 5 300 (15 h) ; daily 02/11. Le 03/11 est déjà pris : outre cats_proto (18h00), Metricool porte deux vidéos narrées de Bounce au format liste, faites en session et absentes de history.json : « Can Anyone Do Bounce's Makeup? » (post 414552817, 21h00, 64,2 s, créé le 02/11 à 22h33) et « Will Bounce Get Hired? » (post 414653885, 14h30, 64,9 s, créé le 03/11 à 00h33). Arrêt à l'étape 2, aucune liste produite ; les deux posts ne sont pas inventés dans videos[] : à consigner par la session qui les a faits (config, script, caption). Créneaux libres restants (8h00, 11h30) laissés au run de bouncefactory. Environnement : rediwane/bouncefactory n'est pas accessible à cette session (clone refusé, dépôt hors périmètre GitHub de la routine) ; controle.py ne pourrait donc pas faire le test de nouveauté contre ses thèmes et accroches : à ajouter aux dépôts de la routine avant le prochain run qui écrit une liste."
+  },
+  {
+   "date": "2026-11-03T10:50+01:00",
+   "note": "Session owner : roast_proto programmée le 04/11 à 14h30 (post 415033420). Idée du propriétaire : le narrateur insulte Bounce pendant une minute ; première réplique « Look at this f*cking purple ball. » (6 mots, pas une question, et « purple » alors que Bounce est rose : choix du propriétaire). Les gros mots sont bipés (sinusoïde 1 kHz synthétisée par src/stories/roast.py, aucun fichier audio) et étoilés à l'écrit : décision explicite du propriétaire, exception à la règle « aucun son ajouté » pour cette vidéo seulement. Juges : muet PASSE ; son RECALÉ (bips 4 à 5 LU au-dessus de la voix), v2 bip −6 dB et crête −1,5 dBTP → PASSE."
+  },
+  {
+   "date": "2026-11-03T16:30+01:00",
+   "note": "Session owner : roast_proto remplacée dans le post du 04/11 14h30 (nouvel id 415394414). Voix du narrateur passée sur Chatterbox (voix plus énervée, validée à l'écoute par le propriétaire), bip qui laisse passer le début du mot, quelques répliques allongées ; 64,0 s. Juges : muet PASSE ; son RECALÉ (fins de mots audibles sur 3 répliques) → bips allongés → corrigé. Le propriétaire garde le faux mort de la fin."
+  },
+  {
+   "date": "2026-11-03T19:50+01:00",
+   "note": "Session owner : test du « juge de la rétention » (consigne dans le scratchpad de session, non versionnée). bottle_proto (04/11 08h00, post 415587524) et surprise_proto (04/11 11h30, post 415586227) portent dans retention_predite les courbes prédites par le juge : à comparer aux courbes réelles de TikTok Studio. Calibrage à l'aveugle sur 4 vidéos passées : le juge ne sépare pas un carton (118 k) des flops (3 k) ; ses pourcentages varient autant d'un juge à l'autre que d'une version à l'autre ; utile comme relecteur de défauts, pas comme prédicteur."
+  },
+  {
+   "date": "2026-11-03T20:15+01:00",
+   "note": "Session owner : floatbath_proto publiée à la main par le propriétaire le 03/11 au soir, en réponse vidéo au commentaire du fan qui a créé Float (personnage invité, non récurrent). 6e vidéo du jour, au-delà de la limite de 5, par décision du propriétaire. Voix de Float : Parler-TTS (Talia), banque hors dépôt."
+  },
+  {
+   "date": "2026-11-04T02:50+01:00",
+   "note": "Run du 04/11 : le jour est déjà pris (bottle_proto 08h00, surprise_proto 11h30, roast_proto 14h30, matter_proto 18h00, life_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : cats_proto, interview_proto, makeup_proto (03/11) PUBLISHED → published. Mesure : stats mises à jour ; floatbath_proto rattachée à la ligne Metricool du 03/11 18:12 UTC (63 s, publiée à la main). Ligne Metricool hors dépôt ignorée (anthill, bed : bouncefactory). Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 04/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  },
+  {
+   "date": "2026-11-05T02:50+01:00",
+   "note": "Run du 05/11 : le jour est déjà pris (doctor_proto 08h00, beam_proto 11h30, sneak_proto 14h30, date_proto 18h00, fall_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : matter_proto, life_proto, roast_proto, surprise_proto, nameoc_proto, clip4_proto (04/11) PUBLISHED → published. Mesure : stats mises à jour ; snooze_proto (publiée à la main, sans heure programmée) rattachée à la ligne Metricool du 04/11 16:11 UTC (61 s), seule ligne du jour sans entrée et de durée compatible. bottle_proto (04/11 08h00, PUBLISHED, vidéo 7704208175217691907) n'a aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides, à revoir au prochain run. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 03/11 mis à jour avec la valeur complète du jour, 04/11 ajouté. coherence.py : numpy absent de l'environnement au démarrage ; sans conséquence aujourd'hui puisque rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 05/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  },
+  {
+   "date": "2026-11-06T02:55+01:00",
+   "note": "Run du 06/11 : le jour est déjà pris (crush_proto 08h00, rollcall_proto 11h30, detonate_proto 14h30, grounded_proto 18h00, blub_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : doctor_proto, beam_proto, sneak_proto, date_proto, fall_proto (05/11) PUBLISHED → published, publicUrl dans post_url. Mesure : stats mises à jour par identifiant de vidéo ; views_48h écrites pour cats, makeup, interview, floatbath ; views_24h pour matter, life, roast, surprise, nameoc, snooze, clip4. bottle_proto (vidéo 7704208175217691907) n'a toujours aucune ligne dans getAnalyticsDataByMetrics : stats laissées vides. Lignes Metricool hors dépôt ignorées (bouncefactory). daily : 04/11 mis à jour avec la valeur complète du jour, 05/11 ajouté. ../bouncefactory non clonable dans cette session (accès GitHub limité à story-factory) : sans conséquence aujourd'hui, rien n'est écrit. coherence.py : numpy absent de l'environnement ; sans conséquence, rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 06/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  },
+  {
+   "date": "2026-11-07T02:50+01:00",
+   "note": "Run du 07/11 : le jour est déjà pris (roll_proto 08h00, wedding_proto 11h30, firstday_proto 14h30, baby_proto 18h00, slo_proto 21h00, toutes PENDING dans getScheduledPosts) : aucune liste écrite, le run s'arrête après nettoyage et mesure. Nettoyage : crush_proto, rollcall_proto, detonate_proto, grounded_proto, blub_proto (06/11) PUBLISHED → published, publicUrl dans post_url. Mesure : getAnalyticsDataByMetrics renvoie les mêmes valeurs qu'au run du 06/11 (aucune ligne pour les posts du 06/11, TKEV sans le 06/11 ni mise à jour du 05/11) : les données Metricool ne se sont pas rafraîchies depuis. Seul stats.views (et likes/comments/shares) mis à jour pour six_hobbies, doubling, machine, dont l'entrée datait du 05/11 ; aucune valeur views_24h/views_48h écrite, car la donnée date d'avant ces âges (on n'inscrit pas une vue de 30 h comme vue à 48 h). daily inchangé. bottle_proto : toujours aucune ligne. coherence.py : numpy non importable (2 KO moteur), sans conséquence, rien n'est rendu. Aucun verdict : moins d'une dizaine de listes mesurées à 48 h. Les cinq créneaux du 07/11 sont pris par story-factory : le run bouncefactory de 6h n'a aucun créneau libre ce jour-là."
+  }
+ ]
 }
